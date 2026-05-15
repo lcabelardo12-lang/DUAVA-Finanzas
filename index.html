@@ -167,7 +167,12 @@
     </div>
     <div id="inv-contenido" class="hidden">
       <div class="section">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <select id="filtro-inversion" onchange="recargarInversion()">
+          <option value="todo">Todo</option>
+          <option value="mes">Ultimo Mes</option>
+          <option value="semana">Ultima Semana</option>
+        </select>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
           <div class="dashboard-box"><small>Inversion en Stock</small><div class="dashboard-number" id="inv-stock">$0</div></div>
           <div class="dashboard-box"><small>Total Gastos</small><div class="dashboard-number" id="inv-gastos">$0</div></div>
           <div class="dashboard-box"><small>Ventas Totales</small><div class="dashboard-number" id="inv-ventas">$0</div></div>
@@ -177,7 +182,7 @@
       <div class="section">
         <h3>Productos y Costos</h3>
         <div style="overflow-x:auto;">
-          <table id="tabla-inv-productos"><thead><tr><th>Producto</th><th>Venta</th><th>Costo</th><th>Gancia</th><th>Margen</th></tr></thead><tbody></tbody></table>
+          <table id="tabla-inv-productos"><thead><tr><th>Producto</th><th>Venta</th><th>Costo</th><th>Ganancia</th><th>Margen</th></tr></thead><tbody></tbody></table>
         </div>
       </div>
       <div class="section">
@@ -203,6 +208,7 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzVZh6s8MNTz3s20X6d2
 let tiendaActual = '';
 let vendedorActual = '';
 let productosDisponibles = [];
+let inversionPinGuardado = '';
 
 function mostrar(id) { document.querySelectorAll('[id^="pantalla-"]').forEach(el => el.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
 function seleccionarTienda(t) { tiendaActual = t; document.getElementById('nombre-tienda-login').textContent = t; cargarVendedores(); mostrar('pantalla-login'); }
@@ -350,8 +356,8 @@ async function editarProducto() {
   else msg.innerHTML = '<div class="error">' + data.error + '</div>';
 }
 
-// PANEL DE INVERSION
 async function irAInversion() {
+  inversionPinGuardado = '';
   document.getElementById('inv-pin').value = '';
   document.getElementById('inv-pin-error').textContent = '';
   document.getElementById('inv-pin-section').classList.remove('hidden');
@@ -361,14 +367,23 @@ async function irAInversion() {
 
 async function verResumenInversion() {
   const pin = document.getElementById('inv-pin').value;
-  const err = document.getElementById('inv-pin-error');
-  if (!pin) { err.textContent = 'Ingrese su PIN'; return; }
-  err.textContent = 'Cargando...';
-  const data = await apiCall({}, 'POST', { action: 'getResumenInversion', tienda: tiendaActual, pin: pin });
-  if (data.error) { err.textContent = data.error; return; }
-  err.textContent = '';
+  if (!pin) { document.getElementById('inv-pin-error').textContent = 'Ingrese su PIN'; return; }
+  inversionPinGuardado = pin;
+  document.getElementById('inv-pin-error').textContent = 'Cargando...';
+  await cargarDatosInversion();
+}
+
+async function cargarDatosInversion() {
+  const filtro = document.getElementById('filtro-inversion').value;
+  const data = await apiCall({}, 'POST', { action: 'getResumenInversion', tienda: tiendaActual, pin: inversionPinGuardado, filtro: filtro });
+  if (data.error) { document.getElementById('inv-pin-error').textContent = data.error; return; }
+  document.getElementById('inv-pin-error').textContent = '';
   document.getElementById('inv-pin-section').classList.add('hidden');
   document.getElementById('inv-contenido').classList.remove('hidden');
+  renderInversion(data);
+}
+
+function renderInversion(data) {
   document.getElementById('inv-stock').textContent = '$' + data.inversionStock.toFixed(2);
   document.getElementById('inv-gastos').textContent = '$' + data.totalGastos.toFixed(2);
   document.getElementById('inv-ventas').textContent = '$' + data.totalVentas.toFixed(2);
@@ -379,8 +394,8 @@ async function verResumenInversion() {
   tbP.innerHTML = '';
   if (data.productos && data.productos.length) {
     data.productos.forEach(p => {
-      const color = p.gananciaUnit >= 0 ? '#28a745' : '#dc3545';
-      tbP.innerHTML += '<tr><td>' + p.nombre + '</td><td>$' + p.precio.toFixed(2) + '</td><td>$' + p.costo.toFixed(2) + '</td><td style="color:' + color + ';">$' + p.gananciaUnit.toFixed(2) + '</td><td>' + p.margen + '%</td></tr>';
+      const c = p.gananciaUnit >= 0 ? '#28a745' : '#dc3545';
+      tbP.innerHTML += '<tr><td>' + p.nombre + '</td><td>$' + p.precio.toFixed(2) + '</td><td>$' + p.costo.toFixed(2) + '</td><td style="color:' + c + ';">$' + p.gananciaUnit.toFixed(2) + '</td><td>' + p.margen + '%</td></tr>';
     });
   } else tbP.innerHTML = '<tr><td colspan="5" style="text-align:center;">Sin productos</td></tr>';
   const tbG = document.querySelector('#tabla-gastos tbody');
@@ -390,15 +405,16 @@ async function verResumenInversion() {
   document.getElementById('gasto-tienda').value = tiendaActual;
 }
 
+function recargarInversion() { if (inversionPinGuardado) cargarDatosInversion(); }
+
 async function agregarGasto() {
   const desc = document.getElementById('gasto-desc').value;
   const monto = parseFloat(document.getElementById('gasto-monto').value);
   const tienda = document.getElementById('gasto-tienda').value;
-  const pin = document.getElementById('inv-pin').value || document.getElementById('new-prod-pin').value;
   const msg = document.getElementById('gasto-msg');
   if (!desc || !monto) { msg.innerHTML = '<div class="error">Complete descripcion y monto</div>'; return; }
-  const data = await apiCall({}, 'POST', { action: 'addGasto', descripcion: desc, monto: monto, tienda: tienda, pin: '7512' });
-  if (data.success) { msg.innerHTML = '<div class="success">Gasto registrado</div>'; document.getElementById('gasto-desc').value = ''; document.getElementById('gasto-monto').value = ''; verResumenInversion(); }
+  const data = await apiCall({}, 'POST', { action: 'addGasto', descripcion: desc, monto: monto, tienda: tienda, pin: inversionPinGuardado });
+  if (data.success) { msg.innerHTML = '<div class="success">Gasto registrado</div>'; document.getElementById('gasto-desc').value = ''; document.getElementById('gasto-monto').value = ''; cargarDatosInversion(); }
   else msg.innerHTML = '<div class="error">' + (data.error || 'Error') + '</div>';
 }
 </script>
