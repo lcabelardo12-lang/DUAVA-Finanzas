@@ -175,6 +175,7 @@
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
           <div class="dashboard-box"><small>Inversion en Stock</small><div class="dashboard-number" id="inv-stock">$0</div></div>
           <div class="dashboard-box"><small>Total Gastos</small><div class="dashboard-number" id="inv-gastos">$0</div></div>
+          <div class="dashboard-box"><small>Comisiones Vend.</small><div class="dashboard-number" id="inv-comisiones">$0</div></div>
           <div class="dashboard-box"><small>Ventas Totales</small><div class="dashboard-number" id="inv-ventas">$0</div></div>
           <div class="dashboard-box"><small style="color:#28a745;">Ganancia Neta</small><div class="dashboard-number" id="inv-ganancia" style="color:#28a745;">$0</div></div>
         </div>
@@ -386,6 +387,7 @@ async function cargarDatosInversion() {
 function renderInversion(data) {
   document.getElementById('inv-stock').textContent = '$' + data.inversionStock.toFixed(2);
   document.getElementById('inv-gastos').textContent = '$' + data.totalGastos.toFixed(2);
+  document.getElementById('inv-comisiones').textContent = '$' + (data.totalComisiones || 0).toFixed(2);
   document.getElementById('inv-ventas').textContent = '$' + data.totalVentas.toFixed(2);
   const gan = data.gananciaNeta;
   document.getElementById('inv-ganancia').textContent = '$' + gan.toFixed(2);
