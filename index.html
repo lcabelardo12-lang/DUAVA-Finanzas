@@ -11,9 +11,9 @@
     html { -webkit-text-size-adjust: 100%; }
     body { background: linear-gradient(180deg, #f0f0f0 0%, #e0e0e0 100%); padding: 15px; width: 100%; min-height: 100vh; margin: 0; }
     h1 { text-align: center; font-size: 28px; margin-bottom: 8px; font-weight: 700; letter-spacing: 1px; color: #2c2c2c; }
-    .subtitle { text-align: center; font-size: 22px; color: #555; margin-bottom: 25px; font-weight: 500; letter-spacing: 0.5px; }
+    .subtitle { text-align: center; font-size: 22px; color: #555; margin-bottom: 25px; font-weight: 500; }
     .subtitle::after { content: ""; display: block; width: 50px; height: 2px; background: #888; margin: 8px auto 0 auto; border-radius: 2px; }
-    .btn { width: 100%; padding: 22px 15px; margin: 12px 0; border: none; font-size: 20px; font-weight: bold; cursor: pointer; border-radius: 12px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); display: block; text-align: center; text-decoration: none; }
+    .btn { width: 100%; padding: 22px 15px; margin: 12px 0; border: none; font-size: 20px; font-weight: bold; cursor: pointer; border-radius: 12px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); display: block; text-align: center; }
     .btn-azul { background: #0066cc; color: white; }
     .btn-rosado { background: #ff6699; color: white; }
     .btn-verde { background: #28a745; color: white; }
@@ -29,7 +29,8 @@
     table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
     th, td { border: 1px solid #ddd; padding: 8px 4px; text-align: left; }
     th { background: #f2f2f2; }
-    .back-link { color: #0066cc; text-decoration: underline; cursor: pointer; display: block; text-align: center; margin-top: 15px; font-size: 16px; }
+    .dashboard-box { background: #e9ecef; padding: 15px; text-align: center; margin: 5px 0; border-radius: 8px; }
+    .dashboard-number { font-size: 28px; font-weight: bold; color: #0066cc; }
   </style>
 </head>
 <body>
@@ -63,7 +64,8 @@
       <button class="btn btn-naranja" onclick="irVentasPublicas()">Mis Ventas</button>
       <button class="btn btn-verde" onclick="irAVenta()">Realizar Venta</button>
       <button class="btn btn-azul" onclick="irAAltas()">Historial de Altas</button>
-      <button class="btn btn-naranja" id="btn-maestro" onclick="irAPanelMaestro()">Panel Maestro</button>
+      <button class="btn btn-naranja" onclick="irAPanelMaestro()">Panel Maestro</button>
+      <button class="btn btn-rosado" onclick="irAInversion()">Panel de Inversion</button>
       <button class="btn btn-rojo" onclick="cerrarSesion()">Cerrar Sesion</button>
     </div>
   </div>
@@ -72,13 +74,10 @@
     <h1>Stock actual</h1>
     <div class="subtitle" id="sub-inventario"></div>
     <div class="section">
-      <div style="overflow-x: auto;">
-        <table id="tabla-inventario">
-          <thead><tr><th>Producto</th><th>Precio (Bs.)</th><th>Stock</th></tr></thead>
-          <tbody></tbody>
-        </table>
+      <div style="overflow-x:auto;">
+        <table id="tabla-inventario"><thead><tr><th>Producto</th><th>Precio ($)</th><th>Stock</th></tr></thead><tbody></tbody></table>
       </div>
-      <button class="btn btn-gris" onclick="volverMenu()" style="margin-top: 15px;">Volver al Menu</button>
+      <button class="btn btn-gris" onclick="volverMenu()" style="margin-top:15px;">Volver</button>
     </div>
   </div>
 
@@ -91,13 +90,10 @@
         <option value="mes">Ultimo Mes</option>
         <option value="todo">Todo</option>
       </select>
-      <div style="overflow-x: auto; margin-top: 10px;">
-        <table id="tabla-ventas-p">
-          <thead><tr><th>Fecha</th><th>Producto</th><th>Cant</th><th>Total</th><th>Vendedor</th><th>Motivo</th><th>% Vend.</th></tr></thead>
-          <tbody></tbody>
-        </table>
+      <div style="overflow-x:auto; margin-top:10px;">
+        <table id="tabla-ventas-p"><thead><tr><th>Fecha</th><th>Producto</th><th>Cant</th><th>Total</th><th>Vendedor</th><th>Motivo</th><th>% Vend.</th></tr></thead><tbody></tbody></table>
       </div>
-      <button class="btn btn-gris" onclick="volverMenu()" style="margin-top: 15px;">Volver al Menu</button>
+      <button class="btn btn-gris" onclick="volverMenu()" style="margin-top:15px;">Volver</button>
     </div>
   </div>
 
@@ -107,15 +103,13 @@
     <div class="section">
       <label>Producto:</label>
       <select id="select-producto" onchange="actualizarStock()"><option value="">Seleccione...</option></select>
-      <div id="info-stock" style="margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 3px;">
-        Stock disponible: <strong id="stock-display">-</strong>
-      </div>
+      <div style="margin:10px 0;padding:10px;background:#f8f9fa;border-radius:3px;">Stock disponible: <strong id="stock-display">-</strong></div>
       <label>Cantidad:</label>
       <input type="number" id="input-cantidad" value="1" min="1">
       <label>Motivo (opcional):</label>
       <input type="text" id="input-motivo" placeholder="Ej: Cliente frecuente">
       <label>Porciento Vendedor (%):</label>
-      <input type="number" id="input-porciento" placeholder="Ej: 10" min="0" max="100" step="1">
+      <input type="number" id="input-porciento" placeholder="Ej: 10" min="0" max="100">
       <div id="venta-error" class="error"></div>
       <div id="venta-success" class="success"></div>
       <button class="btn btn-verde" onclick="confirmarVenta()">Confirmar Venta</button>
@@ -127,13 +121,10 @@
     <h1>Historial de Altas</h1>
     <div class="subtitle" id="sub-altas"></div>
     <div class="section">
-      <div style="overflow-x: auto;">
-        <table id="tabla-altas">
-          <thead><tr><th>Fecha</th><th>Producto</th><th>Cantidad</th><th>Tienda</th><th>Tipo</th><th>Nota</th></tr></thead>
-          <tbody></tbody>
-        </table>
+      <div style="overflow-x:auto;">
+        <table id="tabla-altas"><thead><tr><th>Fecha</th><th>Producto</th><th>Cantidad</th><th>Tienda</th><th>Tipo</th><th>Nota</th></tr></thead><tbody></tbody></table>
       </div>
-      <button class="btn btn-gris" onclick="volverMenu()" style="margin-top: 15px;">Volver al Menu</button>
+      <button class="btn btn-gris" onclick="volverMenu()" style="margin-top:15px;">Volver</button>
     </div>
   </div>
 
@@ -141,29 +132,70 @@
     <h1>Panel Maestro</h1>
     <div class="subtitle">Gestion de Productos</div>
     <div class="section">
-      <h3 style="margin-bottom: 10px;">Anadir Nuevo Producto</h3>
+      <h3 style="margin-bottom:10px;">Anadir Nuevo Producto</h3>
       <input type="text" id="new-prod-nombre" placeholder="Nombre del producto">
-      <input type="number" id="new-prod-precio" placeholder="Precio (Bs.)" step="0.01">
+      <input type="number" id="new-prod-precio" placeholder="Precio venta ($)" step="0.01">
+      <input type="number" id="new-prod-costo" placeholder="Costo real ($)" step="0.01">
       <input type="number" id="new-prod-stock" placeholder="Stock inicial">
-      <select id="new-prod-tienda">
-        <option value="ODONTO STORE">ODONTO STORE</option>
-        <option value="CELEBRACIONES">CELEBRACIONES</option>
-      </select>
+      <select id="new-prod-tienda"><option value="ODONTO STORE">ODONTO STORE</option><option value="CELEBRACIONES">CELEBRACIONES</option></select>
       <input type="text" id="new-prod-nota" placeholder="Nota (opcional)">
       <input type="password" id="new-prod-pin" placeholder="PIN de seguridad">
       <button class="btn btn-verde" onclick="agregarProducto()">Guardar Producto</button>
       <div id="new-prod-msg"></div>
     </div>
     <div class="section">
-      <h3 style="margin-bottom: 10px;">Editar Producto Existente</h3>
+      <h3 style="margin-bottom:10px;">Editar Producto Existente</h3>
       <select id="edit-prod-select"><option value="">Seleccione producto...</option></select>
       <input type="number" id="edit-prod-precio" placeholder="Nuevo precio (vacio si no cambia)" step="0.01">
+      <input type="number" id="edit-prod-costo" placeholder="Nuevo costo (vacio si no cambia)" step="0.01">
       <input type="number" id="edit-prod-stock" placeholder="Nuevo stock (vacio si no cambia)">
       <input type="password" id="edit-prod-pin" placeholder="PIN de seguridad">
       <button class="btn btn-naranja" onclick="editarProducto()">Actualizar Producto</button>
       <div id="edit-prod-msg"></div>
     </div>
-    <button class="btn btn-rojo" onclick="volverMenu()">Volver al Menu</button>
+    <button class="btn btn-rojo" onclick="volverMenu()">Volver</button>
+  </div>
+
+  <div id="pantalla-inversion" class="hidden">
+    <h1>Panel de Inversion</h1>
+    <div class="subtitle">Solo propietario</div>
+    <div class="section" id="inv-pin-section">
+      <label>PIN de seguridad:</label>
+      <input type="password" id="inv-pin" placeholder="Ingrese su PIN">
+      <button class="btn btn-verde" onclick="verResumenInversion()">Ver Resumen</button>
+      <div id="inv-pin-error" class="error"></div>
+    </div>
+    <div id="inv-contenido" class="hidden">
+      <div class="section">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="dashboard-box"><small>Inversion en Stock</small><div class="dashboard-number" id="inv-stock">$0</div></div>
+          <div class="dashboard-box"><small>Total Gastos</small><div class="dashboard-number" id="inv-gastos">$0</div></div>
+          <div class="dashboard-box"><small>Ventas Totales</small><div class="dashboard-number" id="inv-ventas">$0</div></div>
+          <div class="dashboard-box"><small style="color:#28a745;">Ganancia Neta</small><div class="dashboard-number" id="inv-ganancia" style="color:#28a745;">$0</div></div>
+        </div>
+      </div>
+      <div class="section">
+        <h3>Productos y Costos</h3>
+        <div style="overflow-x:auto;">
+          <table id="tabla-inv-productos"><thead><tr><th>Producto</th><th>Venta</th><th>Costo</th><th>Gancia</th><th>Margen</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+      <div class="section">
+        <h3>Registrar Gasto</h3>
+        <input type="text" id="gasto-desc" placeholder="Descripcion (transporte, envio...)">
+        <input type="number" id="gasto-monto" placeholder="Monto ($)" step="0.01">
+        <select id="gasto-tienda"><option value="ODONTO STORE">ODONTO STORE</option><option value="CELEBRACIONES">CELEBRACIONES</option></select>
+        <button class="btn btn-naranja" onclick="agregarGasto()">Agregar Gasto</button>
+        <div id="gasto-msg"></div>
+      </div>
+      <div class="section">
+        <h3>Historial de Gastos</h3>
+        <div style="overflow-x:auto;">
+          <table id="tabla-gastos"><thead><tr><th>Fecha</th><th>Descripcion</th><th>Monto</th><th>Tienda</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-gris" onclick="volverMenu()" style="margin-top:10px;">Volver</button>
   </div>
 
 <script>
@@ -172,18 +204,8 @@ let tiendaActual = '';
 let vendedorActual = '';
 let productosDisponibles = [];
 
-function mostrar(id) {
-  document.querySelectorAll('[id^="pantalla-"]').forEach(el => el.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-}
-
-function seleccionarTienda(tienda) {
-  tiendaActual = tienda;
-  document.getElementById('nombre-tienda-login').textContent = tienda;
-  cargarVendedores();
-  mostrar('pantalla-login');
-}
-
+function mostrar(id) { document.querySelectorAll('[id^="pantalla-"]').forEach(el => el.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
+function seleccionarTienda(t) { tiendaActual = t; document.getElementById('nombre-tienda-login').textContent = t; cargarVendedores(); mostrar('pantalla-login'); }
 function volverInicio() { mostrar('pantalla-inicio'); }
 function volverMenu() { mostrar('pantalla-menu'); }
 function cerrarSesion() { vendedorActual = ''; tiendaActual = ''; document.getElementById('input-clave').value = ''; mostrar('pantalla-inicio'); }
@@ -191,49 +213,63 @@ function cerrarSesion() { vendedorActual = ''; tiendaActual = ''; document.getEl
 async function apiCall(params, method, postData) {
   try {
     if (method === 'POST') {
-      const response = await fetch(SCRIPT_URL, { method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify(postData) });
-      return await response.json();
+      const r = await fetch(SCRIPT_URL, { method: 'POST', headers: {'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(postData) });
+      return await r.json();
     } else {
       let url = SCRIPT_URL + '?';
-      for (let key in params) { url += key + '=' + encodeURIComponent(params[key]) + '&'; }
-      const response = await fetch(url);
-      return await response.json();
+      for (let k in params) url += k + '=' + encodeURIComponent(params[k]) + '&';
+      return await (await fetch(url)).json();
     }
-  } catch (e) {
-    console.error(e);
-    return { error: 'Error de conexion: ' + e.message };
-  }
+  } catch(e) { return { error: 'Error de conexion' }; }
 }
 
 async function cargarVendedores() {
   const data = await apiCall({ action: 'getVendedores' });
-  const select = document.getElementById('select-vendedor');
-  select.innerHTML = '<option value="">Seleccione...</option>';
-  if (data.vendedores) data.vendedores.forEach(v => { select.innerHTML += '<option value="' + v + '">' + v + '</option>'; });
+  const sel = document.getElementById('select-vendedor');
+  sel.innerHTML = '<option value="">Seleccione...</option>';
+  if (data.vendedores) data.vendedores.forEach(v => sel.innerHTML += '<option value="' + v + '">' + v + '</option>');
 }
 
 async function iniciarSesion() {
-  const vendedor = document.getElementById('select-vendedor').value;
-  const clave = document.getElementById('input-clave').value;
-  const errorDiv = document.getElementById('login-error');
-  if (!vendedor || !clave) { errorDiv.textContent = 'Complete todos los campos'; return; }
-  const data = await apiCall({}, 'POST', { action: 'login', vendedor: vendedor, clave: clave });
-  if (data.success) {
-    vendedorActual = vendedor;
-    errorDiv.textContent = '';
-    document.getElementById('nombre-tienda-menu').textContent = tiendaActual;
-    document.getElementById('sub-venta').textContent = tiendaActual + ' - ' + vendedorActual;
-    document.getElementById('sub-altas').textContent = tiendaActual;
-    mostrar('pantalla-menu');
-  } else { errorDiv.textContent = data.error || 'Error al iniciar sesion'; }
+  const v = document.getElementById('select-vendedor').value;
+  const c = document.getElementById('input-clave').value;
+  const err = document.getElementById('login-error');
+  if (!v || !c) { err.textContent = 'Complete todos los campos'; return; }
+  const data = await apiCall({}, 'POST', { action: 'login', vendedor: v, clave: c });
+  if (data.success) { vendedorActual = v; err.textContent = ''; document.getElementById('nombre-tienda-menu').textContent = tiendaActual; document.getElementById('sub-venta').textContent = tiendaActual + ' - ' + v; mostrar('pantalla-menu'); }
+  else err.textContent = data.error || 'Error';
+}
+
+async function verInventario() {
+  document.getElementById('sub-inventario').textContent = tiendaActual;
+  const data = await apiCall({ action: 'getProductos', tienda: tiendaActual });
+  const tb = document.querySelector('#tabla-inventario tbody');
+  tb.innerHTML = '';
+  if (data.productos && data.productos.length) data.productos.forEach(p => tb.innerHTML += '<tr><td>' + p.nombre + '</td><td>$' + parseFloat(p.precio).toFixed(2) + '</td><td style="font-weight:bold;">' + p.stock + '</td></tr>');
+  else tb.innerHTML = '<tr><td colspan="3" style="text-align:center;">Sin productos</td></tr>';
+  mostrar('pantalla-inventario');
+}
+
+async function irVentasPublicas() { document.getElementById('sub-ventas-p').textContent = tiendaActual; cargarVentasPublicas(); mostrar('pantalla-ventas-publico'); }
+
+async function cargarVentasPublicas() {
+  const filtro = document.getElementById('filtro-ventas-p').value;
+  const tb = document.querySelector('#tabla-ventas-p tbody');
+  tb.innerHTML = '<tr><td colspan="7" style="text-align:center;">Cargando...</td></tr>';
+  try {
+    const data = await apiCall({ action: 'getHistorialVentas', filtro: filtro, tienda: tiendaActual });
+    tb.innerHTML = '';
+    if (data.ventas && data.ventas.length) data.ventas.forEach(v => tb.innerHTML += '<tr><td>' + v.fecha + '</td><td>' + v.producto + '</td><td>' + v.cantidad + '</td><td>$' + parseFloat(v.total).toFixed(2) + '</td><td>' + v.vendedor + '</td><td>' + (v.motivo || '-') + '</td><td>' + (v.porcientoVendedor || 0) + '%</td></tr>');
+    else tb.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay registros</td></tr>';
+  } catch(e) { tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:red;">Error</td></tr>'; }
 }
 
 async function irAVenta() {
   const data = await apiCall({ action: 'getProductos', tienda: tiendaActual });
   productosDisponibles = data.productos || [];
-  const select = document.getElementById('select-producto');
-  select.innerHTML = '<option value="">Seleccione...</option>';
-  productosDisponibles.forEach(p => { select.innerHTML += '<option value="' + p.nombre + '" data-stock="' + p.stock + '" data-precio="' + p.precio + '">' + p.nombre + ' - Bs.' + p.precio + '</option>'; });
+  const sel = document.getElementById('select-producto');
+  sel.innerHTML = '<option value="">Seleccione...</option>';
+  productosDisponibles.forEach(p => sel.innerHTML += '<option value="' + p.nombre + '" data-stock="' + p.stock + '">' + p.nombre + ' - $' + p.precio + '</option>');
   document.getElementById('stock-display').textContent = '-';
   document.getElementById('input-cantidad').value = 1;
   document.getElementById('input-motivo').value = '';
@@ -243,138 +279,127 @@ async function irAVenta() {
   mostrar('pantalla-venta');
 }
 
-function actualizarStock() {
-  const select = document.getElementById('select-producto');
-  const option = select.options[select.selectedIndex];
-  document.getElementById('stock-display').textContent = option.getAttribute('data-stock') || '-';
-}
+function actualizarStock() { const o = document.getElementById('select-producto').options[document.getElementById('select-producto').selectedIndex]; document.getElementById('stock-display').textContent = o.getAttribute('data-stock') || '-'; }
 
 async function confirmarVenta() {
-  const producto = document.getElementById('select-producto').value;
-  const cantidad = parseInt(document.getElementById('input-cantidad').value);
+  const prod = document.getElementById('select-producto').value;
+  const cant = parseInt(document.getElementById('input-cantidad').value);
   const motivo = document.getElementById('input-motivo').value;
-  const porciento = parseFloat(document.getElementById('input-porciento').value) || 0;
-  const errorDiv = document.getElementById('venta-error');
-  const successoDiv = document.getElementById('venta-success');
-  if (!producto) { errorDiv.textContent = 'Seleccione un producto'; return; }
-  if (!cantidad || cantidad < 1) { errorDiv.textContent = 'Cantidad invalida'; return; }
-  const prod = productosDisponibles.find(p => p.nombre === producto);
-  if (cantidad > prod.stock) { errorDiv.textContent = 'Stock insuficiente. Disponible: ' + prod.stock; return; }
-
-  const data = await apiCall({}, 'POST', {
-    action: 'realizarVenta', producto: producto, cantidad: cantidad,
-    motivo: motivo, porcientoVendedor: porciento,
-    vendedor: vendedorActual, tienda: tiendaActual
-  });
-
-  if (data.success) {
-    successoDiv.textContent = 'Venta realizada! Total: Bs. ' + data.total.toFixed(2);
-    errorDiv.textContent = '';
-    document.getElementById('select-producto').value = '';
-    document.getElementById('input-cantidad').value = 1;
-    document.getElementById('input-motivo').value = '';
-    document.getElementById('input-porciento').value = '';
-    document.getElementById('stock-display').textContent = '-';
-    setTimeout(irAVenta, 1500);
-  } else { errorDiv.textContent = data.error || 'Error al realizar venta'; successoDiv.textContent = ''; }
+  const porc = parseFloat(document.getElementById('input-porciento').value) || 0;
+  const err = document.getElementById('venta-error');
+  const ok = document.getElementById('venta-success');
+  if (!prod) { err.textContent = 'Seleccione un producto'; return; }
+  if (!cant || cant < 1) { err.textContent = 'Cantidad invalida'; return; }
+  const p = productosDisponibles.find(x => x.nombre === prod);
+  if (cant > p.stock) { err.textContent = 'Stock insuficiente. Disponible: ' + p.stock; return; }
+  const data = await apiCall({}, 'POST', { action: 'realizarVenta', producto: prod, cantidad: cant, motivo: motivo, porcientoVendedor: porc, vendedor: vendedorActual, tienda: tiendaActual });
+  if (data.success) { ok.textContent = 'Venta realizada! Total: $' + data.total.toFixed(2); err.textContent = ''; setTimeout(irAVenta, 1500); }
+  else { err.textContent = data.error || 'Error'; ok.textContent = ''; }
 }
 
 async function irAAltas() {
   document.getElementById('sub-altas').textContent = tiendaActual;
   const data = await apiCall({ action: 'getHistorialAltas', tienda: tiendaActual });
-  const tbody = document.querySelector('#tabla-altas tbody');
-  tbody.innerHTML = '';
-  if (data.altas && data.altas.length > 0) {
-    data.altas.forEach(a => {
-      tbody.innerHTML += '<tr><td>' + a.fecha + '</td><td>' + a.producto + '</td><td>' + a.cantidad + '</td><td>' + a.tienda + '</td><td>' + a.tipo + '</td><td>' + (a.nota || '-') + '</td></tr>';
-    });
-  } else { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No hay registros</td></tr>'; }
+  const tb = document.querySelector('#tabla-altas tbody');
+  tb.innerHTML = '';
+  if (data.altas && data.altas.length) data.altas.forEach(a => tb.innerHTML += '<tr><td>' + a.fecha + '</td><td>' + a.producto + '</td><td>' + a.cantidad + '</td><td>' + a.tienda + '</td><td>' + a.tipo + '</td><td>' + (a.nota || '-') + '</td></tr>');
+  else tb.innerHTML = '<tr><td colspan="6" style="text-align:center;">No hay registros</td></tr>';
   mostrar('pantalla-altas');
-}
-
-async function irVentasPublicas() {
-  document.getElementById('sub-ventas-p').textContent = tiendaActual;
-  cargarVentasPublicas();
-  mostrar('pantalla-ventas-publico');
-}
-
-async function cargarVentasPublicas() {
-  const filtro = document.getElementById('filtro-ventas-p').value;
-  const tbody = document.querySelector('#tabla-ventas-p tbody');
-  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Cargando...</td></tr>';
-  try {
-    const data = await apiCall({ action: 'getHistorialVentas', filtro: filtro, tienda: tiendaActual });
-    tbody.innerHTML = '';
-    if (data.ventas && data.ventas.length > 0) {
-      data.ventas.forEach(v => {
-        tbody.innerHTML += '<tr><td>' + v.fecha + '</td><td>' + v.producto + '</td><td>' + v.cantidad + '</td><td>' + parseFloat(v.total).toFixed(2) + '</td><td>' + v.vendedor + '</td><td>' + (v.motivo || '-') + '</td><td>' + (v.porcientoVendedor || 0) + '%</td></tr>';
-      });
-    } else { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay registros</td></tr>'; }
-  } catch (e) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:red;">Error al cargar</td></tr>'; }
-}
-
-async function verInventario() {
-  document.getElementById('sub-inventario').textContent = tiendaActual;
-  const data = await apiCall({ action: 'getProductos', tienda: tiendaActual });
-  const tbody = document.querySelector('#tabla-inventario tbody');
-  tbody.innerHTML = '';
-  if (data.productos && data.productos.length > 0) {
-    data.productos.forEach(p => {
-      tbody.innerHTML += '<tr><td>' + p.nombre + '</td><td>' + parseFloat(p.precio).toFixed(2) + '</td><td style="font-weight:bold;">' + p.stock + '</td></tr>';
-    });
-  } else { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Sin productos</td></tr>'; }
-  mostrar('pantalla-inventario');
 }
 
 async function irAPanelMaestro() {
   const data = await apiCall({ action: 'getProductos', tienda: tiendaActual });
   productosDisponibles = data.productos || [];
-  const select = document.getElementById('edit-prod-select');
-  select.innerHTML = '<option value="">Seleccione producto...</option>';
-  productosDisponibles.forEach(p => { select.innerHTML += '<option value="' + p.nombre + '" data-tienda="' + p.tienda + '">' + p.nombre + ' (' + p.tienda + ')</option>'; });
+  const sel = document.getElementById('edit-prod-select');
+  sel.innerHTML = '<option value="">Seleccione producto...</option>';
+  productosDisponibles.forEach(p => sel.innerHTML += '<option value="' + p.nombre + '" data-tienda="' + p.tienda + '">' + p.nombre + ' (' + p.tienda + ')</option>');
   mostrar('pantalla-maestro');
 }
 
 async function agregarProducto() {
-  const nombre = document.getElementById('new-prod-nombre').value;
-  const precio = parseFloat(document.getElementById('new-prod-precio').value);
-  const stock = parseInt(document.getElementById('new-prod-stock').value);
-  const tienda = document.getElementById('new-prod-tienda').value;
-  const nota = document.getElementById('new-prod-nota').value;
-  const pin = document.getElementById('new-prod-pin').value;
-  const msgDiv = document.getElementById('new-prod-msg');
-  if (!nombre || !precio || !stock || !pin) { msgDiv.innerHTML = '<div class="error">Complete todos los campos obligatorios</div>'; return; }
-  const data = await apiCall({}, 'POST', { action: 'addProducto', producto: nombre, precio: precio, stock: stock, tienda: tienda, nota: nota, pin: pin });
-  if (data.success) {
-    msgDiv.innerHTML = '<div class="success">Producto agregado correctamente</div>';
-    document.getElementById('new-prod-nombre').value = '';
-    document.getElementById('new-prod-precio').value = '';
-    document.getElementById('new-prod-stock').value = '';
-    document.getElementById('new-prod-nota').value = '';
-    document.getElementById('new-prod-pin').value = '';
-  } else { msgDiv.innerHTML = '<div class="error">' + data.error + '</div>'; }
+  const n = document.getElementById('new-prod-nombre').value;
+  const pr = parseFloat(document.getElementById('new-prod-precio').value);
+  const co = parseFloat(document.getElementById('new-prod-costo').value) || 0;
+  const st = parseInt(document.getElementById('new-prod-stock').value);
+  const ti = document.getElementById('new-prod-tienda').value;
+  const no = document.getElementById('new-prod-nota').value;
+  const pi = document.getElementById('new-prod-pin').value;
+  const msg = document.getElementById('new-prod-msg');
+  if (!n || !pr || !st || !pi) { msg.innerHTML = '<div class="error">Complete los campos obligatorios</div>'; return; }
+  const data = await apiCall({}, 'POST', { action: 'addProducto', producto: n, precio: pr, costo: co, stock: st, tienda: ti, nota: no, pin: pi });
+  if (data.success) { msg.innerHTML = '<div class="success">Producto agregado</div>'; ['new-prod-nombre','new-prod-precio','new-prod-costo','new-prod-stock','new-prod-nota','new-prod-pin'].forEach(id => document.getElementById(id).value = ''); }
+  else msg.innerHTML = '<div class="error">' + data.error + '</div>';
 }
 
 async function editarProducto() {
-  const select = document.getElementById('edit-prod-select');
-  const producto = select.value;
-  const tienda = select.options[select.selectedIndex].getAttribute('data-tienda');
-  const precio = document.getElementById('edit-prod-precio').value;
-  const stock = document.getElementById('edit-prod-stock').value;
-  const pin = document.getElementById('edit-prod-pin').value;
-  const msgDiv = document.getElementById('edit-prod-msg');
-  if (!producto || !pin) { msgDiv.innerHTML = '<div class="error">Seleccione producto e ingrese PIN</div>'; return; }
-  const payload = { action: 'updateProducto', producto: producto, tienda: tienda, pin: pin };
-  if (precio) payload.nuevoPrecio = parseFloat(precio);
-  if (stock) payload.nuevoStock = parseInt(stock);
+  const sel = document.getElementById('edit-prod-select');
+  const prod = sel.value;
+  const tienda = sel.options[sel.selectedIndex].getAttribute('data-tienda');
+  const pr = document.getElementById('edit-prod-precio').value;
+  const co = document.getElementById('edit-prod-costo').value;
+  const st = document.getElementById('edit-prod-stock').value;
+  const pi = document.getElementById('edit-prod-pin').value;
+  const msg = document.getElementById('edit-prod-msg');
+  if (!prod || !pi) { msg.innerHTML = '<div class="error">Seleccione producto e ingrese PIN</div>'; return; }
+  const payload = { action: 'updateProducto', producto: prod, tienda: tienda, pin: pi };
+  if (pr) payload.nuevoPrecio = parseFloat(pr);
+  if (co) payload.nuevoCosto = parseFloat(co);
+  if (st) payload.nuevoStock = parseInt(st);
   const data = await apiCall({}, 'POST', payload);
-  if (data.success) {
-    msgDiv.innerHTML = '<div class="success">Producto actualizado correctamente</div>';
-    document.getElementById('edit-prod-precio').value = '';
-    document.getElementById('edit-prod-stock').value = '';
-    document.getElementById('edit-prod-pin').value = '';
-    irAPanelMaestro();
-  } else { msgDiv.innerHTML = '<div class="error">' + data.error + '</div>'; }
+  if (data.success) { msg.innerHTML = '<div class="success">Producto actualizado</div>'; ['edit-prod-precio','edit-prod-costo','edit-prod-stock','edit-prod-pin'].forEach(id => document.getElementById(id).value = ''); irAPanelMaestro(); }
+  else msg.innerHTML = '<div class="error">' + data.error + '</div>';
+}
+
+// PANEL DE INVERSION
+async function irAInversion() {
+  document.getElementById('inv-pin').value = '';
+  document.getElementById('inv-pin-error').textContent = '';
+  document.getElementById('inv-pin-section').classList.remove('hidden');
+  document.getElementById('inv-contenido').classList.add('hidden');
+  mostrar('pantalla-inversion');
+}
+
+async function verResumenInversion() {
+  const pin = document.getElementById('inv-pin').value;
+  const err = document.getElementById('inv-pin-error');
+  if (!pin) { err.textContent = 'Ingrese su PIN'; return; }
+  err.textContent = 'Cargando...';
+  const data = await apiCall({}, 'POST', { action: 'getResumenInversion', tienda: tiendaActual, pin: pin });
+  if (data.error) { err.textContent = data.error; return; }
+  err.textContent = '';
+  document.getElementById('inv-pin-section').classList.add('hidden');
+  document.getElementById('inv-contenido').classList.remove('hidden');
+  document.getElementById('inv-stock').textContent = '$' + data.inversionStock.toFixed(2);
+  document.getElementById('inv-gastos').textContent = '$' + data.totalGastos.toFixed(2);
+  document.getElementById('inv-ventas').textContent = '$' + data.totalVentas.toFixed(2);
+  const gan = data.gananciaNeta;
+  document.getElementById('inv-ganancia').textContent = '$' + gan.toFixed(2);
+  document.getElementById('inv-ganancia').style.color = gan >= 0 ? '#28a745' : '#dc3545';
+  const tbP = document.querySelector('#tabla-inv-productos tbody');
+  tbP.innerHTML = '';
+  if (data.productos && data.productos.length) {
+    data.productos.forEach(p => {
+      const color = p.gananciaUnit >= 0 ? '#28a745' : '#dc3545';
+      tbP.innerHTML += '<tr><td>' + p.nombre + '</td><td>$' + p.precio.toFixed(2) + '</td><td>$' + p.costo.toFixed(2) + '</td><td style="color:' + color + ';">$' + p.gananciaUnit.toFixed(2) + '</td><td>' + p.margen + '%</td></tr>';
+    });
+  } else tbP.innerHTML = '<tr><td colspan="5" style="text-align:center;">Sin productos</td></tr>';
+  const tbG = document.querySelector('#tabla-gastos tbody');
+  tbG.innerHTML = '';
+  if (data.gastos && data.gastos.length) data.gastos.forEach(g => tbG.innerHTML += '<tr><td>' + g.fecha + '</td><td>' + g.descripcion + '</td><td>$' + g.monto.toFixed(2) + '</td><td>' + g.tienda + '</td></tr>');
+  else tbG.innerHTML = '<tr><td colspan="4" style="text-align:center;">Sin gastos</td></tr>';
+  document.getElementById('gasto-tienda').value = tiendaActual;
+}
+
+async function agregarGasto() {
+  const desc = document.getElementById('gasto-desc').value;
+  const monto = parseFloat(document.getElementById('gasto-monto').value);
+  const tienda = document.getElementById('gasto-tienda').value;
+  const pin = document.getElementById('inv-pin').value || document.getElementById('new-prod-pin').value;
+  const msg = document.getElementById('gasto-msg');
+  if (!desc || !monto) { msg.innerHTML = '<div class="error">Complete descripcion y monto</div>'; return; }
+  const data = await apiCall({}, 'POST', { action: 'addGasto', descripcion: desc, monto: monto, tienda: tienda, pin: '7512' });
+  if (data.success) { msg.innerHTML = '<div class="success">Gasto registrado</div>'; document.getElementById('gasto-desc').value = ''; document.getElementById('gasto-monto').value = ''; verResumenInversion(); }
+  else msg.innerHTML = '<div class="error">' + (data.error || 'Error') + '</div>';
 }
 </script>
 </body>
