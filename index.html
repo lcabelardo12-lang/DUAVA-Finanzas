@@ -1,921 +1,583 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>DUAVA Finanzas</title>
-  <link rel="icon" type="image/svg+xml" href="logo.svg">
-  <link rel="manifest" href="manifest.json">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-    html { -webkit-text-size-adjust: 100%; }
-    body { background: linear-gradient(180deg, #f0f0f0 0%, #e0e0e0 100%); padding: 15px; width: 100%; min-height: 100vh; margin: 0; }
-    h1 { text-align: center; font-size: 28px; margin-bottom: 8px; font-weight: 700; letter-spacing: 1px; color: #2c2c2c; }
-    .subtitle { text-align: center; font-size: 22px; color: #555; margin-bottom: 25px; font-weight: 500; }
-    .subtitle::after { content: ""; display: block; width: 50px; height: 2px; background: #888; margin: 8px auto 0 auto; border-radius: 2px; }
-    .btn { width: 100%; padding: 22px 15px; margin: 12px 0; border: none; font-size: 20px; font-weight: bold; cursor: pointer; border-radius: 12px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); display: block; text-align: center; }
-    .btn-azul { background: #0066cc; color: white; }
-    .btn-rosado { background: #ff6699; color: white; }
-    .btn-verde { background: #28a745; color: white; }
-    .btn-gris { background: #6c757d; color: white; }
-    .btn-naranja { background: #fd7e14; color: white; }
-    .btn-rojo { background: #dc3545; color: white; }
-    .btn-morado { background: #6f42c1; color: white; }
-    .btn-oscuro { background: #343a40; color: white; }
-    .hidden { display: none; }
-    .section { background: white; padding: 20px; margin: 10px 0; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    input, select, textarea { width: 100%; height: 52px; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
-    textarea { height: 80px; resize: vertical; }
-    label { font-weight: bold; display: block; margin-top: 15px; color: #333; }
-    .error { color: red; text-align: center; margin: 10px 0; font-weight: bold; }
-    .success { color: green; text-align: center; margin: 10px 0; font-weight: bold; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-    th, td { border: 1px solid #ddd; padding: 8px 4px; text-align: left; }
-    th { background: #f2f2f2; }
-    .dashboard-box { background: #e9ecef; padding: 15px; text-align: center; margin: 5px 0; border-radius: 8px; }
-    .dashboard-number { font-size: 28px; font-weight: bold; color: #0066cc; }
-    .alert-critical { background: #f8d7da; border: 1px solid #f5c6cb; padding: 12px; border-radius: 8px; margin: 8px 0; }
-    .alert-critical strong { color: #721c24; }
-    .alert-warning { background: #fff3cd; border: 1px solid #ffeeba; padding: 12px; border-radius: 8px; margin: 8px 0; }
-    .alert-warning strong { color: #856404; }
-    .badge-transito { background: #ffc107; color: #333; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
-    .badge-disponible { background: #28a745; color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
-    .badge-cerrado { background: #6c757d; color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
-    .badge-critico { background: #dc3545; color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
-    .badge-normal { background: #28a745; color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
-    .select-lote { background: #e7f3ff; border: 2px solid #0066cc; border-radius: 8px; padding: 10px; margin: 8px 0; cursor: pointer; }
-    .select-lote:hover { background: #cce0ff; }
-    .select-lote.selected { background: #0066cc; color: white; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>DUAVA Finanzas</title>
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="manifest" href="manifest.json">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:linear-gradient(180deg,#f0f0f0,#e0e0e0);padding:15px;min-height:100vh}
+h1{text-align:center;font-size:26px;margin-bottom:8px;font-weight:700;color:#2c2c2c}
+.sub{text-align:center;font-size:20px;color:#555;margin-bottom:20px;font-weight:500}
+.btn{width:100%;padding:20px 15px;margin:10px 0;border:none;font-size:18px;font-weight:bold;cursor:pointer;border-radius:12px;box-shadow:0 3px 6px rgba(0,0,0,.1);display:block;text-align:center}
+.b-azul{background:#0066cc;color:#fff}
+.b-rosa{background:#ff6699;color:#fff}
+.b-verde{background:#28a745;color:#fff}
+.b-gris{background:#6c757d;color:#fff}
+.b-nara{background:#fd7e14;color:#fff}
+.b-rojo{background:#dc3545;color:#fff}
+.b-mora{background:#6f42c1;color:#fff}
+.b-osc{background:#343a40;color:#fff}
+.hidden{display:none}
+.sec{background:#fff;padding:18px;margin:10px 0;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+input,select,textarea{width:100%;height:50px;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:8px;font-size:16px}
+textarea{height:70px;resize:vertical}
+label{font-weight:bold;display:block;margin-top:12px;color:#333}
+.err{color:red;text-align:center;margin:8px 0;font-weight:bold}
+.ok{color:green;text-align:center;margin:8px 0;font-weight:bold}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
+th,td{border:1px solid #ddd;padding:6px 3px;text-align:left}
+th{background:#f2f2f2}
+.dbox{background:#e9ecef;padding:12px;text-align:center;margin:5px 0;border-radius:8px}
+.dnum{font-size:26px;font-weight:bold;color:#0066cc}
+.badge-t{background:#ffc107;color:#333;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:bold}
+.badge-d{background:#28a745;color:#fff;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:bold}
+.badge-c{background:#6c757d;color:#fff;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:bold}
+.badge-m{background:#6f42c1;color:#fff;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:bold}
+.badge-r{background:#dc3545;color:#fff;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:bold}
+.slote{background:#e7f3ff;border:2px solid #0066cc;border-radius:8px;padding:10px;margin:6px 0;cursor:pointer}
+.slote:hover{background:#cce0ff}
+.slote.sel{background:#0066cc;color:#fff}
+.acrt{background:#f8d7da;border:1px solid #f5c6cb;padding:10px;border-radius:8px;margin:6px 0}
+.awrn{background:#fff3cd;border:1px solid #ffeeba;padding:10px;border-radius:8px;margin:6px 0}
+.form-inline{background:#f8f9fa;padding:12px;border-radius:8px;margin:8px 0}
+</style>
 </head>
 <body>
 
-  <!-- ============ PANTALLA INICIO ============ -->
-  <div id="pantalla-inicio">
-    <h1>DUAVA Finanzas</h1>
-    <div class="subtitle">La Habana</div>
-    <button class="btn btn-azul" onclick="seleccionarTienda('ODONTO STORE')">ODONTO STORE</button>
-    <button class="btn btn-rosado" onclick="seleccionarTienda('CELEBRACIONES')">CELEBRACIONES</button>
-  </div>
+<div id="P-inicio">
+<h1>DUAVA Finanzas</h1>
+<div class="sub">La Habana</div>
+<button class="btn b-azul" onclick="selTienda('ODONTO STORE')">ODONTO STORE</button>
+<button class="btn b-rosa" onclick="selTienda('CELEBRACIONES')">CELEBRACIONES</button>
+</div>
 
-  <!-- ============ PANTALLA LOGIN ============ -->
-  <div id="pantalla-login" class="hidden">
-    <h1>DUAVA Finanzas</h1>
-    <div class="subtitle">La Habana - <span id="nombre-tienda-login"></span></div>
-    <div class="section">
-      <label>Vendedor:</label>
-      <select id="select-vendedor"><option value="">Cargando...</option></select>
-      <label>Clave:</label>
-      <input type="password" id="input-clave" placeholder="Ingrese su clave">
-      <div id="login-error" class="error"></div>
-      <button class="btn btn-verde" onclick="iniciarSesion()">Ingresar</button>
-      <button class="btn btn-gris" onclick="volverInicio()">Volver</button>
-    </div>
-  </div>
+<div id="P-login" class="hidden">
+<h1>DUAVA Finanzas</h1>
+<div class="sub" id="sub-login"></div>
+<div class="sec">
+<label>Vendedor:</label>
+<select id="sel-vend"><option>Cargando...</option></select>
+<label>Clave:</label>
+<input type="password" id="inp-clave" placeholder="Clave">
+<div id="login-err" class="err"></div>
+<button class="btn b-verde" onclick="doLogin()">Ingresar</button>
+<button class="btn b-gris" onclick="mostrar('P-inicio')">Volver</button>
+</div>
+</div>
 
-  <!-- ============ PANTALLA MENU ============ -->
-  <div id="pantalla-menu" class="hidden">
-    <h1>DUAVA Finanzas</h1>
-    <div class="subtitle">La Habana - <span id="nombre-tienda-menu"></span></div>
-    <div class="section" id="alertas-container"></div>
-    <div class="section">
-      <button class="btn btn-azul" onclick="verInventario()">Stock actual</button>
-      <button class="btn btn-naranja" onclick="irVentasPublicas()">Mis Ventas</button>
-      <button class="btn btn-verde" onclick="irAVenta()">Realizar Venta</button>
-      <button class="btn btn-azul" onclick="irAAltas()">Historial de Altas</button>
-      <button class="btn btn-oscuro" onclick="irALotesPin()">Gestion de Lotes</button>
-      <button class="btn btn-naranja" onclick="irAPanelMaestro()">Panel Maestro</button>
-      <button class="btn btn-verde" onclick="irAResumenPin()">Resumen de Ganancias</button>
-      <button class="btn btn-morado" onclick="irAInversion()">Panel de Inversion</button>
-      <button class="btn btn-rojo" onclick="cerrarSesion()">Cerrar Sesion</button>
-    </div>
-  </div>
+<div id="P-menu" class="hidden">
+<h1>DUAVA Finanzas</h1>
+<div class="sub" id="sub-menu"></div>
+<div class="sec" id="alertas-box"></div>
+<div class="sec">
+<button class="btn b-azul" onclick="irStock()">Stock Actual</button>
+<button class="btn b-nara" onclick="irVentas()">Mis Ventas</button>
+<button class="btn b-verde" onclick="irVenta()">Realizar Venta</button>
+<button class="btn b-azul" onclick="irAltas()">Historial de Altas</button>
+<button class="btn b-osc" onclick="irLotesPin()">Gestion de Lotes</button>
+<button class="btn b-verde" onclick="irResumenPin()">Resumen de Ganancias</button>
+<button class="btn b-mora" onclick="irInversion()">Panel de Inversion</button>
+<button class="btn b-rojo" onclick="cerrarSes()">Cerrar Sesion</button>
+</div>
+</div>
 
-  <!-- ============ PANTALLA INVENTARIO ============ -->
-  <div id="pantalla-inventario" class="hidden">
-    <h1>Stock actual</h1>
-    <div class="subtitle" id="sub-inventario"></div>
-    <div class="section">
-      <select id="filtro-sucursal-inventario" onchange="verInventario()">
-        <option value="todas">Todas las sucursales</option>
-      </select>
-      <div style="overflow-x:auto;">
-        <table id="tabla-inventario"><thead><tr><th>Producto</th><th>Precio ($)</th><th>Stock</th><th>Sucursal</th><th>Estado</th></tr></thead><tbody></tbody></table>
-      </div>
-      <button class="btn btn-gris" onclick="volverMenu()" style="margin-top:15px;">Volver</button>
-    </div>
-  </div>
+<div id="P-stock" class="hidden">
+<h1>Stock Actual</h1>
+<div class="sub" id="sub-stock"></div>
+<div class="sec">
+<select id="flt-suc-stock" onchange="irStock()"><option value="todas">Todas las sucursales</option></select>
+<div style="overflow-x:auto">
+<table id="t-stock"><thead><tr><th>Producto</th><th>Precio</th><th>Stock</th><th>Sucursal</th><th>Tipo</th><th>Estado</th></tr></thead><tbody></tbody></table>
+</div>
+<button class="btn b-gris" onclick="volverMenu()" style="margin-top:12px">Volver</button>
+</div>
+</div>
 
-  <!-- ============ PANTALLA VENTAS PUBLICAS ============ -->
-  <div id="pantalla-ventas-publico" class="hidden">
-    <h1>Historial de Ventas</h1>
-    <div class="subtitle" id="sub-ventas-p"></div>
-    <div class="section">
-      <select id="filtro-ventas-p" onchange="cargarVentasPublicas()">
-        <option value="semana">Ultima Semana</option>
-        <option value="mes">Ultimo Mes</option>
-        <option value="todo">Todo</option>
-      </select>
-      <div style="overflow-x:auto; margin-top:10px;">
-        <table id="tabla-ventas-p"><thead><tr><th>Fecha</th><th>Producto</th><th>Cant</th><th>Total</th><th>Ganancia</th><th>Vendedor</th><th>Motivo</th></tr></thead><tbody></tbody></table>
-      </div>
-      <button class="btn btn-gris" onclick="volverMenu()" style="margin-top:15px;">Volver</button>
-    </div>
-  </div>
+<div id="P-ventas" class="hidden">
+<h1>Historial de Ventas</h1>
+<div class="sub" id="sub-ventas"></div>
+<div class="sec">
+<select id="flt-ventas" onchange="cargarVentas()"><option value="semana">Ultima Semana</option><option value="mes">Ultimo Mes</option><option value="todo">Todo</option></select>
+<div style="overflow-x:auto;margin-top:10px">
+<table id="t-ventas"><thead><tr><th>Fecha</th><th>Producto</th><th>Cant</th><th>Total</th><th>Gan.</th><th>Vendedor</th><th>Tipo</th></tr></thead><tbody></tbody></table>
+</div>
+<button class="btn b-gris" onclick="volverMenu()" style="margin-top:12px">Volver</button>
+</div>
+</div>
 
-  <!-- ============ PANTALLA VENTA ============ -->
-  <div id="pantalla-venta" class="hidden">
-    <h1>Realizar Venta</h1>
-    <div class="subtitle" id="sub-venta"></div>
-    <div class="section">
-      <label>Producto:</label>
-      <select id="select-producto" onchange="onProductoChange()"><option value="">Seleccione...</option></select>
-      <div style="margin:10px 0;padding:10px;background:#f8f9fa;border-radius:8px;">
-        <div>Stock disponible: <strong id="stock-display">-</strong></div>
-        <div id="lote-info" style="font-size:12px;color:#666;margin-top:4px;"></div>
-      </div>
-      <label>Cantidad:</label>
-      <input type="number" id="input-cantidad" value="1" min="1">
-      <div id="seccion-elegir-lote" class="hidden">
-        <label>Seleccionar Lote (vencimiento proximo):</label>
-        <div id="lista-lotes-elegir"></div>
-      </div>
-      <label>Motivo (opcional):</label>
-      <input type="text" id="input-motivo" placeholder="Ej: Cliente frecuente">
-      <label>Porciento Vendedor (%):</label>
-      <input type="number" id="input-porciento" placeholder="Ej: 10" min="0" max="100">
-      <div id="venta-error" class="error"></div>
-      <div id="venta-success" class="success"></div>
-      <button class="btn btn-verde" onclick="confirmarVenta()">Confirmar Venta</button>
-      <button class="btn btn-gris" onclick="volverMenu()">Volver</button>
-    </div>
-  </div>
+<div id="P-venta" class="hidden">
+<h1>Realizar Venta</h1>
+<div class="sub" id="sub-venta"></div>
+<div class="sec">
+<label>Producto:</label>
+<select id="sel-prod" onchange="onProdChange()"><option value="">Seleccione...</option></select>
+<div style="margin:8px 0;padding:10px;background:#f8f9fa;border-radius:8px">
+<div>Stock: <strong id="stk-disp">-</strong></div>
+<div id="lote-info" style="font-size:11px;color:#666;margin-top:3px"></div>
+</div>
+<label>Cantidad:</label>
+<input type="number" id="inp-cant" value="1" min="1">
+<div id="sec-elegir-lote" class="hidden">
+<label>Seleccionar Lote (vencimiento proximo):</label>
+<div id="lista-lotes"></div>
+</div>
+<label>Motivo (opcional):</label>
+<input type="text" id="inp-motivo" placeholder="Ej: Cliente frecuente">
+<label>% Vendedor:</label>
+<input type="number" id="inp-porc" placeholder="Ej: 10" min="0" max="100">
+<div id="venta-err" class="err"></div>
+<div id="venta-ok" class="ok"></div>
+<button class="btn b-verde" onclick="confirmarVenta()">Confirmar Venta</button>
+<button class="btn b-gris" onclick="volverMenu()">Volver</button>
+</div>
+</div>
 
-  <!-- ============ PANTALLA ALTAS ============ -->
-  <div id="pantalla-altas" class="hidden">
-    <h1>Historial de Altas</h1>
-    <div class="subtitle" id="sub-altas"></div>
-    <div class="section">
-      <div style="overflow-x:auto;">
-        <table id="tabla-altas"><thead><tr><th>Fecha</th><th>Producto</th><th>Cantidad</th><th>Tienda</th><th>Tipo</th><th>Nota</th></tr></thead><tbody></tbody></table>
-      </div>
-      <button class="btn btn-gris" onclick="volverMenu()" style="margin-top:15px;">Volver</button>
-    </div>
-  </div>
+<div id="P-altas" class="hidden">
+<h1>Historial de Altas</h1>
+<div class="sub" id="sub-altas"></div>
+<div class="sec">
+<div style="overflow-x:auto">
+<table id="t-altas"><thead><tr><th>Fecha</th><th>Producto</th><th>Cant</th><th>Lugar</th><th>Tipo</th><th>Nota</th></tr></thead><tbody></tbody></table>
+</div>
+<button class="btn b-gris" onclick="volverMenu()" style="margin-top:12px">Volver</button>
+</div>
+</div>
 
-  <!-- ============ PANTALLA PIN LOTES ============ -->
-  <div id="pantalla-lotes-pin" class="hidden">
-    <h1>Gestion de Lotes</h1>
-    <div class="subtitle">Solo propietario</div>
-    <div class="section">
-      <label>PIN de seguridad:</label>
-      <input type="password" id="lotes-pin" placeholder="Ingrese su PIN">
-      <div id="lotes-pin-error" class="error"></div>
-      <button class="btn btn-verde" onclick="verificarPinLotes()">Acceder</button>
-      <button class="btn btn-gris" onclick="volverMenu()">Volver</button>
-    </div>
-  </div>
+<div id="P-lotes-pin" class="hidden">
+<h1>Gestion de Lotes</h1>
+<div class="sub">Solo propietario</div>
+<div class="sec">
+<label>PIN:</label>
+<input type="password" id="lpin" placeholder="PIN">
+<div id="lpin-err" class="err"></div>
+<button class="btn b-verde" onclick="verifPinLotes()">Acceder</button>
+<button class="btn b-gris" onclick="volverMenu()">Volver</button>
+</div>
+</div>
 
-  <!-- ============ PANTALLA LOTES ============ -->
-  <div id="pantalla-lotes" class="hidden">
-    <h1>Gestion de Lotes</h1>
-    <div class="subtitle">Envios y Stock</div>
+<div id="P-lotes" class="hidden">
+<h1>Gestion de Lotes</h1>
+<div class="sub">Envios y Stock</div>
 
-    <div class="section">
-      <h3 style="margin-bottom:10px;">Crear Nuevo Lote de Envio</h3>
-      <label>Sucursal:</label>
-      <input type="text" id="lote-sucursal" placeholder="Ej: La Habana, Holguin...">
-      <label>Fecha de Envio:</label>
-      <input type="date" id="lote-fecha-envio">
-      <label>Dias Pronosticados de Llegada:</label>
-      <input type="number" id="lote-dias-pronostico" placeholder="Ej: 20" min="1">
-      <label>Costo Total de Envio ($):</label>
-      <input type="number" id="lote-costo-envio" placeholder="Ej: 25.00" step="0.01">
-      <button class="btn btn-verde" onclick="crearLote()">Crear Lote</button>
-      <div id="lote-create-msg"></div>
-    </div>
+<div class="sec">
+<h3>Crear Nuevo Lote</h3>
+<label>Sucursal:</label>
+<select id="lot-suc"></select>
+<label>Tipo:</label>
+<select id="lot-tipo"><option value="Retail">Retail</option><option value="Mayorista">Mayorista</option></select>
+<label>Fecha Envio:</label>
+<input type="date" id="lot-fecha">
+<label>Dias Pronosticados:</label>
+<input type="number" id="lot-dias" placeholder="Ej: 20" min="1">
+<label>Costo Envio ($):</label>
+<input type="number" id="lot-costo" placeholder="Ej: 25" step="0.01">
+<button class="btn b-verde" onclick="crearLote()">Crear Lote</button>
+<div id="lot-create-msg"></div>
+</div>
 
-    <div class="section">
-      <h3 style="margin-bottom:10px;">Agregar Productos al Lote</h3>
-      <label>Seleccionar Lote:</label>
-      <select id="lote-select-add" onchange="mostrarDetalleLote()"><option value="">Seleccione lote...</option></select>
-      <label>Producto (del Catalogo):</label>
-      <select id="lote-producto"><option value="">Seleccione...</option></select>
-      <label>Cantidad:</label>
-      <input type="number" id="lote-cantidad" value="1" min="1">
-      <label>Costo Unitario ($):</label>
-      <input type="number" id="lote-costo-unitario" placeholder="Costo de compra" step="0.01">
-      <label>Fecha de Vencimiento:</label>
-      <input type="date" id="lote-vencimiento">
-      <button class="btn btn-azul" onclick="agregarProductoLote()">Agregar al Lote</button>
-      <div id="lote-add-msg"></div>
-    </div>
+<div class="sec">
+<h3>Crear Producto Nuevo</h3>
+<label>Nombre:</label>
+<input type="text" id="cp-nombre" placeholder="Nombre del producto">
+<label>Marca:</label>
+<input type="text" id="cp-marca" placeholder="Marca">
+<label>Categoria:</label>
+<input type="text" id="cp-cat" placeholder="Ej: Resinas, Adhesivos...">
+<label>Precio Venta ($):</label>
+<input type="number" id="cp-precio" placeholder="Precio base" step="0.01">
+<label>Precio Mayorista ($):</label>
+<input type="number" id="cp-precioM" placeholder="Precio mayorista" step="0.01">
+<button class="btn b-azul" onclick="crearProducto()">Crear Producto</button>
+<div id="cp-msg"></div>
+</div>
 
-    <div class="section">
-      <h3 style="margin-bottom:10px;">Detalle del Lote</h3>
-      <div id="detalle-lote-container">
-        <p style="color:#999;">Seleccione un lote arriba para ver su detalle</p>
-      </div>
-    </div>
+<div class="sec">
+<h3>Agregar Producto al Lote</h3>
+<label>Lote:</label>
+<select id="lot-sel-add" onchange="verDetalleLote()"><option value="">Seleccione...</option></select>
+<label>Producto:</label>
+<select id="lot-prod"><option value="">Seleccione...</option></select>
+<label>Cantidad:</label>
+<input type="number" id="lot-cant" value="1" min="1">
+<label>Costo Unitario ($):</label>
+<input type="number" id="lot-costoU" placeholder="Costo compra" step="0.01">
+<label>Vencimiento:</label>
+<input type="date" id="lot-venc">
+<button class="btn b-azul" onclick="addProdLote()">Agregar al Lote</button>
+<div id="lot-add-msg"></div>
+</div>
 
-    <div class="section">
-      <h3 style="margin-bottom:10px;">Marcar Lote como Llegado</h3>
-      <select id="lote-select-llegada"><option value="">Seleccione lote en transito...</option></select>
-      <label>Fecha Real de Llegada:</label>
-      <input type="date" id="lote-fecha-llegada">
-      <button class="btn btn-naranja" onclick="marcarLlegada()">Marcar como Llegado</button>
-      <div id="lote-llegada-msg"></div>
-    </div>
+<div class="sec">
+<h3>Gestionar Precios</h3>
+<label>Producto:</label>
+<select id="prec-prod" onchange="cargarPrecios()"><option value="">Seleccione...</option></select>
+<div id="prec-form" class="hidden">
+<div id="prec-campos"></div>
+<button class="btn b-nara" onclick="guardarPrecios()">Guardar Precios</button>
+<div id="prec-msg"></div>
+</div>
+</div>
 
-    <div class="section">
-      <h3 style="margin-bottom:10px;">Todos los Lotes</h3>
-      <div style="overflow-x:auto;">
-        <table id="tabla-lotes"><thead><tr><th>ID</th><th>Sucursal</th><th>Envio</th><th>Pronost.</th><th>Llegada</th><th>Real</th><th>Envio $</th><th>Estado</th><th>Dif.</th></tr></thead><tbody></tbody></table>
-      </div>
-    </div>
+<div class="sec">
+<h3>Detalle del Lote</h3>
+<div id="det-lote-box"><p style="color:#999">Seleccione un lote</p></div>
+</div>
 
-    <button class="btn btn-gris" onclick="volverMenu()" style="margin-top:10px;">Volver</button>
-  </div>
+<div class="sec">
+<h3>Marcar Lote como Llegado</h3>
+<select id="lot-sel-lleg"><option value="">Seleccione lote en transito...</option></select>
+<label>Fecha Llegada:</label>
+<input type="date" id="lot-fecha-lleg">
+<button class="btn b-nara" onclick="marcarLlegada()">Marcar Llegada</button>
+<div id="lot-lleg-msg"></div>
+</div>
 
-  <!-- ============ PANTALLA MAESTRO ============ -->
-  <div id="pantalla-maestro" class="hidden">
-    <h1>Panel Maestro</h1>
-    <div class="subtitle">Gestion de Productos</div>
-    <div class="section">
-      <h3 style="margin-bottom:10px;">Anadir Nuevo Producto</h3>
-      <input type="text" id="new-prod-nombre" placeholder="Nombre del producto">
-      <input type="number" id="new-prod-precio" placeholder="Precio venta ($)" step="0.01">
-      <input type="number" id="new-prod-costo" placeholder="Costo real ($)" step="0.01">
-      <input type="number" id="new-prod-stock" placeholder="Stock inicial">
-      <select id="new-prod-tienda"><option value="ODONTO STORE">ODONTO STORE</option><option value="CELEBRACIONES">CELEBRACIONES</option></select>
-      <input type="text" id="new-prod-nota" placeholder="Nota (opcional)">
-      <input type="password" id="new-prod-pin" placeholder="PIN de seguridad">
-      <button class="btn btn-verde" onclick="agregarProducto()">Guardar Producto</button>
-      <div id="new-prod-msg"></div>
-    </div>
-    <div class="section">
-      <h3 style="margin-bottom:10px;">Editar Producto Existente</h3>
-      <select id="edit-prod-select"><option value="">Seleccione producto...</option></select>
-      <input type="number" id="edit-prod-precio" placeholder="Nuevo precio (vacio si no cambia)" step="0.01">
-      <input type="number" id="edit-prod-costo" placeholder="Nuevo costo (vacio si no cambia)" step="0.01">
-      <input type="number" id="edit-prod-stock" placeholder="Nuevo stock (vacio si no cambia)">
-      <input type="password" id="edit-prod-pin" placeholder="PIN de seguridad">
-      <button class="btn btn-naranja" onclick="editarProducto()">Actualizar Producto</button>
-      <div id="edit-prod-msg"></div>
-    </div>
-    <button class="btn btn-rojo" onclick="volverMenu()">Volver</button>
-  </div>
+<div class="sec">
+<h3>Todos los Lotes</h3>
+<div style="overflow-x:auto">
+<table id="t-lotes"><thead><tr><th>ID</th><th>Suc</th><th>Tipo</th><th>Envio</th><th>Pronost</th><th>Llegada</th><th>Real</th><th>$Envio</th><th>Estado</th><th>Dif</th></tr></thead><tbody></tbody></table>
+</div>
+</div>
 
-  <!-- ============ PANTALLA PIN RESUMEN ============ -->
-  <div id="pantalla-resumen-pin" class="hidden">
-    <h1>Resumen de Ganancias</h1>
-    <div class="subtitle">Solo propietario</div>
-    <div class="section">
-      <label>PIN de seguridad:</label>
-      <input type="password" id="resumen-pin" placeholder="Ingrese su PIN">
-      <div id="resumen-pin-error" class="error"></div>
-      <button class="btn btn-verde" onclick="verificarPinResumen()">Acceder</button>
-      <button class="btn btn-gris" onclick="volverMenu()">Volver</button>
-    </div>
-  </div>
+<button class="btn b-gris" onclick="volverMenu()" style="margin-top:10px">Volver</button>
+</div>
 
-  <!-- ============ PANTALLA RESUMEN MENSUAL ============ -->
-  <div id="pantalla-resumen" class="hidden">
-    <h1>Resumen de Ganancias</h1>
-    <div class="subtitle" id="sub-resumen"></div>
-    <div class="section">
-      <label>Periodo:</label>
-      <select id="filtro-resumen" onchange="onFiltroResumenChange()">
-        <option value="mes_actual">Mes Actual</option>
-        <option value="mes_anterior">Mes Anterior</option>
-        <option value="semana">Ultima Semana</option>
-        <option value="personalizado">Personalizado</option>
-      </select>
-      <div id="fechas-personalizadas" class="hidden" style="margin-top:10px;">
-        <label>Fecha inicio:</label>
-        <input type="date" id="resumen-fecha-inicio">
-        <label>Fecha fin:</label>
-        <input type="date" id="resumen-fecha-fin">
-        <button class="btn btn-azul" onclick="cargarResumen()" style="margin-top:5px;">Buscar</button>
-      </div>
-      <div id="resumen-cargando" class="hidden" style="text-align:center;padding:20px;">Cargando...</div>
-    </div>
+<div id="P-resumen-pin" class="hidden">
+<h1>Resumen de Ganancias</h1>
+<div class="sub">Solo propietario</div>
+<div class="sec">
+<label>PIN:</label>
+<input type="password" id="rpin" placeholder="PIN">
+<div id="rpin-err" class="err"></div>
+<button class="btn b-verde" onclick="verifPinResumen()">Acceder</button>
+<button class="btn b-gris" onclick="volverMenu()">Volver</button>
+</div>
+</div>
 
-    <div id="resumen-contenido" class="hidden">
-      <div class="section">
-        <h3 style="margin-bottom:5px;" id="resumen-titulo-periodo">Periodo</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
-          <div class="dashboard-box"><small>Ventas Totales</small><div class="dashboard-number" id="res-ventas">$0</div></div>
-          <div class="dashboard-box"><small>Costo de Productos</small><div class="dashboard-number" id="res-costo">$0</div></div>
-          <div class="dashboard-box"><small>Comisiones Vend.</small><div class="dashboard-number" id="res-comisiones">$0</div></div>
-          <div class="dashboard-box"><small>Gastos Operativos</small><div class="dashboard-number" id="res-gastos">$0</div></div>
-          <div class="dashboard-box"><small style="color:#28a745;">Ganancia Bruta</small><div class="dashboard-number" id="res-bruta" style="color:#28a745;">$0</div></div>
-          <div class="dashboard-box"><small style="color:#28a745;">Ganancia Neta</small><div class="dashboard-number" id="res-neta" style="color:#28a745;">$0</div></div>
-          <div class="dashboard-box"><small>Ventas Realizadas</small><div class="dashboard-number" id="res-cantidad" style="color:#fd7e14;">0</div></div>
-          <div class="dashboard-box"><small>Margen</small><div class="dashboard-number" id="res-margen" style="color:#fd7e14;">0%</div></div>
-        </div>
-      </div>
+<div id="P-resumen" class="hidden">
+<h1>Resumen de Ganancias</h1>
+<div class="sub" id="sub-resumen"></div>
+<div class="sec">
+<label>Periodo:</label>
+<select id="flt-resumen" onchange="onFiltroRes()"><option value="mes_actual">Mes Actual</option><option value="mes_anterior">Mes Anterior</option><option value="semana">Ultima Semana</option><option value="personalizado">Personalizado</option></select>
+<div id="fechas-pers" class="hidden" style="margin-top:8px">
+<label>Desde:</label><input type="date" id="res-fi">
+<label>Hasta:</label><input type="date" id="res-ff">
+<button class="btn b-azul" onclick="cargarResumen()" style="margin-top:5px">Buscar</button>
+</div>
+</div>
+<div id="res-carga" class="hidden" style="text-align:center;padding:15px">Cargando...</div>
+<div id="res-cont" class="hidden">
+<div class="sec">
+<h3 id="res-titulo">Periodo</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+<div class="dbox"><small>Ventas</small><div class="dnum" id="r-v">$0</div></div>
+<div class="dbox"><small>Costo</small><div class="dnum" id="r-c">$0</div></div>
+<div class="dbox"><small>Comisiones</small><div class="dnum" id="r-com">$0</div></div>
+<div class="dbox"><small>Gastos Op.</small><div class="dnum" id="r-g">$0</div></div>
+<div class="dbox"><small style="color:#28a745">Bruta</small><div class="dnum" id="r-br" style="color:#28a745">$0</div></div>
+<div class="dbox"><small style="color:#28a745">Neta</small><div class="dnum" id="r-ne" style="color:#28a745">$0</div></div>
+<div class="dbox"><small>Ventas #</small><div class="dnum" id="r-n" style="color:#fd7e14">0</div></div>
+<div class="dbox"><small>Margen</small><div class="dnum" id="r-m" style="color:#fd7e14">0%</div></div>
+</div>
+</div>
+<div class="sec">
+<h3>Detalle</h3>
+<div style="overflow-x:auto">
+<table id="t-res"><thead><tr><th>Fecha</th><th>Prod</th><th>C</th><th>Venta</th><th>Costo</th><th>Com</th><th>Gan</th></tr></thead><tbody></tbody></table>
+</div>
+</div>
+</div>
+<button class="btn b-gris" onclick="volverMenu()" style="margin-top:10px">Volver</button>
+</div>
 
-      <div class="section">
-        <h3 style="margin-bottom:10px;">Detalle de Ventas</h3>
-        <div style="overflow-x:auto;">
-          <table id="tabla-resumen-ventas"><thead><tr><th>Fecha</th><th>Producto</th><th>Cant</th><th>Venta</th><th>Costo</th><th>Comision</th><th>Ganancia</th></tr></thead><tbody></tbody></table>
-        </div>
-      </div>
-    </div>
-
-    <button class="btn btn-gris" onclick="volverMenu()" style="margin-top:10px;">Volver</button>
-  </div>
-
-  <!-- ============ PANTALLA INVERSION ============ -->
-  <div id="pantalla-inversion" class="hidden">
-    <h1>Panel de Inversion</h1>
-    <div class="subtitle">Solo propietario</div>
-    <div class="section" id="inv-pin-section">
-      <label>PIN de seguridad:</label>
-      <input type="password" id="inv-pin" placeholder="Ingrese su PIN">
-      <button class="btn btn-verde" onclick="verResumenInversion()">Ver Resumen</button>
-      <div id="inv-pin-error" class="error"></div>
-    </div>
-    <div id="inv-contenido" class="hidden">
-      <div class="section">
-        <select id="filtro-inversion" onchange="recargarInversion()">
-          <option value="todo">Todo</option>
-          <option value="mes">Ultimo Mes</option>
-          <option value="semana">Ultima Semana</option>
-        </select>
-        <select id="filtro-sucursal-inversion" onchange="recargarInversion()" style="margin-top:8px;">
-          <option value="todas">Todas las sucursales</option>
-        </select>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
-          <div class="dashboard-box"><small>Inversion en Stock</small><div class="dashboard-number" id="inv-stock">$0</div></div>
-          <div class="dashboard-box"><small>Stock en Transito</small><div class="dashboard-number" id="inv-transito" style="color:#fd7e14;">$0</div></div>
-          <div class="dashboard-box"><small>Gastos Operativos</small><div class="dashboard-number" id="inv-gastos">$0</div></div>
-          <div class="dashboard-box"><small>Ventas Totales</small><div class="dashboard-number" id="inv-ventas">$0</div></div>
-          <div class="dashboard-box"><small>Ganancia Neta</small><div class="dashboard-number" id="inv-ganancia" style="color:#28a745;">$0</div></div>
-          <div class="dashboard-box"><small>Comisiones Vend.</small><div class="dashboard-number" id="inv-comisiones">$0</div></div>
-        </div>
-      </div>
-      <div class="section">
-        <h3>Productos y Costos Reales</h3>
-        <div style="overflow-x:auto;">
-          <table id="tabla-inv-productos"><thead><tr><th>Producto</th><th>Sucursal</th><th>Venta</th><th>Costo Real</th><th>Ganancia</th><th>Margen</th></tr></thead><tbody></tbody></table>
-        </div>
-      </div>
-      <div class="section">
-        <h3>Registrar Gasto Operativo</h3>
-        <input type="text" id="gasto-desc" placeholder="Descripcion (transporte, envio...)">
-        <input type="number" id="gasto-monto" placeholder="Monto ($)" step="0.01">
-        <select id="gasto-tienda"><option value="ODONTO STORE">ODONTO STORE</option><option value="CELEBRACIONES">CELEBRACIONES</option></select>
-        <button class="btn btn-naranja" onclick="agregarGasto()">Agregar Gasto</button>
-        <div id="gasto-msg"></div>
-      </div>
-      <div class="section">
-        <h3>Historial de Gastos</h3>
-        <div style="overflow-x:auto;">
-          <table id="tabla-gastos"><thead><tr><th>Fecha</th><th>Descripcion</th><th>Monto</th><th>Tienda</th></tr></thead><tbody></tbody></table>
-        </div>
-      </div>
-    </div>
-    <button class="btn btn-gris" onclick="volverMenu()" style="margin-top:10px;">Volver</button>
-  </div>
+<div id="P-inversion" class="hidden">
+<h1>Panel de Inversion</h1>
+<div class="sub">Solo propietario</div>
+<div class="sec" id="inv-pin-sec">
+<label>PIN:</label>
+<input type="password" id="inv-pin" placeholder="PIN">
+<button class="btn b-verde" onclick="verInv()">Ver Resumen</button>
+<div id="inv-pin-err" class="err"></div>
+</div>
+<div id="inv-cont" class="hidden">
+<div class="sec">
+<select id="flt-inv" onchange="recInv()"><option value="todo">Todo</option><option value="mes">Ultimo Mes</option><option value="semana">Ultima Semana</option></select>
+<select id="flt-suc-inv" onchange="recInv()" style="margin-top:6px"><option value="todas">Todas las sucursales</option></select>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+<div class="dbox"><small>Stock</small><div class="dnum" id="i-st">$0</div></div>
+<div class="dbox"><small>Transito</small><div class="dnum" id="i-tr" style="color:#fd7e14">$0</div></div>
+<div class="dbox"><small>Gastos</small><div class="dnum" id="i-ga">$0</div></div>
+<div class="dbox"><small>Ventas</small><div class="dnum" id="i-vt">$0</div></div>
+<div class="dbox"><small style="color:#28a745">Neta</small><div class="dnum" id="i-ne" style="color:#28a745">$0</div></div>
+<div class="dbox"><small>Comisiones</small><div class="dnum" id="i-co">$0</div></div>
+</div>
+</div>
+<div class="sec">
+<h3>Productos</h3>
+<div style="overflow-x:auto">
+<table id="t-inv-p"><thead><tr><th>Prod</th><th>Suc</th><th>Venta</th><th>Costo</th><th>Gan</th><th>%</th></tr></thead><tbody></tbody></table>
+</div>
+</div>
+<div class="sec">
+<h3>Registrar Gasto</h3>
+<input type="text" id="g-desc" placeholder="Descripcion">
+<input type="number" id="g-monto" placeholder="Monto ($)" step="0.01">
+<select id="g-tienda"><option value="ODONTO STORE">ODONTO STORE</option><option value="CELEBRACIONES">CELEBRACIONES</option></select>
+<button class="btn b-nara" onclick="addGasto()">Agregar Gasto</button>
+<div id="g-msg"></div>
+</div>
+<div class="sec">
+<h3>Historial Gastos</h3>
+<div style="overflow-x:auto">
+<table id="t-gastos"><thead><tr><th>Fecha</th><th>Desc</th><th>Monto</th><th>Lugar</th></tr></thead><tbody></tbody></table>
+</div>
+</div>
+</div>
+<button class="btn b-gris" onclick="volverMenu()" style="margin-top:10px">Volver</button>
+</div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzVZh6s8MNTz3s20X6d2hUxZ2dhbDA8WOIN6pjyaLrJkbRJ7mELrZIELeY0l4yB3bH7zQ/exec';
-let tiendaActual = '';
-let vendedorActual = '';
-let productosDisponibles = [];
-let inversionPinGuardado = '';
-let lotesDisponibles = [];
-let catalogoProductos = [];
-let loteSeleccionado = null;
-let lotesProductoVenta = [];
+const URL_GAS='https://script.google.com/macros/s/AKfycbzVZh6s8MNTz3s20X6d2hUxZ2dhbDA8WOIN6pjyaLrJkbRJ7mELrZIELeY0l4yB3bH7zQ/exec';
+let tienda='',vendedor='',prods=[],pinInv='',lotes=[],catalogo=[],lotSel=null,lotsProd=[];
 
-function mostrar(id) { document.querySelectorAll('[id^="pantalla-"]').forEach(el => el.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
-function seleccionarTienda(t) { tiendaActual = t; document.getElementById('nombre-tienda-login').textContent = t; cargarVendedores(); mostrar('pantalla-login'); }
-function volverInicio() { mostrar('pantalla-inicio'); }
-function volverMenu() { mostrar('pantalla-menu'); cargarAlertas(); }
-function cerrarSesion() { vendedorActual = ''; tiendaActual = ''; document.getElementById('input-clave').value = ''; mostrar('pantalla-inicio'); }
+function mostrar(id){document.querySelectorAll('[id^="P-"]').forEach(e=>e.classList.add('hidden'));document.getElementById(id).classList.remove('hidden')}
+function selTienda(t){tienda=t;document.getElementById('sub-login').textContent='La Habana - '+t;cargarVend();mostrar('P-login')}
+function volverMenu(){mostrar('P-menu');cargarAlertas()}
+function cerrarSes(){vendedor='';tienda='';document.getElementById('inp-clave').value='';mostrar('P-inicio')}
 
-async function apiCall(params, method, postData) {
-  try {
-    if (method === 'POST') {
-      const r = await fetch(SCRIPT_URL, { method: 'POST', headers: {'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(postData) });
-      return await r.json();
-    } else {
-      let url = SCRIPT_URL + '?';
-      for (let k in params) url += k + '=' + encodeURIComponent(params[k]) + '&';
-      return await (await fetch(url)).json();
-    }
-  } catch(e) { return { error: 'Error de conexion: ' + e.message }; }
+async function api(p,m,d){
+  try{
+    if(m==='POST'){const r=await fetch(URL_GAS,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)});return await r.json()}
+    else{let u=URL_GAS+'?';for(let k in p)u+=k+'='+encodeURIComponent(p[k])+'&';return await(await fetch(u)).json()}
+  }catch(e){return{error:'Error: '+e.message}}
 }
 
-// ============ LOGIN ============
-async function cargarVendedores() {
-  const data = await apiCall({ action: 'getVendedores' });
-  const sel = document.getElementById('select-vendedor');
-  sel.innerHTML = '<option value="">Seleccione...</option>';
-  sel.innerHTML += '<option value="Abelardo">Abelardo</option>';
-  if (data.vendedores) data.vendedores.forEach(v => sel.innerHTML += '<option value="' + v + '">' + v + '</option>');
+async function cargarVend(){
+  const d=await api({action:'getVendedores'});
+  const s=document.getElementById('sel-vend');
+  s.innerHTML='<option value="">Seleccione...</option><option value="Abelardo">Abelardo</option>';
+  if(d.vendedores)d.vendedores.forEach(v=>{if(v!=='Abelardo')s.innerHTML+='<option value="'+v+'">'+v+'</option>'});
 }
 
-async function iniciarSesion() {
-  const v = document.getElementById('select-vendedor').value;
-  const c = document.getElementById('input-clave').value;
-  const err = document.getElementById('login-error');
-  if (!v || !c) { err.textContent = 'Complete todos los campos'; return; }
-  if (v === 'Abelardo' && c === '7512') {
-    vendedorActual = v; err.textContent = '';
-    document.getElementById('nombre-tienda-menu').textContent = tiendaActual;
-    document.getElementById('sub-venta').textContent = tiendaActual + ' - ' + v;
-    mostrar('pantalla-menu'); cargarAlertas(); return;
-  }
-  const data = await apiCall({}, 'POST', { action: 'login', vendedor: v, clave: c });
-  if (data.success) { vendedorActual = v; err.textContent = ''; document.getElementById('nombre-tienda-menu').textContent = tiendaActual; document.getElementById('sub-venta').textContent = tiendaActual + ' - ' + v; mostrar('pantalla-menu'); cargarAlertas(); }
-  else err.textContent = data.error || 'Error';
+async function doLogin(){
+  const v=document.getElementById('sel-vend').value,c=document.getElementById('inp-clave').value,e=document.getElementById('login-err');
+  if(!v||!c){e.textContent='Complete campos';return}
+  if(v==='Abelardo'&&c==='7512'){vendedor=v;e.textContent='';document.getElementById('sub-menu').textContent='La Habana - '+tienda;mostrar('P-menu');cargarAlertas();return}
+  const d=await api({},'POST',{action:'login',vendedor:v,clave:c});
+  if(d.success){vendedor=v;e.textContent='';document.getElementById('sub-menu').textContent='La Habana - '+tienda;mostrar('P-menu');cargarAlertas()}else e.textContent=d.error||'Error';
 }
 
-// ============ ALERTAS DE VENCIMIENTO ============
-async function cargarAlertas() {
-  const data = await apiCall({ action: 'getAlertasVencimiento', tienda: tiendaActual });
-  const container = document.getElementById('alertas-container');
-  if (!data.alertas || data.alertas.length === 0) { container.innerHTML = ''; container.classList.add('hidden'); return; }
-  let html = '<h3 style="margin-bottom:10px;">Alertas de Vencimiento</h3>';
-  data.alertas.forEach(a => {
-    const cls = a.dias <= 30 ? 'alert-critical' : 'alert-warning';
-    const icono = a.dias <= 30 ? 'CRITICO' : 'PROXIMO';
-    html += '<div class="' + cls + '"><strong>' + icono + ': ' + a.producto + '</strong><br>Vence en ' + a.dias + ' dias | Stock: ' + a.cantidad + ' | Sucursal: ' + a.sucursal + '</div>';
-  });
-  container.innerHTML = html;
-  container.classList.remove('hidden');
+async function cargarAlertas(){
+  const d=await api({action:'getAlertasVencimiento',tienda:tienda});
+  const box=document.getElementById('alertas-box');
+  if(!d.alertas||!d.alertas.length){box.innerHTML='';return}
+  let h='<h3 style="margin-bottom:8px">Alertas de Vencimiento</h3>';
+  d.alertas.forEach(a=>{const cls=a.dias<=30?'acrt':'awrn';h+='<div class="'+cls+'"><strong>'+a.producto+'</strong><br>Vence en '+a.dias+' dias | Stock: '+a.cantidad+' | '+a.sucursal+'</div>'});
+  box.innerHTML=h;
 }
 
-// ============ INVENTARIO ============
-async function verInventario() {
-  document.getElementById('sub-inventario').textContent = tiendaActual;
-  const data = await apiCall({ action: 'getInventarioPorLotes', tienda: tiendaActual });
-  const tb = document.querySelector('#tabla-inventario tbody');
-  tb.innerHTML = '';
-  const sucFiltro = document.getElementById('filtro-sucursal-inventario').value;
-
-  if (data.inventario && data.inventario.length) {
-    const sucursales = [...new Set(data.inventario.map(p => p.sucursal || 'General'))];
-    const selSuc = document.getElementById('filtro-sucursal-inventario');
-    const valActual = selSuc.value;
-    selSuc.innerHTML = '<option value="todas">Todas las sucursales</option>';
-    sucursales.forEach(s => selSuc.innerHTML += '<option value="' + s + '">' + s + '</option>');
-    selSuc.value = valActual;
-
-    const filtrado = sucFiltro === 'todas' ? data.inventario : data.inventario.filter(p => p.sucursal === sucFiltro);
-    filtrado.forEach(p => {
-      const estado = p.stock > 0 ? '<span class="badge-disponible">Disponible</span>' : '<span class="badge-cerrado">Agotado</span>';
-      tb.innerHTML += '<tr><td>' + p.nombre + '</td><td>$' + parseFloat(p.precio).toFixed(2) + '</td><td style="font-weight:bold;">' + p.stock + '</td><td>' + (p.sucursal || 'General') + '</td><td>' + estado + '</td></tr>';
+async function irStock(){
+  document.getElementById('sub-stock').textContent=tienda;
+  const d=await api({action:'getInventarioPorLotes',tienda:tienda});
+  const tb=document.querySelector('#t-stock tbody');tb.innerHTML='';
+  const sf=document.getElementById('flt-suc-stock').value;
+  if(d.inventario&&d.inventario.length){
+    const sucs=[...new Set(d.inventario.map(p=>p.sucursal||'General'))];
+    const sel=document.getElementById('flt-suc-stock');const va=sel.value;
+    sel.innerHTML='<option value="todas">Todas</option>';sucs.forEach(s=>sel.innerHTML+='<option value="'+s+'">'+s+'</option>');sel.value=va;
+    const f=sf==='todas'?d.inventario:d.inventario.filter(p=>p.sucursal===sf);
+    f.forEach(p=>{
+      const est=p.stock>0?'<span class="badge-d">Disponible</span>':'<span class="badge-c">Agotado</span>';
+      const tipo=p.tipo==='Mayorista'?'<span class="badge-m">Mayorista</span>':'<span class="badge-d">Retail</span>';
+      tb.innerHTML+='<tr><td>'+p.nombre+'</td><td>$'+p.precio.toFixed(2)+'</td><td>'+p.stock+'</td><td>'+(p.sucursal||'General')+'</td><td>'+tipo+'</td><td>'+est+'</td></tr>';
     });
-  } else {
-    tb.innerHTML = '<tr><td colspan="5" style="text-align:center;">Sin productos</td></tr>';
-  }
-  mostrar('pantalla-inventario');
+  }else tb.innerHTML='<tr><td colspan="6" style="text-align:center">Sin productos en lotes</td></tr>';
+  mostrar('P-stock');
 }
 
-// ============ VENTAS ============
-async function irVentasPublicas() { document.getElementById('sub-ventas-p').textContent = tiendaActual; cargarVentasPublicas(); mostrar('pantalla-ventas-publico'); }
-
-async function cargarVentasPublicas() {
-  const filtro = document.getElementById('filtro-ventas-p').value;
-  const tb = document.querySelector('#tabla-ventas-p tbody');
-  tb.innerHTML = '<tr><td colspan="7" style="text-align:center;">Cargando...</td></tr>';
-  try {
-    const data = await apiCall({ action: 'getHistorialVentas', filtro: filtro, tienda: tiendaActual });
-    tb.innerHTML = '';
-    if (data.ventas && data.ventas.length) {
-      data.ventas.forEach(v => {
-        const ganancia = v.ganancia ? '$' + parseFloat(v.ganancia).toFixed(2) : '-';
-        tb.innerHTML += '<tr><td>' + v.fecha + '</td><td>' + v.producto + '</td><td>' + v.cantidad + '</td><td>$' + parseFloat(v.total).toFixed(2) + '</td><td>' + ganancia + '</td><td>' + v.vendedor + '</td><td>' + (v.motivo || '-') + '</td></tr>';
-      });
-    } else tb.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay registros</td></tr>';
-  } catch(e) { tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:red;">Error</td></tr>'; }
+async function irVentas(){document.getElementById('sub-ventas').textContent=tienda;cargarVentas();mostrar('P-ventas')}
+async function cargarVentas(){
+  const f=document.getElementById('flt-ventas').value;const tb=document.querySelector('#t-ventas tbody');
+  tb.innerHTML='<tr><td colspan="7">Cargando...</td></tr>';
+  const d=await api({action:'getHistorialVentas',filtro:f,tienda:tienda});tb.innerHTML='';
+  if(d.ventas&&d.ventas.length)d.ventas.forEach(v=>{const g=v.ganancia?'$'+parseFloat(v.ganancia).toFixed(2):'-';const t=v.tipoVenta==='Mayorista'?'<span class="badge-m">M</span>':'';tb.innerHTML+='<tr><td>'+v.fecha+'</td><td>'+v.producto+'</td><td>'+v.cantidad+'</td><td>$'+parseFloat(v.total).toFixed(2)+'</td><td>'+g+'</td><td>'+v.vendedor+'</td><td>'+t+'</td></tr>'});
+  else tb.innerHTML='<tr><td colspan="7" style="text-align:center">Sin registros</td></tr>';
 }
 
-async function irAVenta() {
-  const data = await apiCall({ action: 'getProductosConLotes', tienda: tiendaActual });
-  productosDisponibles = data.productos || [];
-  const sel = document.getElementById('select-producto');
-  sel.innerHTML = '<option value="">Seleccione...</option>';
-  productosDisponibles.forEach(p => {
-    if (p.stock > 0) sel.innerHTML += '<option value="' + p.nombre + '" data-stock="' + p.stock + '">' + p.nombre + ' - $' + p.precio + ' (Stock: ' + p.stock + ')</option>';
-  });
-  document.getElementById('stock-display').textContent = '-';
-  document.getElementById('lote-info').textContent = '';
-  document.getElementById('input-cantidad').value = 1;
-  document.getElementById('input-motivo').value = '';
-  document.getElementById('input-porciento').value = '';
-  document.getElementById('venta-error').textContent = '';
-  document.getElementById('venta-success').textContent = '';
-  document.getElementById('seccion-elegir-lote').classList.add('hidden');
-  mostrar('pantalla-venta');
+async function irVenta(){
+  const d=await api({action:'getProductosConLotes',tienda:tienda});prods=d.productos||[];
+  const s=document.getElementById('sel-prod');s.innerHTML='<option value="">Seleccione...</option>';
+  prods.forEach(p=>{if(p.stock>0)s.innerHTML+='<option value="'+p.nombre+'" data-stock="'+p.stock+'">'+p.nombre+' - $'+p.precio+' ('+p.stock+')</option>'});
+  document.getElementById('stk-disp').textContent='-';document.getElementById('lote-info').textContent='';
+  document.getElementById('inp-cant').value=1;document.getElementById('inp-motivo').value='';document.getElementById('inp-porc').value='';
+  document.getElementById('venta-err').textContent='';document.getElementById('venta-ok').textContent='';
+  document.getElementById('sec-elegir-lote').classList.add('hidden');mostrar('P-venta');
 }
 
-async function onProductoChange() {
-  const sel = document.getElementById('select-producto');
-  const prod = sel.value;
-  if (!prod) { document.getElementById('stock-display').textContent = '-'; document.getElementById('lote-info').textContent = ''; document.getElementById('seccion-elegir-lote').classList.add('hidden'); return; }
-
-  const opt = sel.options[sel.selectedIndex];
-  document.getElementById('stock-display').textContent = opt.getAttribute('data-stock');
-
-  const data = await apiCall({ action: 'getLotesProducto', producto: prod, tienda: tiendaActual });
-  lotesProductoVenta = data.lotes || [];
-
-  if (lotesProductoVenta.length <= 1) {
-    document.getElementById('seccion-elegir-lote').classList.add('hidden');
-    const lote = lotesProductoVenta[0];
-    if (lote) document.getElementById('lote-info').textContent = 'Lote: ' + lote.loteId + ' | Sucursal: ' + lote.sucursal + ' | Vence: ' + lote.vencimiento + ' | Costo real: $' + lote.costoReal.toFixed(2);
-    else document.getElementById('lote-info').textContent = '';
-  } else {
-    const hayCritico = lotesProductoVenta.some(l => l.diasVencimiento !== null && l.diasVencimiento <= 90);
-    if (hayCritico) {
-      document.getElementById('seccion-elegir-lote').classList.remove('hidden');
-      let html = '';
-      lotesProductoVenta.forEach((l, i) => {
-        const badge = l.diasVencimiento !== null && l.diasVencimiento <= 90 ? '<span class="badge-critico">VENCE ' + l.diasVencimiento + ' dias</span>' : '';
-        html += '<div class="select-lote" onclick="elegirLote(' + i + ')" id="lote-opt-' + i + '"><strong>' + l.loteId + '</strong> | ' + l.sucursal + ' | Stock: ' + l.cantidadRestante + ' | Vence: ' + l.vencimiento + ' ' + badge + '</div>';
-      });
-      document.getElementById('lista-lotes-elegir').innerHTML = html;
-      loteSeleccionado = 0;
-      elegirLote(0);
-    } else {
-      document.getElementById('seccion-elegir-lote').classList.add('hidden');
-      const antiguo = lotesProductoVenta[0];
-      document.getElementById('lote-info').textContent = 'FIFO: Lote ' + antiguo.loteId + ' | ' + antiguo.sucursal + ' | Vence: ' + antiguo.vencimiento + ' | Costo real: $' + antiguo.costoReal.toFixed(2);
+async function onProdChange(){
+  const s=document.getElementById('sel-prod'),p=s.value;
+  if(!p){document.getElementById('stk-disp').textContent='-';document.getElementById('lote-info').textContent='';document.getElementById('sec-elegir-lote').classList.add('hidden');return}
+  document.getElementById('stk-disp').textContent=s.options[s.selectedIndex].getAttribute('data-stock');
+  const d=await api({action:'getLotesProducto',producto:p,tienda:tienda});lotsProd=d.lotes||[];
+  if(lotsProd.length<=1){
+    document.getElementById('sec-elegir-lote').classList.add('hidden');
+    const l=lotsProd[0];document.getElementById('lote-info').textContent=l?'Lote:'+l.loteId+' '+l.sucursal+' Vence:'+l.vencimiento+' $'+l.costoReal.toFixed(2)+'/u':'';
+  }else{
+    const hc=lotsProd.some(l=>l.diasVencimiento!==null&&l.diasVencimiento<=90);
+    if(hc){
+      document.getElementById('sec-elegir-lote').classList.remove('hidden');let h='';
+      lotsProd.forEach((l,i)=>{const b=l.diasVencimiento!==null&&l.diasVencimiento<=90?'<span class="badge-r">VENCE '+l.diasVencimiento+'d</span>':'<span class="badge-d">'+l.tipo+'</span>';h+='<div class="slote" onclick="elegirLot('+i+')" id="sl-'+i+'"><strong>'+l.loteId+'</strong> '+l.sucursal+' Stock:'+l.cantidadRestante+' Vence:'+l.vencimiento+' '+b+'</div>'});
+      document.getElementById('lista-lotes').innerHTML=h;lotSel=0;elegirLot(0);
+    }else{
+      document.getElementById('sec-elegir-lote').classList.add('hidden');
+      const a=lotsProd[0];document.getElementById('lote-info').textContent='FIFO: '+a.loteId+' '+a.sucursal+' Vence:'+a.vencimiento+' $'+a.costoReal.toFixed(2)+'/u';
     }
   }
 }
 
-function elegirLote(idx) {
-  loteSeleccionado = idx;
-  document.querySelectorAll('.select-lote').forEach(el => el.classList.remove('selected'));
-  const el = document.getElementById('lote-opt-' + idx);
-  if (el) el.classList.add('selected');
+function elegirLot(i){lotSel=i;document.querySelectorAll('.slote').forEach(e=>e.classList.remove('sel'));const el=document.getElementById('sl-'+i);if(el)el.classList.add('sel')}
+
+async function confirmarVenta(){
+  const p=document.getElementById('sel-prod').value,c=parseInt(document.getElementById('inp-cant').value),m=document.getElementById('inp-motivo').value,pc=parseFloat(document.getElementById('inp-porc').value)||0;
+  const err=document.getElementById('venta-err'),ok=document.getElementById('venta-ok');
+  if(!p){err.textContent='Seleccione producto';return}if(!c||c<1){err.textContent='Cantidad invalida';return}
+  const pr=prods.find(x=>x.nombre===p);if(c>pr.stock){err.textContent='Stock: '+pr.stock;return}
+  let lid=null;if(lotsProd.length>0){const hc=lotsProd.some(l=>l.diasVencimiento!==null&&l.diasVencimiento<=90);lid=hc&&lotSel!==null?lotsProd[lotSel].loteId:lotsProd[0].loteId}
+  const d=await api({},'POST',{action:'realizarVenta',producto:p,cantidad:c,motivo:m,porcientoVendedor:pc,vendedor:vendedor,tienda:tienda,loteId:lid});
+  if(d.success){let msg='Venta: $'+d.total.toFixed(2);if(d.ganancia)msg+=' | Gan: $'+d.ganancia.toFixed(2);ok.textContent=msg;err.textContent='';setTimeout(irVenta,1800)}else{err.textContent=d.error||'Error';ok.textContent=''}
 }
 
-async function confirmarVenta() {
-  const prod = document.getElementById('select-producto').value;
-  const cant = parseInt(document.getElementById('input-cantidad').value);
-  const motivo = document.getElementById('input-motivo').value;
-  const porc = parseFloat(document.getElementById('input-porciento').value) || 0;
-  const err = document.getElementById('venta-error');
-  const ok = document.getElementById('venta-success');
-  if (!prod) { err.textContent = 'Seleccione un producto'; return; }
-  if (!cant || cant < 1) { err.textContent = 'Cantidad invalida'; return; }
-  const p = productosDisponibles.find(x => x.nombre === prod);
-  if (cant > p.stock) { err.textContent = 'Stock insuficiente. Disponible: ' + p.stock; return; }
+async function irAltas(){document.getElementById('sub-altas').textContent=tienda;const d=await api({action:'getHistorialAltas',tienda:tienda});const tb=document.querySelector('#t-altas tbody');tb.innerHTML='';if(d.altas&&d.altas.length)d.altas.forEach(a=>tb.innerHTML+='<tr><td>'+a.fecha+'</td><td>'+a.producto+'</td><td>'+a.cantidad+'</td><td>'+a.tienda+'</td><td>'+a.tipo+'</td><td>'+(a.nota||'-')+'</td></tr>');else tb.innerHTML='<tr><td colspan="6" style="text-align:center">Sin registros</td></tr>';mostrar('P-altas')}
 
-  let loteId = null;
-  if (lotesProductoVenta.length > 0) {
-    const hayCritico = lotesProductoVenta.some(l => l.diasVencimiento !== null && l.diasVencimiento <= 90);
-    if (hayCritico && loteSeleccionado !== null) {
-      loteId = lotesProductoVenta[loteSeleccionado].loteId;
-    } else {
-      loteId = lotesProductoVenta[0].loteId;
-    }
-  }
+function irLotesPin(){document.getElementById('lpin').value='';document.getElementById('lpin-err').textContent='';mostrar('P-lotes-pin')}
+async function verifPinLotes(){const p=document.getElementById('lpin').value;if(!p){document.getElementById('lpin-err').textContent='Ingrese PIN';return}if(p!=='7512'){document.getElementById('lpin-err').textContent='Incorrecto';return}pinInv=p;await irLotes()}
 
-  const data = await apiCall({}, 'POST', {
-    action: 'realizarVenta',
-    producto: prod, cantidad: cant, motivo: motivo,
-    porcientoVendedor: porc, vendedor: vendedorActual,
-    tienda: tiendaActual, loteId: loteId
+async function irLotes(){
+  const s=await api({action:'getSucursales'});const sel=document.getElementById('lot-suc');sel.innerHTML='';
+  if(s.sucursales)s.sucursales.forEach(sc=>{if(sc.activa)sel.innerHTML+='<option>'+sc.nombre+'</option>'});
+  const c=await api({action:'getCatalogoIA'});catalogo=c.productos||[];
+  const sp=document.getElementById('lot-prod');sp.innerHTML='<option value="">Seleccione...</option>';catalogo.forEach(p=>sp.innerHTML+='<option value="'+p.id+'">'+p.producto+' ('+p.marca+')</option>');
+  const spp=document.getElementById('prec-prod');spp.innerHTML='<option value="">Seleccione...</option>';catalogo.forEach(p=>spp.innerHTML+='<option value="'+p.id+'">'+p.producto+'</option>');
+  await cargarLotes();mostrar('P-lotes');
+}
+
+async function cargarLotes(){
+  const d=await api({action:'getLotes'});lotes=d.lotes||[];
+  const sa=document.getElementById('lot-sel-add'),sl=document.getElementById('lot-sel-lleg');
+  sa.innerHTML='<option value="">Seleccione...</option>';sl.innerHTML='<option value="">Seleccione en transito...</option>';
+  lotes.forEach(l=>{sa.innerHTML+='<option value="'+l.loteId+'">'+l.loteId+' '+l.sucursal+' ('+l.estado+')</option>';if(l.estado==='En Transito')sl.innerHTML+='<option value="'+l.loteId+'">'+l.loteId+' '+l.sucursal+'</option>'});
+  const tb=document.querySelector('#t-lotes tbody');tb.innerHTML='';
+  if(lotes.length)lotes.forEach(l=>{let b;if(l.estado==='En Transito')b='<span class="badge-t">Transito</span>';else if(l.estado==='Disponible')b='<span class="badge-d">Disponible</span>';else b='<span class="badge-c">Cerrado</span>';const t=l.tipo==='Mayorista'?'<span class="badge-m">Mayorista</span>':'<span class="badge-d">Retail</span>';const df=l.diferencia!==null?(l.diferencia>0?'+':'')+l.diferencia+'d':'-';tb.innerHTML+='<tr><td>'+l.loteId+'</td><td>'+l.sucursal+'</td><td>'+t+'</td><td>'+l.fechaEnvio+'</td><td>'+(l.diasPronostico||'-')+'</td><td>'+(l.fechaLlegada||'-')+'</td><td>'+(l.diasReal||'-')+'</td><td>$'+l.costoEnvio.toFixed(2)+'</td><td>'+b+'</td><td>'+df+'</td></tr>'});
+  else tb.innerHTML='<tr><td colspan="10" style="text-align:center">Sin lotes</td></tr>';
+}
+
+async function crearLote(){
+  const s=document.getElementById('lot-suc').value,t=document.getElementById('lot-tipo').value,f=document.getElementById('lot-fecha').value,d=document.getElementById('lot-dias').value,c=document.getElementById('lot-costo').value,msg=document.getElementById('lot-create-msg');
+  if(!s||!f||!c){msg.innerHTML='<div class="err">Complete campos</div>';return}
+  const r=await api({},'POST',{action:'crearLote',sucursal:s,fechaEnvio:f,diasPronostico:parseInt(d)||0,costoEnvio:parseFloat(c),tipo:t,pin:pinInv});
+  if(r.success){msg.innerHTML='<div class="ok">Lote '+r.loteId+' creado ('+t+')</div>';document.getElementById('lot-fecha').value='';document.getElementById('lot-dias').value='';document.getElementById('lot-costo').value='';cargarLotes()}else msg.innerHTML='<div class="err">'+(r.error||'Error')+'</div>';
+}
+
+async function crearProducto(){
+  const n=document.getElementById('cp-nombre').value,m=document.getElementById('cp-marca').value,cat=document.getElementById('cp-cat').value,pr=parseFloat(document.getElementById('cp-precio').value),pm=parseFloat(document.getElementById('cp-precioM').value)||0,msg=document.getElementById('cp-msg');
+  if(!n||!pr){msg.innerHTML='<div class="err">Nombre y precio requeridos</div>';return}
+  const d=await api({},'POST',{action:'addProducto',producto:n,marca:m,categoria:cat,precio:pr,precioMayorista:pm,tienda:tienda,pin:pinInv});
+  if(d.success){msg.innerHTML='<div class="ok">Producto '+d.id+' creado</div>';['cp-nombre','cp-marca','cp-cat','cp-precio','cp-precioM'].forEach(i=>document.getElementById(i).value='');const c2=await api({action:'getCatalogoIA'});catalogo=c2.productos||[];const sp=document.getElementById('lot-prod');sp.innerHTML='<option value="">Seleccione...</option>';catalogo.forEach(p=>sp.innerHTML+='<option value="'+p.id+'">'+p.producto+' ('+p.marca+')</option>');const spp=document.getElementById('prec-prod');spp.innerHTML='<option value="">Seleccione...</option>';catalogo.forEach(p=>spp.innerHTML+='<option value="'+p.id+'">'+p.producto+'</option>')}else msg.innerHTML='<div class="err">'+(d.error||'Error')+'</div>';
+}
+
+async function addProdLote(){
+  const l=document.getElementById('lot-sel-add').value,p=document.getElementById('lot-prod').value,c=parseInt(document.getElementById('lot-cant').value),cu=parseFloat(document.getElementById('lot-costoU').value),v=document.getElementById('lot-venc').value,msg=document.getElementById('lot-add-msg');
+  if(!l||!p||!c||!cu){msg.innerHTML='<div class="err">Complete campos</div>';return}
+  const d=await api({},'POST',{action:'addProductoLote',loteId:l,productoId:p,cantidad:c,costoUnitario:cu,vencimiento:v,pin:pinInv});
+  if(d.success){msg.innerHTML='<div class="ok">Agregado. Costo real: $'+d.costoRealUnitario.toFixed(2)+'/u</div>';document.getElementById('lot-cant').value='1';document.getElementById('lot-costoU').value='';verDetalleLote()}else msg.innerHTML='<div class="err">'+(d.error||'Error')+'</div>';
+}
+
+async function verDetalleLote(){
+  const lid=document.getElementById('lot-sel-add').value,box=document.getElementById('det-lote-box');
+  if(!lid){box.innerHTML='<p style="color:#999">Seleccione lote</p>';return}
+  const d=await api({action:'getDetalleLote',loteId:lid});
+  if(!d.productos||!d.productos.length){box.innerHTML='<p style="color:#999">Sin productos</p>';return}
+  let h='<div style="overflow-x:auto"><table><thead><tr><th>Prod</th><th>C</th><th>Costo</th><th>Env/U</th><th>Real/U</th><th>Vence</th><th>Rest</th></tr></thead><tbody>';
+  d.productos.forEach(p=>{h+='<tr><td>'+p.producto+'</td><td>'+p.cantidad+'</td><td>$'+p.costoUnitario.toFixed(2)+'</td><td>$'+p.costoEnvioUnitario.toFixed(2)+'</td><td>$'+p.costoRealUnitario.toFixed(2)+'</td><td>'+(p.vencimiento||'-')+'</td><td>'+p.cantidadRestante+'</td></tr>'});
+  h+='</tbody></table></div>';box.innerHTML=h;
+}
+
+async function marcarLlegada(){
+  const l=document.getElementById('lot-sel-lleg').value,f=document.getElementById('lot-fecha-lleg').value,msg=document.getElementById('lot-lleg-msg');
+  if(!l||!f){msg.innerHTML='<div class="err">Seleccione lote y fecha</div>';return}
+  const d=await api({},'POST',{action:'marcarLlegada',loteId:l,fechaLlegada:f,pin:pinInv});
+  if(d.success){msg.innerHTML='<div class="ok">Llegado. '+d.diasReal+' dias reales ('+d.diferencia+')</div>';cargarLotes()}else msg.innerHTML='<div class="err">'+(d.error||'Error')+'</div>';
+}
+
+async function cargarPrecios(){
+  const pid=document.getElementById('prec-prod').value,form=document.getElementById('prec-form');
+  if(!pid){form.classList.add('hidden');return}
+  const d=await api({action:'getPreciosProducto',productoId:pid});
+  const s=await api({action:'getSucursales'});const sucs=s.sucursales||[];
+  let h='';
+  sucs.forEach(sc=>{if(!sc.activa)return;let pr='',pm='',op='',od='',oh='';if(d.precios)d.precios.forEach(px=>{if(px.sucursal===sc.nombre){pr=px.precio;pm=px.precioMayorista;op=px.ofertaPrecio;od=px.ofertaDesde;oh=px.ofertaHasta}});
+    h+='<div class="form-inline"><strong>'+sc.nombre+'</strong><label>Precio:</label><input type="number" class="prec-v" data-suc="'+sc.nombre+'" data-field="precio" value="'+pr+'" step="0.01"><label>Mayorista:</label><input type="number" class="prec-v" data-suc="'+sc.nombre+'" data-field="pm" value="'+pm+'" step="0.01"><label>Oferta:</label><input type="number" class="prec-v" data-suc="'+sc.nombre+'" data-field="oferta" value="'+op+'" step="0.01"><label>Oferta Desde:</label><input type="date" class="prec-v" data-suc="'+sc.nombre+'" data-field="odesde" value="'+od+'"><label>Oferta Hasta:</label><input type="date" class="prec-v" data-suc="'+sc.nombre+'" data-field="ohasta" value="'+oh+'"></div>';
   });
-
-  if (data.success) {
-    let msg = 'Venta realizada! Total: $' + data.total.toFixed(2);
-    if (data.ganancia) msg += ' | Ganancia: $' + data.ganancia.toFixed(2);
-    if (data.costoRealUnitario) msg += ' | Costo real: $' + data.costoRealUnitario.toFixed(2) + '/u';
-    ok.textContent = msg; err.textContent = '';
-    setTimeout(irAVenta, 2000);
-  } else { err.textContent = data.error || 'Error'; ok.textContent = ''; }
+  document.getElementById('prec-campos').innerHTML=h;form.classList.remove('hidden');
 }
 
-// ============ ALTAS ============
-async function irAAltas() {
-  document.getElementById('sub-altas').textContent = tiendaActual;
-  const data = await apiCall({ action: 'getHistorialAltas', tienda: tiendaActual });
-  const tb = document.querySelector('#tabla-altas tbody');
-  tb.innerHTML = '';
-  if (data.altas && data.altas.length) data.altas.forEach(a => tb.innerHTML += '<tr><td>' + a.fecha + '</td><td>' + a.producto + '</td><td>' + a.cantidad + '</td><td>' + a.tienda + '</td><td>' + a.tipo + '</td><td>' + (a.nota || '-') + '</td></tr>');
-  else tb.innerHTML = '<tr><td colspan="6" style="text-align:center;">No hay registros</td></tr>';
-  mostrar('pantalla-altas');
-}
-
-// ============ PIN LOTES ============
-function irALotesPin() {
-  document.getElementById('lotes-pin').value = '';
-  document.getElementById('lotes-pin-error').textContent = '';
-  mostrar('pantalla-lotes-pin');
-}
-
-async function verificarPinLotes() {
-  var pin = document.getElementById('lotes-pin').value;
-  if (!pin) { document.getElementById('lotes-pin-error').textContent = 'Ingrese su PIN'; return; }
-  if (pin !== '7512') { document.getElementById('lotes-pin-error').textContent = 'PIN incorrecto'; return; }
-  inversionPinGuardado = pin;
-  await irALotes();
-}
-
-// ============ LOTES ============
-async function irALotes() {
-  await cargarCatalogo();
-  await cargarLotes();
-  mostrar('pantalla-lotes');
-}
-
-async function cargarCatalogo() {
-  const data = await apiCall({ action: 'getCatalogoIA' });
-  catalogoProductos = data.productos || [];
-  const sel = document.getElementById('lote-producto');
-  sel.innerHTML = '<option value="">Seleccione...</option>';
-  catalogoProductos.forEach(p => sel.innerHTML += '<option value="' + p.id + '">' + p.producto + ' (' + p.marca + ')</option>');
-}
-
-async function cargarLotes() {
-  const data = await apiCall({ action: 'getLotes', tienda: tiendaActual });
-  lotesDisponibles = data.lotes || [];
-
-  const selAdd = document.getElementById('lote-select-add');
-  const selLlegada = document.getElementById('lote-select-llegada');
-  selAdd.innerHTML = '<option value="">Seleccione lote...</option>';
-  selLlegada.innerHTML = '<option value="">Seleccione lote en transito...</option>';
-
-  lotesDisponibles.forEach(l => {
-    selAdd.innerHTML += '<option value="' + l.loteId + '">' + l.loteId + ' - ' + l.sucursal + ' (' + l.estado + ')</option>';
-    if (l.estado === 'En Transito') selLlegada.innerHTML += '<option value="' + l.loteId + '">' + l.loteId + ' - ' + l.sucursal + '</option>';
-  });
-
-  const tb = document.querySelector('#tabla-lotes tbody');
-  tb.innerHTML = '';
-  if (lotesDisponibles.length) lotesDisponibles.forEach(l => {
-    let badge = '';
-    if (l.estado === 'En Transito') badge = '<span class="badge-transito">En Transito</span>';
-    else if (l.estado === 'Disponible') badge = '<span class="badge-disponible">Disponible</span>';
-    else badge = '<span class="badge-cerrado">Cerrado</span>';
-    const dif = l.diferencia !== null && l.diferencia !== undefined ? (l.diferencia > 0 ? '+' + l.diferencia : l.diferencia) + ' dias' : '-';
-    tb.innerHTML += '<tr><td>' + l.loteId + '</td><td>' + l.sucursal + '</td><td>' + l.fechaEnvio + '</td><td>' + (l.diasPronostico || '-') + '</td><td>' + (l.fechaLlegada || '-') + '</td><td>' + (l.diasReal || '-') + '</td><td>$' + parseFloat(l.costoEnvio).toFixed(2) + '</td><td>' + badge + '</td><td>' + dif + '</td></tr>';
-  });
-  else tb.innerHTML = '<tr><td colspan="9" style="text-align:center;">Sin lotes</td></tr>';
-}
-
-async function crearLote() {
-  const sucursal = document.getElementById('lote-sucursal').value;
-  const fechaEnvio = document.getElementById('lote-fecha-envio').value;
-  const dias = document.getElementById('lote-dias-pronostico').value;
-  const costoEnvio = document.getElementById('lote-costo-envio').value;
-  const msg = document.getElementById('lote-create-msg');
-  if (!sucursal || !fechaEnvio || !costoEnvio) { msg.innerHTML = '<div class="error">Complete los campos obligatorios</div>'; return; }
-  const data = await apiCall({}, 'POST', { action: 'crearLote', sucursal: sucursal, fechaEnvio: fechaEnvio, diasPronostico: parseInt(dias) || 0, costoEnvio: parseFloat(costoEnvio), pin: inversionPinGuardado || '7512' });
-  if (data.success) { msg.innerHTML = '<div class="success">Lote ' + data.loteId + ' creado</div>'; ['lote-sucursal','lote-fecha-envio','lote-dias-pronostico','lote-costo-envio'].forEach(id => document.getElementById(id).value = ''); cargarLotes(); }
-  else msg.innerHTML = '<div class="error">' + (data.error || 'Error') + '</div>';
-}
-
-async function agregarProductoLote() {
-  const loteId = document.getElementById('lote-select-add').value;
-  const prodId = document.getElementById('lote-producto').value;
-  const cant = parseInt(document.getElementById('lote-cantidad').value);
-  const costo = parseFloat(document.getElementById('lote-costo-unitario').value);
-  const venc = document.getElementById('lote-vencimiento').value;
-  const msg = document.getElementById('lote-add-msg');
-  if (!loteId || !prodId || !cant || !costo) { msg.innerHTML = '<div class="error">Complete todos los campos</div>'; return; }
-  const data = await apiCall({}, 'POST', { action: 'addProductoLote', loteId: loteId, productoId: prodId, cantidad: cant, costoUnitario: costo, vencimiento: venc });
-  if (data.success) { msg.innerHTML = '<div class="success">Producto agregado al lote. Costo real unitario: $' + data.costoRealUnitario.toFixed(2) + '</div>'; document.getElementById('lote-cantidad').value = '1'; document.getElementById('lote-costo-unitario').value = ''; mostrarDetalleLote(); }
-  else msg.innerHTML = '<div class="error">' + (data.error || 'Error') + '</div>';
-}
-
-async function mostrarDetalleLote() {
-  const loteId = document.getElementById('lote-select-add').value;
-  const container = document.getElementById('detalle-lote-container');
-  if (!loteId) { container.innerHTML = '<p style="color:#999;">Seleccione un lote</p>'; return; }
-  const data = await apiCall({ action: 'getDetalleLote', loteId: loteId });
-  if (!data.productos || !data.productos.length) { container.innerHTML = '<p style="color:#999;">Lote sin productos</p>'; return; }
-  let html = '<div style="overflow-x:auto;"><table><thead><tr><th>Producto</th><th>Cant</th><th>Costo</th><th>Envio/U</th><th>Real/U</th><th>Vence</th><th>Estado</th><th>Rest.</th></tr></thead><tbody>';
-  data.productos.forEach(p => {
-    const estado = p.cantidadRestante > 0 ? '<span class="badge-disponible">Disponible</span>' : '<span class="badge-cerrado">Vendido</span>';
-    html += '<tr><td>' + p.producto + '</td><td>' + p.cantidad + '</td><td>$' + p.costoUnitario.toFixed(2) + '</td><td>$' + p.costoEnvioUnitario.toFixed(2) + '</td><td>$' + p.costoRealUnitario.toFixed(2) + '</td><td>' + (p.vencimiento || '-') + '</td><td>' + estado + '</td><td>' + p.cantidadRestante + '</td></tr>';
-  });
-  html += '</tbody></table></div>';
-  container.innerHTML = html;
-}
-
-async function marcarLlegada() {
-  const loteId = document.getElementById('lote-select-llegada').value;
-  const fechaLlegada = document.getElementById('lote-fecha-llegada').value;
-  const msg = document.getElementById('lote-llegada-msg');
-  if (!loteId || !fechaLlegada) { msg.innerHTML = '<div class="error">Seleccione lote y fecha</div>'; return; }
-  const data = await apiCall({}, 'POST', { action: 'marcarLlegada', loteId: loteId, fechaLlegada: fechaLlegada });
-  if (data.success) { msg.innerHTML = '<div class="success">Lote marcado como llegado. Dias reales: ' + data.diasReal + ' | Diferencia: ' + data.diferencia + ' dias</div>'; cargarLotes(); }
-  else msg.innerHTML = '<div class="error">' + (data.error || 'Error') + '</div>';
-}
-
-// ============ PANEL MAESTRO ============
-async function irAPanelMaestro() {
-  const data = await apiCall({ action: 'getProductos', tienda: tiendaActual });
-  productosDisponibles = data.productos || [];
-  const sel = document.getElementById('edit-prod-select');
-  sel.innerHTML = '<option value="">Seleccione producto...</option>';
-  productosDisponibles.forEach(p => sel.innerHTML += '<option value="' + p.nombre + '" data-tienda="' + p.tienda + '">' + p.nombre + ' (' + p.tienda + ')</option>');
-  mostrar('pantalla-maestro');
-}
-
-async function agregarProducto() {
-  const n = document.getElementById('new-prod-nombre').value;
-  const pr = parseFloat(document.getElementById('new-prod-precio').value);
-  const co = parseFloat(document.getElementById('new-prod-costo').value) || 0;
-  const st = parseInt(document.getElementById('new-prod-stock').value);
-  const ti = document.getElementById('new-prod-tienda').value;
-  const no = document.getElementById('new-prod-nota').value;
-  const pi = document.getElementById('new-prod-pin').value;
-  const msg = document.getElementById('new-prod-msg');
-  if (!n || !pr || !st || !pi) { msg.innerHTML = '<div class="error">Complete los campos obligatorios</div>'; return; }
-  const data = await apiCall({}, 'POST', { action: 'addProducto', producto: n, precio: pr, costo: co, stock: st, tienda: ti, nota: no, pin: pi });
-  if (data.success) { msg.innerHTML = '<div class="success">Producto agregado</div>'; ['new-prod-nombre','new-prod-precio','new-prod-costo','new-prod-stock','new-prod-nota','new-prod-pin'].forEach(id => document.getElementById(id).value = ''); }
-  else msg.innerHTML = '<div class="error">' + data.error + '</div>';
-}
-
-async function editarProducto() {
-  const sel = document.getElementById('edit-prod-select');
-  const prod = sel.value;
-  const tienda = sel.options[sel.selectedIndex].getAttribute('data-tienda');
-  const pr = document.getElementById('edit-prod-precio').value;
-  const co = document.getElementById('edit-prod-costo').value;
-  const st = document.getElementById('edit-prod-stock').value;
-  const pi = document.getElementById('edit-prod-pin').value;
-  const msg = document.getElementById('edit-prod-msg');
-  if (!prod || !pi) { msg.innerHTML = '<div class="error">Seleccione producto e ingrese PIN</div>'; return; }
-  const payload = { action: 'updateProducto', producto: prod, tienda: tienda, pin: pi };
-  if (pr) payload.nuevoPrecio = parseFloat(pr);
-  if (co) payload.nuevoCosto = parseFloat(co);
-  if (st) payload.nuevoStock = parseInt(st);
-  const data = await apiCall({}, 'POST', payload);
-  if (data.success) { msg.innerHTML = '<div class="success">Producto actualizado</div>'; ['edit-prod-precio','edit-prod-costo','edit-prod-stock','edit-prod-pin'].forEach(id => document.getElementById(id).value = ''); irAPanelMaestro(); }
-  else msg.innerHTML = '<div class="error">' + data.error + '</div>';
-}
-
-// ============ PIN RESUMEN ============
-function irAResumenPin() {
-  document.getElementById('resumen-pin').value = '';
-  document.getElementById('resumen-pin-error').textContent = '';
-  mostrar('pantalla-resumen-pin');
-}
-
-function verificarPinResumen() {
-  var pin = document.getElementById('resumen-pin').value;
-  if (!pin) { document.getElementById('resumen-pin-error').textContent = 'Ingrese su PIN'; return; }
-  if (pin !== '7512') { document.getElementById('resumen-pin-error').textContent = 'PIN incorrecto'; return; }
-  inversionPinGuardado = pin;
-  document.getElementById('sub-resumen').textContent = tiendaActual;
-  document.getElementById('filtro-resumen').value = 'mes_actual';
-  document.getElementById('fechas-personalizadas').classList.add('hidden');
-  document.getElementById('resumen-contenido').classList.add('hidden');
-  cargarResumen();
-  mostrar('pantalla-resumen');
-}
-
-// ============ RESUMEN MENSUAL ============
-function onFiltroResumenChange() {
-  var filtro = document.getElementById('filtro-resumen').value;
-  if (filtro === 'personalizado') {
-    document.getElementById('fechas-personalizadas').classList.remove('hidden');
-    document.getElementById('resumen-contenido').classList.add('hidden');
-  } else {
-    document.getElementById('fechas-personalizadas').classList.add('hidden');
-    cargarResumen();
+async function guardarPrecios(){
+  const pid=document.getElementById('prec-prod').value;const inputs=document.querySelectorAll('.prec-v');const sucData={};
+  inputs.forEach(inp=>{const s=inp.getAttribute('data-suc'),f=inp.getAttribute('data-field');if(!sucData[s])sucData[s]={};sucData[s][f]=inp.value});
+  for(var s2 in sucData){
+    var sd=sucData[s2];
+    await api({},'POST',{action:'updatePrecio',productoId:pid,sucursal:s2,pin:pinInv,precio:parseFloat(sd.precio)||0,precioMayorista:parseFloat(sd.pm)||0,ofertaPrecio:parseFloat(sd.oferta)||'',ofertaDesde:sd.odesde||'',ofertaHasta:sd.ohasta||''});
   }
+  document.getElementById('prec-msg').innerHTML='<div class="ok">Precios guardados</div>';
 }
 
-async function cargarResumen() {
-  var filtro = document.getElementById('filtro-resumen').value;
-  if (filtro === 'personalizado') {
-    var fi = document.getElementById('resumen-fecha-inicio').value;
-    var ff = document.getElementById('resumen-fecha-fin').value;
-    if (!fi || !ff) return;
-  }
-
-  document.getElementById('resumen-cargando').classList.remove('hidden');
-  document.getElementById('resumen-contenido').classList.add('hidden');
-
-  var params = { action: 'getResumenMensual', tienda: tiendaActual, filtro: filtro };
-  if (filtro === 'personalizado') {
-    params.fechaInicio = document.getElementById('resumen-fecha-inicio').value;
-    params.fechaFin = document.getElementById('resumen-fecha-fin').value;
-  }
-
-  var data = await apiCall(params);
-
-  document.getElementById('resumen-cargando').classList.add('hidden');
-
-  if (data.error) {
-    document.getElementById('resumen-cargando').textContent = data.error;
-    document.getElementById('resumen-cargando').classList.remove('hidden');
-    return;
-  }
-
-  document.getElementById('resumen-titulo-periodo').textContent = data.periodo || 'Periodo';
-  document.getElementById('res-ventas').textContent = '$' + data.totalVentas.toFixed(2);
-  document.getElementById('res-costo').textContent = '$' + data.totalCostoReal.toFixed(2);
-  document.getElementById('res-comisiones').textContent = '$' + data.totalComisiones.toFixed(2);
-  document.getElementById('res-gastos').textContent = '$' + data.gastosOperativos.toFixed(2);
-  document.getElementById('res-bruta').textContent = '$' + data.gananciaBruta.toFixed(2);
-  document.getElementById('res-neta').textContent = '$' + data.gananciaNeta.toFixed(2);
-  document.getElementById('res-neta').style.color = data.gananciaNeta >= 0 ? '#28a745' : '#dc3545';
-  document.getElementById('res-cantidad').textContent = data.numVentas;
-  document.getElementById('res-margen').textContent = data.margen + '%';
-
-  var tb = document.querySelector('#tabla-resumen-ventas tbody');
-  tb.innerHTML = '';
-  if (data.ventas && data.ventas.length) {
-    data.ventas.forEach(function(v) {
-      var colorGan = v.ganancia >= 0 ? '#28a745' : '#dc3545';
-      tb.innerHTML += '<tr><td>' + v.fecha + '</td><td>' + v.producto + '</td><td>' + v.cantidad + '</td><td>$' + v.venta.toFixed(2) + '</td><td>$' + v.costoReal.toFixed(2) + '</td><td>$' + v.comision.toFixed(2) + '</td><td style="color:' + colorGan + ';">$' + v.ganancia.toFixed(2) + '</td></tr>';
-    });
-  } else tb.innerHTML = '<tr><td colspan="7" style="text-align:center;">Sin ventas en este periodo</td></tr>';
-
-  document.getElementById('resumen-contenido').classList.remove('hidden');
+function irResumenPin(){document.getElementById('rpin').value='';document.getElementById('rpin-err').textContent='';mostrar('P-resumen-pin')}
+function verifPinResumen(){const p=document.getElementById('rpin').value;if(!p){document.getElementById('rpin-err').textContent='Ingrese PIN';return}if(p!=='7512'){document.getElementById('rpin-err').textContent='Incorrecto';return}pinInv=p;document.getElementById('sub-resumen').textContent=tienda;document.getElementById('flt-resumen').value='mes_actual';document.getElementById('fechas-pers').classList.add('hidden');document.getElementById('res-cont').classList.add('hidden');cargarResumen();mostrar('P-resumen')}
+function onFiltroRes(){if(document.getElementById('flt-resumen').value==='personalizado'){document.getElementById('fechas-pers').classList.remove('hidden');document.getElementById('res-cont').classList.add('hidden')}else{document.getElementById('fechas-pers').classList.add('hidden');cargarResumen()}}
+async function cargarResumen(){
+  const f=document.getElementById('flt-resumen').value;if(f==='personalizado'){if(!document.getElementById('res-fi').value||!document.getElementById('res-ff').value)return}
+  document.getElementById('res-carga').classList.remove('hidden');document.getElementById('res-cont').classList.add('hidden');
+  var p={action:'getResumenMensual',tienda:tienda,filtro:f};if(f==='personalizado'){p.fechaInicio=document.getElementById('res-fi').value;p.fechaFin=document.getElementById('res-ff').value}
+  const d=await api(p);document.getElementById('res-carga').classList.add('hidden');
+  if(d.error){document.getElementById('res-carga').textContent=d.error;document.getElementById('res-carga').classList.remove('hidden');return}
+  document.getElementById('res-titulo').textContent=d.periodo||'Periodo';
+  document.getElementById('r-v').textContent='$'+d.totalVentas.toFixed(2);
+  document.getElementById('r-c').textContent='$'+d.totalCostoReal.toFixed(2);
+  document.getElementById('r-com').textContent='$'+d.totalComisiones.toFixed(2);
+  document.getElementById('r-g').textContent='$'+d.gastosOperativos.toFixed(2);
+  document.getElementById('r-br').textContent='$'+d.gananciaBruta.toFixed(2);
+  document.getElementById('r-ne').textContent='$'+d.gananciaNeta.toFixed(2);document.getElementById('r-ne').style.color=d.gananciaNeta>=0?'#28a745':'#dc3545';
+  document.getElementById('r-n').textContent=d.numVentas;document.getElementById('r-m').textContent=d.margen+'%';
+  const tb=document.querySelector('#t-res tbody');tb.innerHTML='';
+  if(d.ventas&&d.ventas.length)d.ventas.forEach(v=>{const c=v.ganancia>=0?'#28a745':'#dc3545';const t=v.tipoVenta==='Mayorista'?'<span class="badge-m">M</span>':'';tb.innerHTML+='<tr><td>'+v.fecha+'</td><td>'+v.producto+'</td><td>'+v.cantidad+'</td><td>$'+v.venta.toFixed(2)+'</td><td>$'+v.costoReal.toFixed(2)+'</td><td>$'+v.comision.toFixed(2)+'</td><td style="color:'+c+'">$'+v.ganancia.toFixed(2)+'</td></tr>'});
+  else tb.innerHTML='<tr><td colspan="7" style="text-align:center">Sin ventas</td></tr>';
+  document.getElementById('res-cont').classList.remove('hidden');
 }
 
-// ============ INVERSION ============
-async function irAInversion() {
-  inversionPinGuardado = '';
-  document.getElementById('inv-pin').value = '';
-  document.getElementById('inv-pin-error').textContent = '';
-  document.getElementById('inv-pin-section').classList.remove('hidden');
-  document.getElementById('inv-contenido').classList.add('hidden');
-  mostrar('pantalla-inversion');
+async function irInversion(){pinInv='';document.getElementById('inv-pin').value='';document.getElementById('inv-pin-err').textContent='';document.getElementById('inv-pin-sec').classList.remove('hidden');document.getElementById('inv-cont').classList.add('hidden');mostrar('P-inversion')}
+async function verInv(){const p=document.getElementById('inv-pin').value;if(!p){document.getElementById('inv-pin-err').textContent='Ingrese PIN';return}pinInv=p;document.getElementById('inv-pin-err').textContent='Cargando...';await cargarInv()}
+async function cargarInv(){
+  const f=document.getElementById('flt-inv').value,su=document.getElementById('flt-suc-inv').value;
+  const d=await api({},'POST',{action:'getResumenInversion',tienda:tienda,pin:pinInv,filtro:f,sucursal:su});
+  if(d.error){document.getElementById('inv-pin-err').textContent=d.error;return}
+  document.getElementById('inv-pin-err').textContent='';document.getElementById('inv-pin-sec').classList.add('hidden');document.getElementById('inv-cont').classList.remove('hidden');
+  if(d.sucursales){const sel=document.getElementById('flt-suc-inv');const va=sel.value;sel.innerHTML='<option value="todas">Todas</option>';d.sucursales.forEach(s=>sel.innerHTML+='<option>'+s+'</option>');sel.value=va}
+  document.getElementById('i-st').textContent='$'+d.inversionStock.toFixed(2);document.getElementById('i-tr').textContent='$'+(d.stockTransito||0).toFixed(2);document.getElementById('i-ga').textContent='$'+d.totalGastos.toFixed(2);document.getElementById('i-co').textContent='$'+(d.totalComisiones||0).toFixed(2);document.getElementById('i-vt').textContent='$'+d.totalVentas.toFixed(2);
+  const g=d.gananciaNeta;document.getElementById('i-ne').textContent='$'+g.toFixed(2);document.getElementById('i-ne').style.color=g>=0?'#28a745':'#dc3545';
+  const tb=document.querySelector('#t-inv-p tbody');tb.innerHTML='';
+  if(d.productos&&d.productos.length)d.productos.forEach(p=>{const c=p.gananciaUnit>=0?'#28a745':'#dc3545';tb.innerHTML+='<tr><td>'+p.nombre+'</td><td>'+(p.sucursal||'-')+'</td><td>$'+p.precio.toFixed(2)+'</td><td>$'+p.costo.toFixed(2)+'</td><td style="color:'+c+'">$'+p.gananciaUnit.toFixed(2)+'</td><td>'+p.margen+'%</td></tr>'});
+  else tb.innerHTML='<tr><td colspan="6" style="text-align:center">Sin productos</td></tr>';
+  const tg=document.querySelector('#t-gastos tbody');tg.innerHTML='';
+  if(d.gastos&&d.gastos.length)d.gastos.forEach(g=>tg.innerHTML+='<tr><td>'+g.fecha+'</td><td>'+g.descripcion+'</td><td>$'+g.monto.toFixed(2)+'</td><td>'+g.tienda+'</td></tr>');
+  else tg.innerHTML='<tr><td colspan="4" style="text-align:center">Sin gastos</td></tr>';
+  document.getElementById('g-tienda').value=tienda;
 }
-
-async function verResumenInversion() {
-  const pin = document.getElementById('inv-pin').value;
-  if (!pin) { document.getElementById('inv-pin-error').textContent = 'Ingrese su PIN'; return; }
-  inversionPinGuardado = pin;
-  document.getElementById('inv-pin-error').textContent = 'Cargando...';
-  await cargarDatosInversion();
-}
-
-async function cargarDatosInversion() {
-  const filtro = document.getElementById('filtro-inversion').value;
-  const sucursal = document.getElementById('filtro-sucursal-inversion').value;
-  const data = await apiCall({}, 'POST', { action: 'getResumenInversion', tienda: tiendaActual, pin: inversionPinGuardado, filtro: filtro, sucursal: sucursal });
-  if (data.error) { document.getElementById('inv-pin-error').textContent = data.error; return; }
-  document.getElementById('inv-pin-error').textContent = '';
-  document.getElementById('inv-pin-section').classList.add('hidden');
-  document.getElementById('inv-contenido').classList.remove('hidden');
-
-  if (data.sucursales) {
-    const selSuc = document.getElementById('filtro-sucursal-inversion');
-    const valActual = selSuc.value;
-    selSuc.innerHTML = '<option value="todas">Todas las sucursales</option>';
-    data.sucursales.forEach(s => selSuc.innerHTML += '<option value="' + s + '">' + s + '</option>');
-    selSuc.value = valActual;
-  }
-
-  renderInversion(data);
-}
-
-function renderInversion(data) {
-  document.getElementById('inv-stock').textContent = '$' + data.inversionStock.toFixed(2);
-  document.getElementById('inv-transito').textContent = '$' + (data.stockTransito || 0).toFixed(2);
-  document.getElementById('inv-gastos').textContent = '$' + data.totalGastos.toFixed(2);
-  document.getElementById('inv-comisiones').textContent = '$' + (data.totalComisiones || 0).toFixed(2);
-  document.getElementById('inv-ventas').textContent = '$' + data.totalVentas.toFixed(2);
-  const gan = data.gananciaNeta;
-  document.getElementById('inv-ganancia').textContent = '$' + gan.toFixed(2);
-  document.getElementById('inv-ganancia').style.color = gan >= 0 ? '#28a745' : '#dc3545';
-
-  const tbP = document.querySelector('#tabla-inv-productos tbody');
-  tbP.innerHTML = '';
-  if (data.productos && data.productos.length) {
-    data.productos.forEach(p => {
-      const c = p.gananciaUnit >= 0 ? '#28a745' : '#dc3545';
-      tbP.innerHTML += '<tr><td>' + p.nombre + '</td><td>' + (p.sucursal || '-') + '</td><td>$' + p.precio.toFixed(2) + '</td><td>$' + p.costo.toFixed(2) + '</td><td style="color:' + c + ';">$' + p.gananciaUnit.toFixed(2) + '</td><td>' + p.margen + '%</td></tr>';
-    });
-  } else tbP.innerHTML = '<tr><td colspan="6" style="text-align:center;">Sin productos</td></tr>';
-
-  const tbG = document.querySelector('#tabla-gastos tbody');
-  tbG.innerHTML = '';
-  if (data.gastos && data.gastos.length) data.gastos.forEach(g => tbG.innerHTML += '<tr><td>' + g.fecha + '</td><td>' + g.descripcion + '</td><td>$' + g.monto.toFixed(2) + '</td><td>' + g.tienda + '</td></tr>');
-  else tbG.innerHTML = '<tr><td colspan="4" style="text-align:center;">Sin gastos</td></tr>';
-  document.getElementById('gasto-tienda').value = tiendaActual;
-}
-
-function recargarInversion() { if (inversionPinGuardado) cargarDatosInversion(); }
-
-async function agregarGasto() {
-  const desc = document.getElementById('gasto-desc').value;
-  const monto = parseFloat(document.getElementById('gasto-monto').value);
-  const tienda = document.getElementById('gasto-tienda').value;
-  const msg = document.getElementById('gasto-msg');
-  if (!desc || !monto) { msg.innerHTML = '<div class="error">Complete descripcion y monto</div>'; return; }
-  const data = await apiCall({}, 'POST', { action: 'addGasto', descripcion: desc, monto: monto, tienda: tienda, pin: inversionPinGuardado });
-  if (data.success) { msg.innerHTML = '<div class="success">Gasto registrado</div>'; document.getElementById('gasto-desc').value = ''; document.getElementById('gasto-monto').value = ''; cargarDatosInversion(); }
-  else msg.innerHTML = '<div class="error">' + (data.error || 'Error') + '</div>';
-}
+function recInv(){if(pinInv)cargarInv()}
+async function addGasto(){const desc=document.getElementById('g-desc').value,m=parseFloat(document.getElementById('g-monto').value),t=document.getElementById('g-tienda').value,msg=document.getElementById('g-msg');if(!desc||!m){msg.innerHTML='<div class="err">Complete campos</div>';return}const d=await api({},'POST',{action:'addGasto',descripcion:desc,monto:m,tienda:t,pin:pinInv});if(d.success){msg.innerHTML='<div class="ok">Registrado</div>';document.getElementById('g-desc').value='';document.getElementById('g-monto').value='';cargarInv()}else msg.innerHTML='<div class="err">'+(d.error||'Error')+'</div>'}
 </script>
 </body>
 </html>
