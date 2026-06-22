@@ -20,9 +20,12 @@
     .btn-gris { background: #6c757d; color: white; }
     .btn-naranja { background: #fd7e14; color: white; }
     .btn-rojo { background: #dc3545; color: white; }
+    .btn-morado { background: #6f42c1; color: white; }
+    .btn-oscuro { background: #343a40; color: white; }
     .hidden { display: none; }
     .section { background: white; padding: 20px; margin: 10px 0; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    input, select { width: 100%; height: 52px; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+    input, select, textarea { width: 100%; height: 52px; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+    textarea { height: 80px; resize: vertical; }
     label { font-weight: bold; display: block; margin-top: 15px; color: #333; }
     .error { color: red; text-align: center; margin: 10px 0; font-weight: bold; }
     .success { color: green; text-align: center; margin: 10px 0; font-weight: bold; }
@@ -31,10 +34,23 @@
     th { background: #f2f2f2; }
     .dashboard-box { background: #e9ecef; padding: 15px; text-align: center; margin: 5px 0; border-radius: 8px; }
     .dashboard-number { font-size: 28px; font-weight: bold; color: #0066cc; }
+    .alert-critical { background: #f8d7da; border: 1px solid #f5c6cb; padding: 12px; border-radius: 8px; margin: 8px 0; }
+    .alert-critical strong { color: #721c24; }
+    .alert-warning { background: #fff3cd; border: 1px solid #ffeeba; padding: 12px; border-radius: 8px; margin: 8px 0; }
+    .alert-warning strong { color: #856404; }
+    .badge-transito { background: #ffc107; color: #333; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+    .badge-disponible { background: #28a745; color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+    .badge-cerrado { background: #6c757d; color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+    .badge-critico { background: #dc3545; color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+    .badge-normal { background: #28a745; color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+    .select-lote { background: #e7f3ff; border: 2px solid #0066cc; border-radius: 8px; padding: 10px; margin: 8px 0; cursor: pointer; }
+    .select-lote:hover { background: #cce0ff; }
+    .select-lote.selected { background: #0066cc; color: white; }
   </style>
 </head>
 <body>
 
+  <!-- ============ PANTALLA INICIO ============ -->
   <div id="pantalla-inicio">
     <h1>DUAVA Finanzas</h1>
     <div class="subtitle">La Habana</div>
@@ -42,6 +58,7 @@
     <button class="btn btn-rosado" onclick="seleccionarTienda('CELEBRACIONES')">CELEBRACIONES</button>
   </div>
 
+  <!-- ============ PANTALLA LOGIN ============ -->
   <div id="pantalla-login" class="hidden">
     <h1>DUAVA Finanzas</h1>
     <div class="subtitle">La Habana - <span id="nombre-tienda-login"></span></div>
@@ -56,31 +73,40 @@
     </div>
   </div>
 
+  <!-- ============ PANTALLA MENU ============ -->
   <div id="pantalla-menu" class="hidden">
     <h1>DUAVA Finanzas</h1>
     <div class="subtitle">La Habana - <span id="nombre-tienda-menu"></span></div>
+    <div class="section" id="alertas-container" class="hidden"></div>
     <div class="section">
       <button class="btn btn-azul" onclick="verInventario()">Stock actual</button>
       <button class="btn btn-naranja" onclick="irVentasPublicas()">Mis Ventas</button>
       <button class="btn btn-verde" onclick="irAVenta()">Realizar Venta</button>
       <button class="btn btn-azul" onclick="irAAltas()">Historial de Altas</button>
+      <button class="btn btn-oscuro" onclick="irALotes()">Gestion de Lotes</button>
       <button class="btn btn-naranja" onclick="irAPanelMaestro()">Panel Maestro</button>
-      <button class="btn btn-rosado" onclick="irAInversion()">Panel de Inversion</button>
+            <button class="btn btn-verde" onclick="irAResumen()">Resumen de Ganancias</button>
+      <button class="btn btn-morado" onclick="irAInversion()">Panel de Inversion</button>
       <button class="btn btn-rojo" onclick="cerrarSesion()">Cerrar Sesion</button>
     </div>
   </div>
 
+  <!-- ============ PANTALLA INVENTARIO ============ -->
   <div id="pantalla-inventario" class="hidden">
     <h1>Stock actual</h1>
     <div class="subtitle" id="sub-inventario"></div>
     <div class="section">
+      <select id="filtro-sucursal-inventario" onchange="verInventario()">
+        <option value="todas">Todas las sucursales</option>
+      </select>
       <div style="overflow-x:auto;">
-        <table id="tabla-inventario"><thead><tr><th>Producto</th><th>Precio ($)</th><th>Stock</th></tr></thead><tbody></tbody></table>
+        <table id="tabla-inventario"><thead><tr><th>Producto</th><th>Precio ($)</th><th>Stock</th><th>Sucursal</th><th>Estado</th></tr></thead><tbody></tbody></table>
       </div>
       <button class="btn btn-gris" onclick="volverMenu()" style="margin-top:15px;">Volver</button>
     </div>
   </div>
 
+  <!-- ============ PANTALLA VENTAS PUBLICAS ============ -->
   <div id="pantalla-ventas-publico" class="hidden">
     <h1>Historial de Ventas</h1>
     <div class="subtitle" id="sub-ventas-p"></div>
@@ -91,21 +117,29 @@
         <option value="todo">Todo</option>
       </select>
       <div style="overflow-x:auto; margin-top:10px;">
-        <table id="tabla-ventas-p"><thead><tr><th>Fecha</th><th>Producto</th><th>Cant</th><th>Total</th><th>Vendedor</th><th>Motivo</th><th>% Vend.</th></tr></thead><tbody></tbody></table>
+        <table id="tabla-ventas-p"><thead><tr><th>Fecha</th><th>Producto</th><th>Cant</th><th>Total</th><th>Ganancia</th><th>Vendedor</th><th>Motivo</th></tr></thead><tbody></tbody></table>
       </div>
       <button class="btn btn-gris" onclick="volverMenu()" style="margin-top:15px;">Volver</button>
     </div>
   </div>
 
+  <!-- ============ PANTALLA VENTA ============ -->
   <div id="pantalla-venta" class="hidden">
     <h1>Realizar Venta</h1>
     <div class="subtitle" id="sub-venta"></div>
     <div class="section">
       <label>Producto:</label>
-      <select id="select-producto" onchange="actualizarStock()"><option value="">Seleccione...</option></select>
-      <div style="margin:10px 0;padding:10px;background:#f8f9fa;border-radius:3px;">Stock disponible: <strong id="stock-display">-</strong></div>
+      <select id="select-producto" onchange="onProductoChange()"><option value="">Seleccione...</option></select>
+      <div style="margin:10px 0;padding:10px;background:#f8f9fa;border-radius:8px;">
+        <div>Stock disponible: <strong id="stock-display">-</strong></div>
+        <div id="lote-info" style="font-size:12px;color:#666;margin-top:4px;"></div>
+      </div>
       <label>Cantidad:</label>
       <input type="number" id="input-cantidad" value="1" min="1">
+      <div id="seccion-elegir-lote" class="hidden">
+        <label>Seleccionar Lote (vencimiento proximo):</label>
+        <div id="lista-lotes-elegir"></div>
+      </div>
       <label>Motivo (opcional):</label>
       <input type="text" id="input-motivo" placeholder="Ej: Cliente frecuente">
       <label>Porciento Vendedor (%):</label>
@@ -117,6 +151,7 @@
     </div>
   </div>
 
+  <!-- ============ PANTALLA ALTAS ============ -->
   <div id="pantalla-altas" class="hidden">
     <h1>Historial de Altas</h1>
     <div class="subtitle" id="sub-altas"></div>
@@ -128,6 +163,68 @@
     </div>
   </div>
 
+  <!-- ============ PANTALLA LOTES ============ -->
+  <div id="pantalla-lotes" class="hidden">
+    <h1>Gestion de Lotes</h1>
+    <div class="subtitle">Envios y Stock</div>
+
+    <div class="section">
+      <h3 style="margin-bottom:10px;">Crear Nuevo Lote de Envio</h3>
+      <label>Sucursal:</label>
+      <input type="text" id="lote-sucursal" placeholder="Ej: La Habana, Holguin...">
+      <label>Fecha de Envio:</label>
+      <input type="date" id="lote-fecha-envio">
+      <label>Dias Pronosticados de Llegada:</label>
+      <input type="number" id="lote-dias-pronostico" placeholder="Ej: 20" min="1">
+      <label>Costo Total de Envio ($):</label>
+      <input type="number" id="lote-costo-envio" placeholder="Ej: 25.00" step="0.01">
+      <button class="btn btn-verde" onclick="crearLote()">Crear Lote</button>
+      <div id="lote-create-msg"></div>
+    </div>
+
+    <div class="section">
+      <h3 style="margin-bottom:10px;">Agregar Productos al Lote</h3>
+      <label>Seleccionar Lote:</label>
+      <select id="lote-select-add" onchange="mostrarDetalleLote()"><option value="">Seleccione lote...</option></select>
+      <label>Producto (del Catalogo):</label>
+      <select id="lote-producto"><option value="">Seleccione...</option></select>
+      <label>Cantidad:</label>
+      <input type="number" id="lote-cantidad" value="1" min="1">
+      <label>Costo Unitario ($):</label>
+      <input type="number" id="lote-costo-unitario" placeholder="Costo de compra" step="0.01">
+      <label>Fecha de Vencimiento:</label>
+      <input type="date" id="lote-vencimiento">
+      <button class="btn btn-azul" onclick="agregarProductoLote()">Agregar al Lote</button>
+      <div id="lote-add-msg"></div>
+    </div>
+
+    <div class="section">
+      <h3 style="margin-bottom:10px;">Detalle del Lote</h3>
+      <div id="detalle-lote-container">
+        <p style="color:#999;">Seleccione un lote arriba para ver su detalle</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3 style="margin-bottom:10px;">Marcar Lote como Llegado</h3>
+      <select id="lote-select-llegada"><option value="">Seleccione lote en transito...</option></select>
+      <label>Fecha Real de Llegada:</label>
+      <input type="date" id="lote-fecha-llegada">
+      <button class="btn btn-naranja" onclick="marcarLlegada()">Marcar como Llegado</button>
+      <div id="lote-llegada-msg"></div>
+    </div>
+
+    <div class="section">
+      <h3 style="margin-bottom:10px;">Todos los Lotes</h3>
+      <div style="overflow-x:auto;">
+        <table id="tabla-lotes"><thead><tr><th>ID</th><th>Sucursal</th><th>Envio</th><th>Pronost.</th><th>Llegada</th><th>Real</th><th>Envio $</th><th>Estado</th><th>Dif.</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+
+    <button class="btn btn-gris" onclick="volverMenu()" style="margin-top:10px;">Volver</button>
+  </div>
+
+  <!-- ============ PANTALLA MAESTRO ============ -->
   <div id="pantalla-maestro" class="hidden">
     <h1>Panel Maestro</h1>
     <div class="subtitle">Gestion de Productos</div>
@@ -155,7 +252,54 @@
     </div>
     <button class="btn btn-rojo" onclick="volverMenu()">Volver</button>
   </div>
+  <!-- ============ PANTALLA RESUMEN MENSUAL ============ -->
+  <div id="pantalla-resumen" class="hidden">
+    <h1>Resumen de Ganancias</h1>
+    <div class="subtitle" id="sub-resumen"></div>
+    <div class="section">
+      <label>Periodo:</label>
+      <select id="filtro-resumen" onchange="cargarResumen()">
+        <option value="mes_actual">Mes Actual</option>
+        <option value="mes_anterior">Mes Anterior</option>
+        <option value="semana">Ultima Semana</option>
+        <option value="personalizado">Personalizado</option>
+      </select>
+      <div id="fechas-personalizadas" class="hidden" style="margin-top:10px;">
+        <label>Fecha inicio:</label>
+        <input type="date" id="resumen-fecha-inicio">
+        <label>Fecha fin:</label>
+        <input type="date" id="resumen-fecha-fin">
+        <button class="btn btn-azul" onclick="cargarResumen()" style="margin-top:5px;">Buscar</button>
+      </div>
+      <div id="resumen-cargando" class="hidden" style="text-align:center;padding:20px;">Cargando...</div>
+    </div>
 
+    <div id="resumen-contenido" class="hidden">
+      <div class="section">
+        <h3 style="margin-bottom:5px;" id="resumen-titulo-periodo">Periodo</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+          <div class="dashboard-box"><small>Ventas Totales</small><div class="dashboard-number" id="res-ventas">$0</div></div>
+          <div class="dashboard-box"><small>Costo de Productos</small><div class="dashboard-number" id="res-costo">$0</div></div>
+          <div class="dashboard-box"><small>Comisiones Vend.</small><div class="dashboard-number" id="res-comisiones">$0</div></div>
+          <div class="dashboard-box"><small>Gastos Operativos</small><div class="dashboard-number" id="res-gastos">$0</div></div>
+          <div class="dashboard-box"><small style="color:#28a745;">Ganancia Bruta</small><div class="dashboard-number" id="res-bruta" style="color:#28a745;">$0</div></div>
+          <div class="dashboard-box"><small style="color:#28a745;">Ganancia Neta</small><div class="dashboard-number" id="res-neta" style="color:#28a745;">$0</div></div>
+          <div class="dashboard-box"><small>Ventas Realizadas</small><div class="dashboard-number" id="res-cantidad" style="color:#fd7e14;">0</div></div>
+          <div class="dashboard-box"><small>Margen</small><div class="dashboard-number" id="res-margen" style="color:#fd7e14;">0%</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3 style="margin-bottom:10px;">Detalle de Ventas</h3>
+        <div style="overflow-x:auto;">
+          <table id="tabla-resumen-ventas"><thead><tr><th>Fecha</th><th>Producto</th><th>Cant</th><th>Venta</th><th>Costo</th><th>Comision</th><th>Ganancia</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-gris" onclick="volverMenu()" style="margin-top:10px;">Volver</button>
+  </div>
+  <!-- ============ PANTALLA INVERSION ============ -->
   <div id="pantalla-inversion" class="hidden">
     <h1>Panel de Inversion</h1>
     <div class="subtitle">Solo propietario</div>
@@ -172,22 +316,26 @@
           <option value="mes">Ultimo Mes</option>
           <option value="semana">Ultima Semana</option>
         </select>
+        <select id="filtro-sucursal-inversion" onchange="recargarInversion()" style="margin-top:8px;">
+          <option value="todas">Todas las sucursales</option>
+        </select>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
           <div class="dashboard-box"><small>Inversion en Stock</small><div class="dashboard-number" id="inv-stock">$0</div></div>
-          <div class="dashboard-box"><small>Total Gastos</small><div class="dashboard-number" id="inv-gastos">$0</div></div>
-          <div class="dashboard-box"><small>Comisiones Vend.</small><div class="dashboard-number" id="inv-comisiones">$0</div></div>
+          <div class="dashboard-box"><small>Stock en Transito</small><div class="dashboard-number" id="inv-transito" style="color:#fd7e14;">$0</div></div>
+          <div class="dashboard-box"><small>Gastos Operativos</small><div class="dashboard-number" id="inv-gastos">$0</div></div>
           <div class="dashboard-box"><small>Ventas Totales</small><div class="dashboard-number" id="inv-ventas">$0</div></div>
-          <div class="dashboard-box"><small style="color:#28a745;">Ganancia Neta</small><div class="dashboard-number" id="inv-ganancia" style="color:#28a745;">$0</div></div>
+          <div class="dashboard-box"><small>Ganancia Neta</small><div class="dashboard-number" id="inv-ganancia" style="color:#28a745;">$0</div></div>
+          <div class="dashboard-box"><small>Comisiones Vend.</small><div class="dashboard-number" id="inv-comisiones">$0</div></div>
         </div>
       </div>
       <div class="section">
-        <h3>Productos y Costos</h3>
+        <h3>Productos y Costos Reales</h3>
         <div style="overflow-x:auto;">
-          <table id="tabla-inv-productos"><thead><tr><th>Producto</th><th>Venta</th><th>Costo</th><th>Ganancia</th><th>Margen</th></tr></thead><tbody></tbody></table>
+          <table id="tabla-inv-productos"><thead><tr><th>Producto</th><th>Sucursal</th><th>Venta</th><th>Costo Real</th><th>Ganancia</th><th>Margen</th></tr></thead><tbody></tbody></table>
         </div>
       </div>
       <div class="section">
-        <h3>Registrar Gasto</h3>
+        <h3>Registrar Gasto Operativo</h3>
         <input type="text" id="gasto-desc" placeholder="Descripcion (transporte, envio...)">
         <input type="number" id="gasto-monto" placeholder="Monto ($)" step="0.01">
         <select id="gasto-tienda"><option value="ODONTO STORE">ODONTO STORE</option><option value="CELEBRACIONES">CELEBRACIONES</option></select>
@@ -210,11 +358,15 @@ let tiendaActual = '';
 let vendedorActual = '';
 let productosDisponibles = [];
 let inversionPinGuardado = '';
+let lotesDisponibles = [];
+let catalogoProductos = [];
+let loteSeleccionado = null;
+let lotesProductoVenta = [];
 
 function mostrar(id) { document.querySelectorAll('[id^="pantalla-"]').forEach(el => el.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
 function seleccionarTienda(t) { tiendaActual = t; document.getElementById('nombre-tienda-login').textContent = t; cargarVendedores(); mostrar('pantalla-login'); }
 function volverInicio() { mostrar('pantalla-inicio'); }
-function volverMenu() { mostrar('pantalla-menu'); }
+function volverMenu() { mostrar('pantalla-menu'); cargarAlertas(); }
 function cerrarSesion() { vendedorActual = ''; tiendaActual = ''; document.getElementById('input-clave').value = ''; mostrar('pantalla-inicio'); }
 
 async function apiCall(params, method, postData) {
@@ -227,7 +379,7 @@ async function apiCall(params, method, postData) {
       for (let k in params) url += k + '=' + encodeURIComponent(params[k]) + '&';
       return await (await fetch(url)).json();
     }
-  } catch(e) { return { error: 'Error de conexion' }; }
+  } catch(e) { return { error: 'Error de conexion: ' + e.message }; }
 }
 
 async function cargarVendedores() {
@@ -244,29 +396,59 @@ async function iniciarSesion() {
   const err = document.getElementById('login-error');
   if (!v || !c) { err.textContent = 'Complete todos los campos'; return; }
   if (v === 'Abelardo' && c === '7512') {
-  vendedorActual = v;
-  err.textContent = '';
-  document.getElementById('nombre-tienda-menu').textContent = tiendaActual;
-  document.getElementById('sub-venta').textContent = tiendaActual + ' - ' + v;
-  mostrar('pantalla-menu');
-  return;
-}
-
+    vendedorActual = v; err.textContent = '';
+    document.getElementById('nombre-tienda-menu').textContent = tiendaActual;
+    document.getElementById('sub-venta').textContent = tiendaActual + ' - ' + v;
+    mostrar('pantalla-menu'); cargarAlertas(); return;
+  }
   const data = await apiCall({}, 'POST', { action: 'login', vendedor: v, clave: c });
-  if (data.success) { vendedorActual = v; err.textContent = ''; document.getElementById('nombre-tienda-menu').textContent = tiendaActual; document.getElementById('sub-venta').textContent = tiendaActual + ' - ' + v; mostrar('pantalla-menu'); }
+  if (data.success) { vendedorActual = v; err.textContent = ''; document.getElementById('nombre-tienda-menu').textContent = tiendaActual; document.getElementById('sub-venta').textContent = tiendaActual + ' - ' + v; mostrar('pantalla-menu'); cargarAlertas(); }
   else err.textContent = data.error || 'Error';
 }
 
+// ============ ALERTAS DE VENCIMIENTO ============
+async function cargarAlertas() {
+  const data = await apiCall({ action: 'getAlertasVencimiento', tienda: tiendaActual });
+  const container = document.getElementById('alertas-container');
+  if (!data.alertas || data.alertas.length === 0) { container.classList.add('hidden'); return; }
+  let html = '<h3 style="margin-bottom:10px;">Alertas de Vencimiento</h3>';
+  data.alertas.forEach(a => {
+    const cls = a.dias <= 30 ? 'alert-critical' : 'alert-warning';
+    const icono = a.dias <= 30 ? '🔴' : '🟡';
+    html += '<div class="' + cls + '"><strong>' + icono + ' ' + a.producto + '</strong><br>Vence en ' + a.dias + ' dias | Stock: ' + a.cantidad + ' | Sucursal: ' + a.sucursal + '</div>';
+  });
+  container.innerHTML = html;
+  container.classList.remove('hidden');
+}
+
+// ============ INVENTARIO ============
 async function verInventario() {
   document.getElementById('sub-inventario').textContent = tiendaActual;
-  const data = await apiCall({ action: 'getProductos', tienda: tiendaActual });
+  const data = await apiCall({ action: 'getInventarioPorLotes', tienda: tiendaActual });
   const tb = document.querySelector('#tabla-inventario tbody');
   tb.innerHTML = '';
-  if (data.productos && data.productos.length) data.productos.forEach(p => tb.innerHTML += '<tr><td>' + p.nombre + '</td><td>$' + parseFloat(p.precio).toFixed(2) + '</td><td style="font-weight:bold;">' + p.stock + '</td></tr>');
-  else tb.innerHTML = '<tr><td colspan="3" style="text-align:center;">Sin productos</td></tr>';
+  const sucFiltro = document.getElementById('filtro-sucursal-inventario').value;
+
+  if (data.inventario && data.inventario.length) {
+    const sucursales = [...new Set(data.inventario.map(p => p.sucursal || 'General'))];
+    const selSuc = document.getElementById('filtro-sucursal-inventario');
+    const valActual = selSuc.value;
+    selSuc.innerHTML = '<option value="todas">Todas las sucursales</option>';
+    sucursales.forEach(s => selSuc.innerHTML += '<option value="' + s + '">' + s + '</option>');
+    selSuc.value = valActual;
+
+    const filtrado = sucFiltro === 'todas' ? data.inventario : data.inventario.filter(p => p.sucursal === sucFiltro);
+    filtrado.forEach(p => {
+      const estado = p.stock > 0 ? '<span class="badge-disponible">Disponible</span>' : '<span class="badge-cerrado">Agotado</span>';
+      tb.innerHTML += '<tr><td>' + p.nombre + '</td><td>$' + parseFloat(p.precio).toFixed(2) + '</td><td style="font-weight:bold;">' + p.stock + '</td><td>' + (p.sucursal || 'General') + '</td><td>' + estado + '</td></tr>';
+    });
+  } else {
+    tb.innerHTML = '<tr><td colspan="5" style="text-align:center;">Sin productos</td></tr>';
+  }
   mostrar('pantalla-inventario');
 }
 
+// ============ VENTAS ============
 async function irVentasPublicas() { document.getElementById('sub-ventas-p').textContent = tiendaActual; cargarVentasPublicas(); mostrar('pantalla-ventas-publico'); }
 
 async function cargarVentasPublicas() {
@@ -276,27 +458,77 @@ async function cargarVentasPublicas() {
   try {
     const data = await apiCall({ action: 'getHistorialVentas', filtro: filtro, tienda: tiendaActual });
     tb.innerHTML = '';
-    if (data.ventas && data.ventas.length) data.ventas.forEach(v => tb.innerHTML += '<tr><td>' + v.fecha + '</td><td>' + v.producto + '</td><td>' + v.cantidad + '</td><td>$' + parseFloat(v.total).toFixed(2) + '</td><td>' + v.vendedor + '</td><td>' + (v.motivo || '-') + '</td><td>' + (v.porcientoVendedor || 0) + '%</td></tr>');
-    else tb.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay registros</td></tr>';
+    if (data.ventas && data.ventas.length) {
+      data.ventas.forEach(v => {
+        const ganancia = v.ganancia ? '$' + parseFloat(v.ganancia).toFixed(2) : '-';
+        tb.innerHTML += '<tr><td>' + v.fecha + '</td><td>' + v.producto + '</td><td>' + v.cantidad + '</td><td>$' + parseFloat(v.total).toFixed(2) + '</td><td>' + ganancia + '</td><td>' + v.vendedor + '</td><td>' + (v.motivo || '-') + '</td></tr>';
+      });
+    } else tb.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay registros</td></tr>';
   } catch(e) { tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:red;">Error</td></tr>'; }
 }
 
 async function irAVenta() {
-  const data = await apiCall({ action: 'getProductos', tienda: tiendaActual });
+  const data = await apiCall({ action: 'getProductosConLotes', tienda: tiendaActual });
   productosDisponibles = data.productos || [];
   const sel = document.getElementById('select-producto');
   sel.innerHTML = '<option value="">Seleccione...</option>';
-  productosDisponibles.forEach(p => sel.innerHTML += '<option value="' + p.nombre + '" data-stock="' + p.stock + '">' + p.nombre + ' - $' + p.precio + '</option>');
+  productosDisponibles.forEach(p => {
+    if (p.stock > 0) sel.innerHTML += '<option value="' + p.nombre + '" data-stock="' + p.stock + '">' + p.nombre + ' - $' + p.precio + ' (Stock: ' + p.stock + ')</option>';
+  });
   document.getElementById('stock-display').textContent = '-';
+  document.getElementById('lote-info').textContent = '';
   document.getElementById('input-cantidad').value = 1;
   document.getElementById('input-motivo').value = '';
   document.getElementById('input-porciento').value = '';
   document.getElementById('venta-error').textContent = '';
   document.getElementById('venta-success').textContent = '';
+  document.getElementById('seccion-elegir-lote').classList.add('hidden');
   mostrar('pantalla-venta');
 }
 
-function actualizarStock() { const o = document.getElementById('select-producto').options[document.getElementById('select-producto').selectedIndex]; document.getElementById('stock-display').textContent = o.getAttribute('data-stock') || '-'; }
+async function onProductoChange() {
+  const sel = document.getElementById('select-producto');
+  const prod = sel.value;
+  if (!prod) { document.getElementById('stock-display').textContent = '-'; document.getElementById('lote-info').textContent = ''; document.getElementById('seccion-elegir-lote').classList.add('hidden'); return; }
+
+  const opt = sel.options[sel.selectedIndex];
+  document.getElementById('stock-display').textContent = opt.getAttribute('data-stock');
+
+  const data = await apiCall({ action: 'getLotesProducto', producto: prod, tienda: tiendaActual });
+  lotesProductoVenta = data.lotes || [];
+
+  if (lotesProductoVenta.length <= 1) {
+    document.getElementById('seccion-elegir-lote').classList.add('hidden');
+    const lote = lotesProductoVenta[0];
+    if (lote) document.getElementById('lote-info').textContent = 'Lote: ' + lote.loteId + ' | Sucursal: ' + lote.sucursal + ' | Vence: ' + lote.vencimiento + ' | Costo real: $' + lote.costoReal.toFixed(2);
+    else document.getElementById('lote-info').textContent = '';
+  } else {
+    const hayCritico = lotesProductoVenta.some(l => l.diasVencimiento !== null && l.diasVencimiento <= 90);
+    if (hayCritico) {
+      document.getElementById('seccion-elegir-lote').classList.remove('hidden');
+      let html = '';
+      lotesProductoVenta.forEach((l, i) => {
+        const cls = l.diasVencimiento !== null && l.diasVencimiento <= 90 ? 'critico' : 'normal';
+        const badge = l.diasVencimiento !== null && l.diasVencimiento <= 90 ? '<span class="badge-critico">VENCE ' + l.diasVencimiento + ' dias</span>' : '';
+        html += '<div class="select-lote" onclick="elegirLote(' + i + ')" id="lote-opt-' + i + '"><strong>' + l.loteId + '</strong> | ' + l.sucursal + ' | Stock: ' + l.cantidadRestante + ' | Vence: ' + l.vencimiento + ' ' + badge + '</div>';
+      });
+      document.getElementById('lista-lotes-elegir').innerHTML = html;
+      loteSeleccionado = 0;
+      elegirLote(0);
+    } else {
+      document.getElementById('seccion-elegir-lote').classList.add('hidden');
+      const antiguo = lotesProductoVenta[0];
+      document.getElementById('lote-info').textContent = 'FIFO: Lote ' + antiguo.loteId + ' | ' + antiguo.sucursal + ' | Vence: ' + antiguo.vencimiento + ' | Costo real: $' + antiguo.costoReal.toFixed(2);
+    }
+  }
+}
+
+function elegirLote(idx) {
+  loteSeleccionado = idx;
+  document.querySelectorAll('.select-lote').forEach(el => el.classList.remove('selected'));
+  const el = document.getElementById('lote-opt-' + idx);
+  if (el) el.classList.add('selected');
+}
 
 async function confirmarVenta() {
   const prod = document.getElementById('select-producto').value;
@@ -309,11 +541,34 @@ async function confirmarVenta() {
   if (!cant || cant < 1) { err.textContent = 'Cantidad invalida'; return; }
   const p = productosDisponibles.find(x => x.nombre === prod);
   if (cant > p.stock) { err.textContent = 'Stock insuficiente. Disponible: ' + p.stock; return; }
-  const data = await apiCall({}, 'POST', { action: 'realizarVenta', producto: prod, cantidad: cant, motivo: motivo, porcientoVendedor: porc, vendedor: vendedorActual, tienda: tiendaActual });
-  if (data.success) { ok.textContent = 'Venta realizada! Total: $' + data.total.toFixed(2); err.textContent = ''; setTimeout(irAVenta, 1500); }
-  else { err.textContent = data.error || 'Error'; ok.textContent = ''; }
+
+  let loteId = null;
+  if (lotesProductoVenta.length > 0) {
+    const hayCritico = lotesProductoVenta.some(l => l.diasVencimiento !== null && l.diasVencimiento <= 90);
+    if (hayCritico && loteSeleccionado !== null) {
+      loteId = lotesProductoVenta[loteSeleccionado].loteId;
+    } else {
+      loteId = lotesProductoVenta[0].loteId;
+    }
+  }
+
+  const data = await apiCall({}, 'POST', {
+    action: 'realizarVenta',
+    producto: prod, cantidad: cant, motivo: motivo,
+    porcientoVendedor: porc, vendedor: vendedorActual,
+    tienda: tiendaActual, loteId: loteId
+  });
+
+  if (data.success) {
+    let msg = 'Venta realizada! Total: $' + data.total.toFixed(2);
+    if (data.ganancia) msg += ' | Ganancia: $' + data.ganancia.toFixed(2);
+    if (data.costoRealUnitario) msg += ' | Costo real: $' + data.costoRealUnitario.toFixed(2) + '/u';
+    ok.textContent = msg; err.textContent = '';
+    setTimeout(irAVenta, 2000);
+  } else { err.textContent = data.error || 'Error'; ok.textContent = ''; }
 }
 
+// ============ ALTAS ============
 async function irAAltas() {
   document.getElementById('sub-altas').textContent = tiendaActual;
   const data = await apiCall({ action: 'getHistorialAltas', tienda: tiendaActual });
@@ -324,6 +579,99 @@ async function irAAltas() {
   mostrar('pantalla-altas');
 }
 
+// ============ LOTES ============
+async function irALotes() {
+  await cargarCatalogo();
+  await cargarLotes();
+  mostrar('pantalla-lotes');
+}
+
+async function cargarCatalogo() {
+  const data = await apiCall({ action: 'getCatalogoIA' });
+  catalogoProductos = data.productos || [];
+  const sel = document.getElementById('lote-producto');
+  sel.innerHTML = '<option value="">Seleccione...</option>';
+  catalogoProductos.forEach(p => sel.innerHTML += '<option value="' + p.id + '">' + p.producto + ' (' + p.marca + ')</option>');
+}
+
+async function cargarLotes() {
+  const data = await apiCall({ action: 'getLotes', tienda: tiendaActual });
+  lotesDisponibles = data.lotes || [];
+
+  const selAdd = document.getElementById('lote-select-add');
+  const selLlegada = document.getElementById('lote-select-llegada');
+  selAdd.innerHTML = '<option value="">Seleccione lote...</option>';
+  selLlegada.innerHTML = '<option value="">Seleccione lote en transito...</option>';
+
+  lotesDisponibles.forEach(l => {
+    selAdd.innerHTML += '<option value="' + l.loteId + '">' + l.loteId + ' - ' + l.sucursal + ' (' + l.estado + ')</option>';
+    if (l.estado === 'En Transito') selLlegada.innerHTML += '<option value="' + l.loteId + '">' + l.loteId + ' - ' + l.sucursal + '</option>';
+  });
+
+  const tb = document.querySelector('#tabla-lotes tbody');
+  tb.innerHTML = '';
+  if (lotesDisponibles.length) lotesDisponibles.forEach(l => {
+    let badge = '';
+    if (l.estado === 'En Transito') badge = '<span class="badge-transito">En Transito</span>';
+    else if (l.estado === 'Disponible') badge = '<span class="badge-disponible">Disponible</span>';
+    else badge = '<span class="badge-cerrado">Cerrado</span>';
+    const dif = l.diferencia !== null && l.diferencia !== undefined ? (l.diferencia > 0 ? '+' + l.diferencia : l.diferencia) + ' dias' : '-';
+    tb.innerHTML += '<tr><td>' + l.loteId + '</td><td>' + l.sucursal + '</td><td>' + l.fechaEnvio + '</td><td>' + (l.diasPronostico || '-') + '</td><td>' + (l.fechaLlegada || '-') + '</td><td>' + (l.diasReal || '-') + '</td><td>$' + parseFloat(l.costoEnvio).toFixed(2) + '</td><td>' + badge + '</td><td>' + dif + '</td></tr>';
+  });
+  else tb.innerHTML = '<tr><td colspan="9" style="text-align:center;">Sin lotes</td></tr>';
+}
+
+async function crearLote() {
+  const sucursal = document.getElementById('lote-sucursal').value;
+  const fechaEnvio = document.getElementById('lote-fecha-envio').value;
+  const dias = document.getElementById('lote-dias-pronostico').value;
+  const costoEnvio = document.getElementById('lote-costo-envio').value;
+  const msg = document.getElementById('lote-create-msg');
+  if (!sucursal || !fechaEnvio || !costoEnvio) { msg.innerHTML = '<div class="error">Complete los campos obligatorios</div>'; return; }
+  const data = await apiCall({}, 'POST', { action: 'crearLote', sucursal: sucursal, fechaEnvio: fechaEnvio, diasPronostico: parseInt(dias) || 0, costoEnvio: parseFloat(costoEnvio), pin: inversionPinGuardado || '7512' });
+  if (data.success) { msg.innerHTML = '<div class="success">Lote ' + data.loteId + ' creado</div>'; ['lote-sucursal','lote-fecha-envio','lote-dias-pronostico','lote-costo-envio'].forEach(id => document.getElementById(id).value = ''); cargarLotes(); }
+  else msg.innerHTML = '<div class="error">' + (data.error || 'Error') + '</div>';
+}
+
+async function agregarProductoLote() {
+  const loteId = document.getElementById('lote-select-add').value;
+  const prodId = document.getElementById('lote-producto').value;
+  const cant = parseInt(document.getElementById('lote-cantidad').value);
+  const costo = parseFloat(document.getElementById('lote-costo-unitario').value);
+  const venc = document.getElementById('lote-vencimiento').value;
+  const msg = document.getElementById('lote-add-msg');
+  if (!loteId || !prodId || !cant || !costo) { msg.innerHTML = '<div class="error">Complete todos los campos</div>'; return; }
+  const data = await apiCall({}, 'POST', { action: 'addProductoLote', loteId: loteId, productoId: prodId, cantidad: cant, costoUnitario: costo, vencimiento: venc });
+  if (data.success) { msg.innerHTML = '<div class="success">Producto agregado al lote</div>'; document.getElementById('lote-cantidad').value = '1'; document.getElementById('lote-costo-unitario').value = ''; mostrarDetalleLote(); }
+  else msg.innerHTML = '<div class="error">' + (data.error || 'Error') + '</div>';
+}
+
+async function mostrarDetalleLote() {
+  const loteId = document.getElementById('lote-select-add').value;
+  const container = document.getElementById('detalle-lote-container');
+  if (!loteId) { container.innerHTML = '<p style="color:#999;">Seleccione un lote</p>'; return; }
+  const data = await apiCall({ action: 'getDetalleLote', loteId: loteId });
+  if (!data.productos || !data.productos.length) { container.innerHTML = '<p style="color:#999;">Lote sin productos</p>'; return; }
+  let html = '<div style="overflow-x:auto;"><table><thead><tr><th>Producto</th><th>Cant</th><th>Costo</th><th>Envio/U</th><th>Real/U</th><th>Vence</th><th>Estado</th><th>Rest.</th></tr></thead><tbody>';
+  data.productos.forEach(p => {
+    const estado = p.cantidadRestante > 0 ? '<span class="badge-disponible">Disponible</span>' : '<span class="badge-cerrado">Vendido</span>';
+    html += '<tr><td>' + p.producto + '</td><td>' + p.cantidad + '</td><td>$' + p.costoUnitario.toFixed(2) + '</td><td>$' + p.costoEnvioUnitario.toFixed(2) + '</td><td>$' + p.costoRealUnitario.toFixed(2) + '</td><td>' + (p.vencimiento || '-') + '</td><td>' + estado + '</td><td>' + p.cantidadRestante + '</td></tr>';
+  });
+  html += '</tbody></table></div>';
+  container.innerHTML = html;
+}
+
+async function marcarLlegada() {
+  const loteId = document.getElementById('lote-select-llegada').value;
+  const fechaLlegada = document.getElementById('lote-fecha-llegada').value;
+  const msg = document.getElementById('lote-llegada-msg');
+  if (!loteId || !fechaLlegada) { msg.innerHTML = '<div class="error">Seleccione lote y fecha</div>'; return; }
+  const data = await apiCall({}, 'POST', { action: 'marcarLlegada', loteId: loteId, fechaLlegada: fechaLlegada });
+  if (data.success) { msg.innerHTML = '<div class="success">Lote marcado como llegado. Dias reales: ' + data.diasReal + '</div>'; cargarLotes(); }
+  else msg.innerHTML = '<div class="error">' + (data.error || 'Error') + '</div>';
+}
+
+// ============ PANEL MAESTRO ============
 async function irAPanelMaestro() {
   const data = await apiCall({ action: 'getProductos', tienda: tiendaActual });
   productosDisponibles = data.productos || [];
@@ -367,6 +715,7 @@ async function editarProducto() {
   else msg.innerHTML = '<div class="error">' + data.error + '</div>';
 }
 
+// ============ INVERSION ============
 async function irAInversion() {
   inversionPinGuardado = '';
   document.getElementById('inv-pin').value = '';
@@ -386,30 +735,43 @@ async function verResumenInversion() {
 
 async function cargarDatosInversion() {
   const filtro = document.getElementById('filtro-inversion').value;
-  const data = await apiCall({}, 'POST', { action: 'getResumenInversion', tienda: tiendaActual, pin: inversionPinGuardado, filtro: filtro });
+  const sucursal = document.getElementById('filtro-sucursal-inversion').value;
+  const data = await apiCall({}, 'POST', { action: 'getResumenInversion', tienda: tiendaActual, pin: inversionPinGuardado, filtro: filtro, sucursal: sucursal });
   if (data.error) { document.getElementById('inv-pin-error').textContent = data.error; return; }
   document.getElementById('inv-pin-error').textContent = '';
   document.getElementById('inv-pin-section').classList.add('hidden');
   document.getElementById('inv-contenido').classList.remove('hidden');
+
+  if (data.sucursales) {
+    const selSuc = document.getElementById('filtro-sucursal-inversion');
+    const valActual = selSuc.value;
+    selSuc.innerHTML = '<option value="todas">Todas las sucursales</option>';
+    data.sucursales.forEach(s => selSuc.innerHTML += '<option value="' + s + '">' + s + '</option>');
+    selSuc.value = valActual;
+  }
+
   renderInversion(data);
 }
 
 function renderInversion(data) {
   document.getElementById('inv-stock').textContent = '$' + data.inversionStock.toFixed(2);
+  document.getElementById('inv-transito').textContent = '$' + (data.stockTransito || 0).toFixed(2);
   document.getElementById('inv-gastos').textContent = '$' + data.totalGastos.toFixed(2);
   document.getElementById('inv-comisiones').textContent = '$' + (data.totalComisiones || 0).toFixed(2);
   document.getElementById('inv-ventas').textContent = '$' + data.totalVentas.toFixed(2);
   const gan = data.gananciaNeta;
   document.getElementById('inv-ganancia').textContent = '$' + gan.toFixed(2);
   document.getElementById('inv-ganancia').style.color = gan >= 0 ? '#28a745' : '#dc3545';
+
   const tbP = document.querySelector('#tabla-inv-productos tbody');
   tbP.innerHTML = '';
   if (data.productos && data.productos.length) {
     data.productos.forEach(p => {
       const c = p.gananciaUnit >= 0 ? '#28a745' : '#dc3545';
-      tbP.innerHTML += '<tr><td>' + p.nombre + '</td><td>$' + p.precio.toFixed(2) + '</td><td>$' + p.costo.toFixed(2) + '</td><td style="color:' + c + ';">$' + p.gananciaUnit.toFixed(2) + '</td><td>' + p.margen + '%</td></tr>';
+      tbP.innerHTML += '<tr><td>' + p.nombre + '</td><td>' + (p.sucursal || '-') + '</td><td>$' + p.precio.toFixed(2) + '</td><td>$' + p.costo.toFixed(2) + '</td><td style="color:' + c + ';">$' + p.gananciaUnit.toFixed(2) + '</td><td>' + p.margen + '%</td></tr>';
     });
-  } else tbP.innerHTML = '<tr><td colspan="5" style="text-align:center;">Sin productos</td></tr>';
+  } else tbP.innerHTML = '<tr><td colspan="6" style="text-align:center;">Sin productos</td></tr>';
+
   const tbG = document.querySelector('#tabla-gastos tbody');
   tbG.innerHTML = '';
   if (data.gastos && data.gastos.length) data.gastos.forEach(g => tbG.innerHTML += '<tr><td>' + g.fecha + '</td><td>' + g.descripcion + '</td><td>$' + g.monto.toFixed(2) + '</td><td>' + g.tienda + '</td></tr>');
@@ -428,6 +790,75 @@ async function agregarGasto() {
   const data = await apiCall({}, 'POST', { action: 'addGasto', descripcion: desc, monto: monto, tienda: tienda, pin: inversionPinGuardado });
   if (data.success) { msg.innerHTML = '<div class="success">Gasto registrado</div>'; document.getElementById('gasto-desc').value = ''; document.getElementById('gasto-monto').value = ''; cargarDatosInversion(); }
   else msg.innerHTML = '<div class="error">' + (data.error || 'Error') + '</div>';
+}
+// ============ RESUMEN MENSUAL ============
+function irAResumen() {
+  document.getElementById('sub-resumen').textContent = tiendaActual;
+  document.getElementById('filtro-resumen').value = 'mes_actual';
+  document.getElementById('fechas-personalizadas').classList.add('hidden');
+  document.getElementById('resumen-contenido').classList.add('hidden');
+  cargarResumen();
+  mostrar('pantalla-resumen');
+}
+
+document.getElementById('filtro-resumen').addEventListener('change', function() {
+  if (this.value === 'personalizado') {
+    document.getElementById('fechas-personalizadas').classList.remove('hidden');
+    document.getElementById('resumen-contenido').classList.add('hidden');
+  } else {
+    document.getElementById('fechas-personalizadas').classList.add('hidden');
+    cargarResumen();
+  }
+});
+
+async function cargarResumen() {
+  var filtro = document.getElementById('filtro-resumen').value;
+  if (filtro === 'personalizado') {
+    var fi = document.getElementById('resumen-fecha-inicio').value;
+    var ff = document.getElementById('resumen-fecha-fin').value;
+    if (!fi || !ff) return;
+  }
+
+  document.getElementById('resumen-cargando').classList.remove('hidden');
+  document.getElementById('resumen-contenido').classList.add('hidden');
+
+  var params = { action: 'getResumenMensual', tienda: tiendaActual, filtro: filtro };
+  if (filtro === 'personalizado') {
+    params.fechaInicio = document.getElementById('resumen-fecha-inicio').value;
+    params.fechaFin = document.getElementById('resumen-fecha-fin').value;
+  }
+
+  var data = await apiCall(params);
+
+  document.getElementById('resumen-cargando').classList.add('hidden');
+
+  if (data.error) {
+    document.getElementById('resumen-cargando').classList.remove('hidden');
+    document.getElementById('resumen-cargando').textContent = data.error;
+    return;
+  }
+
+  document.getElementById('resumen-titulo-periodo').textContent = data.periodo || 'Periodo';
+  document.getElementById('res-ventas').textContent = '$' + data.totalVentas.toFixed(2);
+  document.getElementById('res-costo').textContent = '$' + data.totalCostoReal.toFixed(2);
+  document.getElementById('res-comisiones').textContent = '$' + data.totalComisiones.toFixed(2);
+  document.getElementById('res-gastos').textContent = '$' + data.gastosOperativos.toFixed(2);
+  document.getElementById('res-bruta').textContent = '$' + data.gananciaBruta.toFixed(2);
+  document.getElementById('res-neta').textContent = '$' + data.gananciaNeta.toFixed(2);
+  document.getElementById('res-neta').style.color = data.gananciaNeta >= 0 ? '#28a745' : '#dc3545';
+  document.getElementById('res-cantidad').textContent = data.numVentas;
+  document.getElementById('res-margen').textContent = data.margen + '%';
+
+  var tb = document.querySelector('#tabla-resumen-ventas tbody');
+  tb.innerHTML = '';
+  if (data.ventas && data.ventas.length) {
+    data.ventas.forEach(function(v) {
+      var colorGan = v.ganancia >= 0 ? '#28a745' : '#dc3545';
+      tb.innerHTML += '<tr><td>' + v.fecha + '</td><td>' + v.producto + '</td><td>' + v.cantidad + '</td><td>$' + v.venta.toFixed(2) + '</td><td>$' + v.costoReal.toFixed(2) + '</td><td>$' + v.comision.toFixed(2) + '</td><td style="color:' + colorGan + ';">$' + v.ganancia.toFixed(2) + '</td></tr>';
+    });
+  } else tb.innerHTML = '<tr><td colspan="7" style="text-align:center;">Sin ventas en este periodo</td></tr>';
+
+  document.getElementById('resumen-contenido').classList.remove('hidden');
 }
 </script>
 </body>
