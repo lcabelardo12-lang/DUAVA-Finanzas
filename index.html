@@ -77,15 +77,15 @@
   <div id="pantalla-menu" class="hidden">
     <h1>DUAVA Finanzas</h1>
     <div class="subtitle">La Habana - <span id="nombre-tienda-menu"></span></div>
-    <div class="section" id="alertas-container" class="hidden"></div>
+    <div class="section" id="alertas-container"></div>
     <div class="section">
       <button class="btn btn-azul" onclick="verInventario()">Stock actual</button>
       <button class="btn btn-naranja" onclick="irVentasPublicas()">Mis Ventas</button>
       <button class="btn btn-verde" onclick="irAVenta()">Realizar Venta</button>
       <button class="btn btn-azul" onclick="irAAltas()">Historial de Altas</button>
-      <button class="btn btn-oscuro" onclick="irALotes()">Gestion de Lotes</button>
+      <button class="btn btn-oscuro" onclick="irALotesPin()">Gestion de Lotes</button>
       <button class="btn btn-naranja" onclick="irAPanelMaestro()">Panel Maestro</button>
-            <button class="btn btn-verde" onclick="irAResumen()">Resumen de Ganancias</button>
+      <button class="btn btn-verde" onclick="irAResumenPin()">Resumen de Ganancias</button>
       <button class="btn btn-morado" onclick="irAInversion()">Panel de Inversion</button>
       <button class="btn btn-rojo" onclick="cerrarSesion()">Cerrar Sesion</button>
     </div>
@@ -160,6 +160,19 @@
         <table id="tabla-altas"><thead><tr><th>Fecha</th><th>Producto</th><th>Cantidad</th><th>Tienda</th><th>Tipo</th><th>Nota</th></tr></thead><tbody></tbody></table>
       </div>
       <button class="btn btn-gris" onclick="volverMenu()" style="margin-top:15px;">Volver</button>
+    </div>
+  </div>
+
+  <!-- ============ PANTALLA PIN LOTES ============ -->
+  <div id="pantalla-lotes-pin" class="hidden">
+    <h1>Gestion de Lotes</h1>
+    <div class="subtitle">Solo propietario</div>
+    <div class="section">
+      <label>PIN de seguridad:</label>
+      <input type="password" id="lotes-pin" placeholder="Ingrese su PIN">
+      <div id="lotes-pin-error" class="error"></div>
+      <button class="btn btn-verde" onclick="verificarPinLotes()">Acceder</button>
+      <button class="btn btn-gris" onclick="volverMenu()">Volver</button>
     </div>
   </div>
 
@@ -252,13 +265,27 @@
     </div>
     <button class="btn btn-rojo" onclick="volverMenu()">Volver</button>
   </div>
+
+  <!-- ============ PANTALLA PIN RESUMEN ============ -->
+  <div id="pantalla-resumen-pin" class="hidden">
+    <h1>Resumen de Ganancias</h1>
+    <div class="subtitle">Solo propietario</div>
+    <div class="section">
+      <label>PIN de seguridad:</label>
+      <input type="password" id="resumen-pin" placeholder="Ingrese su PIN">
+      <div id="resumen-pin-error" class="error"></div>
+      <button class="btn btn-verde" onclick="verificarPinResumen()">Acceder</button>
+      <button class="btn btn-gris" onclick="volverMenu()">Volver</button>
+    </div>
+  </div>
+
   <!-- ============ PANTALLA RESUMEN MENSUAL ============ -->
   <div id="pantalla-resumen" class="hidden">
     <h1>Resumen de Ganancias</h1>
     <div class="subtitle" id="sub-resumen"></div>
     <div class="section">
       <label>Periodo:</label>
-      <select id="filtro-resumen" onchange="cargarResumen()">
+      <select id="filtro-resumen" onchange="onFiltroResumenChange()">
         <option value="mes_actual">Mes Actual</option>
         <option value="mes_anterior">Mes Anterior</option>
         <option value="semana">Ultima Semana</option>
@@ -299,6 +326,7 @@
 
     <button class="btn btn-gris" onclick="volverMenu()" style="margin-top:10px;">Volver</button>
   </div>
+
   <!-- ============ PANTALLA INVERSION ============ -->
   <div id="pantalla-inversion" class="hidden">
     <h1>Panel de Inversion</h1>
@@ -382,6 +410,7 @@ async function apiCall(params, method, postData) {
   } catch(e) { return { error: 'Error de conexion: ' + e.message }; }
 }
 
+// ============ LOGIN ============
 async function cargarVendedores() {
   const data = await apiCall({ action: 'getVendedores' });
   const sel = document.getElementById('select-vendedor');
@@ -410,12 +439,12 @@ async function iniciarSesion() {
 async function cargarAlertas() {
   const data = await apiCall({ action: 'getAlertasVencimiento', tienda: tiendaActual });
   const container = document.getElementById('alertas-container');
-  if (!data.alertas || data.alertas.length === 0) { container.classList.add('hidden'); return; }
+  if (!data.alertas || data.alertas.length === 0) { container.innerHTML = ''; container.classList.add('hidden'); return; }
   let html = '<h3 style="margin-bottom:10px;">Alertas de Vencimiento</h3>';
   data.alertas.forEach(a => {
     const cls = a.dias <= 30 ? 'alert-critical' : 'alert-warning';
-    const icono = a.dias <= 30 ? '🔴' : '🟡';
-    html += '<div class="' + cls + '"><strong>' + icono + ' ' + a.producto + '</strong><br>Vence en ' + a.dias + ' dias | Stock: ' + a.cantidad + ' | Sucursal: ' + a.sucursal + '</div>';
+    const icono = a.dias <= 30 ? 'CRITICO' : 'PROXIMO';
+    html += '<div class="' + cls + '"><strong>' + icono + ': ' + a.producto + '</strong><br>Vence en ' + a.dias + ' dias | Stock: ' + a.cantidad + ' | Sucursal: ' + a.sucursal + '</div>';
   });
   container.innerHTML = html;
   container.classList.remove('hidden');
@@ -508,7 +537,6 @@ async function onProductoChange() {
       document.getElementById('seccion-elegir-lote').classList.remove('hidden');
       let html = '';
       lotesProductoVenta.forEach((l, i) => {
-        const cls = l.diasVencimiento !== null && l.diasVencimiento <= 90 ? 'critico' : 'normal';
         const badge = l.diasVencimiento !== null && l.diasVencimiento <= 90 ? '<span class="badge-critico">VENCE ' + l.diasVencimiento + ' dias</span>' : '';
         html += '<div class="select-lote" onclick="elegirLote(' + i + ')" id="lote-opt-' + i + '"><strong>' + l.loteId + '</strong> | ' + l.sucursal + ' | Stock: ' + l.cantidadRestante + ' | Vence: ' + l.vencimiento + ' ' + badge + '</div>';
       });
@@ -579,6 +607,21 @@ async function irAAltas() {
   mostrar('pantalla-altas');
 }
 
+// ============ PIN LOTES ============
+function irALotesPin() {
+  document.getElementById('lotes-pin').value = '';
+  document.getElementById('lotes-pin-error').textContent = '';
+  mostrar('pantalla-lotes-pin');
+}
+
+async function verificarPinLotes() {
+  var pin = document.getElementById('lotes-pin').value;
+  if (!pin) { document.getElementById('lotes-pin-error').textContent = 'Ingrese su PIN'; return; }
+  if (pin !== '7512') { document.getElementById('lotes-pin-error').textContent = 'PIN incorrecto'; return; }
+  inversionPinGuardado = pin;
+  await irALotes();
+}
+
 // ============ LOTES ============
 async function irALotes() {
   await cargarCatalogo();
@@ -642,7 +685,7 @@ async function agregarProductoLote() {
   const msg = document.getElementById('lote-add-msg');
   if (!loteId || !prodId || !cant || !costo) { msg.innerHTML = '<div class="error">Complete todos los campos</div>'; return; }
   const data = await apiCall({}, 'POST', { action: 'addProductoLote', loteId: loteId, productoId: prodId, cantidad: cant, costoUnitario: costo, vencimiento: venc });
-  if (data.success) { msg.innerHTML = '<div class="success">Producto agregado al lote</div>'; document.getElementById('lote-cantidad').value = '1'; document.getElementById('lote-costo-unitario').value = ''; mostrarDetalleLote(); }
+  if (data.success) { msg.innerHTML = '<div class="success">Producto agregado al lote. Costo real unitario: $' + data.costoRealUnitario.toFixed(2) + '</div>'; document.getElementById('lote-cantidad').value = '1'; document.getElementById('lote-costo-unitario').value = ''; mostrarDetalleLote(); }
   else msg.innerHTML = '<div class="error">' + (data.error || 'Error') + '</div>';
 }
 
@@ -667,7 +710,7 @@ async function marcarLlegada() {
   const msg = document.getElementById('lote-llegada-msg');
   if (!loteId || !fechaLlegada) { msg.innerHTML = '<div class="error">Seleccione lote y fecha</div>'; return; }
   const data = await apiCall({}, 'POST', { action: 'marcarLlegada', loteId: loteId, fechaLlegada: fechaLlegada });
-  if (data.success) { msg.innerHTML = '<div class="success">Lote marcado como llegado. Dias reales: ' + data.diasReal + '</div>'; cargarLotes(); }
+  if (data.success) { msg.innerHTML = '<div class="success">Lote marcado como llegado. Dias reales: ' + data.diasReal + ' | Diferencia: ' + data.diferencia + ' dias</div>'; cargarLotes(); }
   else msg.innerHTML = '<div class="error">' + (data.error || 'Error') + '</div>';
 }
 
@@ -713,6 +756,88 @@ async function editarProducto() {
   const data = await apiCall({}, 'POST', payload);
   if (data.success) { msg.innerHTML = '<div class="success">Producto actualizado</div>'; ['edit-prod-precio','edit-prod-costo','edit-prod-stock','edit-prod-pin'].forEach(id => document.getElementById(id).value = ''); irAPanelMaestro(); }
   else msg.innerHTML = '<div class="error">' + data.error + '</div>';
+}
+
+// ============ PIN RESUMEN ============
+function irAResumenPin() {
+  document.getElementById('resumen-pin').value = '';
+  document.getElementById('resumen-pin-error').textContent = '';
+  mostrar('pantalla-resumen-pin');
+}
+
+function verificarPinResumen() {
+  var pin = document.getElementById('resumen-pin').value;
+  if (!pin) { document.getElementById('resumen-pin-error').textContent = 'Ingrese su PIN'; return; }
+  if (pin !== '7512') { document.getElementById('resumen-pin-error').textContent = 'PIN incorrecto'; return; }
+  inversionPinGuardado = pin;
+  document.getElementById('sub-resumen').textContent = tiendaActual;
+  document.getElementById('filtro-resumen').value = 'mes_actual';
+  document.getElementById('fechas-personalizadas').classList.add('hidden');
+  document.getElementById('resumen-contenido').classList.add('hidden');
+  cargarResumen();
+  mostrar('pantalla-resumen');
+}
+
+// ============ RESUMEN MENSUAL ============
+function onFiltroResumenChange() {
+  var filtro = document.getElementById('filtro-resumen').value;
+  if (filtro === 'personalizado') {
+    document.getElementById('fechas-personalizadas').classList.remove('hidden');
+    document.getElementById('resumen-contenido').classList.add('hidden');
+  } else {
+    document.getElementById('fechas-personalizadas').classList.add('hidden');
+    cargarResumen();
+  }
+}
+
+async function cargarResumen() {
+  var filtro = document.getElementById('filtro-resumen').value;
+  if (filtro === 'personalizado') {
+    var fi = document.getElementById('resumen-fecha-inicio').value;
+    var ff = document.getElementById('resumen-fecha-fin').value;
+    if (!fi || !ff) return;
+  }
+
+  document.getElementById('resumen-cargando').classList.remove('hidden');
+  document.getElementById('resumen-contenido').classList.add('hidden');
+
+  var params = { action: 'getResumenMensual', tienda: tiendaActual, filtro: filtro };
+  if (filtro === 'personalizado') {
+    params.fechaInicio = document.getElementById('resumen-fecha-inicio').value;
+    params.fechaFin = document.getElementById('resumen-fecha-fin').value;
+  }
+
+  var data = await apiCall(params);
+
+  document.getElementById('resumen-cargando').classList.add('hidden');
+
+  if (data.error) {
+    document.getElementById('resumen-cargando').textContent = data.error;
+    document.getElementById('resumen-cargando').classList.remove('hidden');
+    return;
+  }
+
+  document.getElementById('resumen-titulo-periodo').textContent = data.periodo || 'Periodo';
+  document.getElementById('res-ventas').textContent = '$' + data.totalVentas.toFixed(2);
+  document.getElementById('res-costo').textContent = '$' + data.totalCostoReal.toFixed(2);
+  document.getElementById('res-comisiones').textContent = '$' + data.totalComisiones.toFixed(2);
+  document.getElementById('res-gastos').textContent = '$' + data.gastosOperativos.toFixed(2);
+  document.getElementById('res-bruta').textContent = '$' + data.gananciaBruta.toFixed(2);
+  document.getElementById('res-neta').textContent = '$' + data.gananciaNeta.toFixed(2);
+  document.getElementById('res-neta').style.color = data.gananciaNeta >= 0 ? '#28a745' : '#dc3545';
+  document.getElementById('res-cantidad').textContent = data.numVentas;
+  document.getElementById('res-margen').textContent = data.margen + '%';
+
+  var tb = document.querySelector('#tabla-resumen-ventas tbody');
+  tb.innerHTML = '';
+  if (data.ventas && data.ventas.length) {
+    data.ventas.forEach(function(v) {
+      var colorGan = v.ganancia >= 0 ? '#28a745' : '#dc3545';
+      tb.innerHTML += '<tr><td>' + v.fecha + '</td><td>' + v.producto + '</td><td>' + v.cantidad + '</td><td>$' + v.venta.toFixed(2) + '</td><td>$' + v.costoReal.toFixed(2) + '</td><td>$' + v.comision.toFixed(2) + '</td><td style="color:' + colorGan + ';">$' + v.ganancia.toFixed(2) + '</td></tr>';
+    });
+  } else tb.innerHTML = '<tr><td colspan="7" style="text-align:center;">Sin ventas en este periodo</td></tr>';
+
+  document.getElementById('resumen-contenido').classList.remove('hidden');
 }
 
 // ============ INVERSION ============
@@ -790,75 +915,6 @@ async function agregarGasto() {
   const data = await apiCall({}, 'POST', { action: 'addGasto', descripcion: desc, monto: monto, tienda: tienda, pin: inversionPinGuardado });
   if (data.success) { msg.innerHTML = '<div class="success">Gasto registrado</div>'; document.getElementById('gasto-desc').value = ''; document.getElementById('gasto-monto').value = ''; cargarDatosInversion(); }
   else msg.innerHTML = '<div class="error">' + (data.error || 'Error') + '</div>';
-}
-// ============ RESUMEN MENSUAL ============
-function irAResumen() {
-  document.getElementById('sub-resumen').textContent = tiendaActual;
-  document.getElementById('filtro-resumen').value = 'mes_actual';
-  document.getElementById('fechas-personalizadas').classList.add('hidden');
-  document.getElementById('resumen-contenido').classList.add('hidden');
-  cargarResumen();
-  mostrar('pantalla-resumen');
-}
-
-document.getElementById('filtro-resumen').addEventListener('change', function() {
-  if (this.value === 'personalizado') {
-    document.getElementById('fechas-personalizadas').classList.remove('hidden');
-    document.getElementById('resumen-contenido').classList.add('hidden');
-  } else {
-    document.getElementById('fechas-personalizadas').classList.add('hidden');
-    cargarResumen();
-  }
-});
-
-async function cargarResumen() {
-  var filtro = document.getElementById('filtro-resumen').value;
-  if (filtro === 'personalizado') {
-    var fi = document.getElementById('resumen-fecha-inicio').value;
-    var ff = document.getElementById('resumen-fecha-fin').value;
-    if (!fi || !ff) return;
-  }
-
-  document.getElementById('resumen-cargando').classList.remove('hidden');
-  document.getElementById('resumen-contenido').classList.add('hidden');
-
-  var params = { action: 'getResumenMensual', tienda: tiendaActual, filtro: filtro };
-  if (filtro === 'personalizado') {
-    params.fechaInicio = document.getElementById('resumen-fecha-inicio').value;
-    params.fechaFin = document.getElementById('resumen-fecha-fin').value;
-  }
-
-  var data = await apiCall(params);
-
-  document.getElementById('resumen-cargando').classList.add('hidden');
-
-  if (data.error) {
-    document.getElementById('resumen-cargando').classList.remove('hidden');
-    document.getElementById('resumen-cargando').textContent = data.error;
-    return;
-  }
-
-  document.getElementById('resumen-titulo-periodo').textContent = data.periodo || 'Periodo';
-  document.getElementById('res-ventas').textContent = '$' + data.totalVentas.toFixed(2);
-  document.getElementById('res-costo').textContent = '$' + data.totalCostoReal.toFixed(2);
-  document.getElementById('res-comisiones').textContent = '$' + data.totalComisiones.toFixed(2);
-  document.getElementById('res-gastos').textContent = '$' + data.gastosOperativos.toFixed(2);
-  document.getElementById('res-bruta').textContent = '$' + data.gananciaBruta.toFixed(2);
-  document.getElementById('res-neta').textContent = '$' + data.gananciaNeta.toFixed(2);
-  document.getElementById('res-neta').style.color = data.gananciaNeta >= 0 ? '#28a745' : '#dc3545';
-  document.getElementById('res-cantidad').textContent = data.numVentas;
-  document.getElementById('res-margen').textContent = data.margen + '%';
-
-  var tb = document.querySelector('#tabla-resumen-ventas tbody');
-  tb.innerHTML = '';
-  if (data.ventas && data.ventas.length) {
-    data.ventas.forEach(function(v) {
-      var colorGan = v.ganancia >= 0 ? '#28a745' : '#dc3545';
-      tb.innerHTML += '<tr><td>' + v.fecha + '</td><td>' + v.producto + '</td><td>' + v.cantidad + '</td><td>$' + v.venta.toFixed(2) + '</td><td>$' + v.costoReal.toFixed(2) + '</td><td>$' + v.comision.toFixed(2) + '</td><td style="color:' + colorGan + ';">$' + v.ganancia.toFixed(2) + '</td></tr>';
-    });
-  } else tb.innerHTML = '<tr><td colspan="7" style="text-align:center;">Sin ventas en este periodo</td></tr>';
-
-  document.getElementById('resumen-contenido').classList.remove('hidden');
 }
 </script>
 </body>
