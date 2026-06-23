@@ -38,11 +38,10 @@ th{background:#f2f2f2}
 .badge-m{background:#6f42c1;color:#fff;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:bold}
 .badge-r{background:#dc3545;color:#fff;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:bold}
 .slote{background:#e7f3ff;border:2px solid #0066cc;border-radius:8px;padding:10px;margin:6px 0;cursor:pointer}
-.slote:hover{background:#cce0ff}
 .slote.sel{background:#0066cc;color:#fff}
 .acrt{background:#f8d7da;border:1px solid #f5c6cb;padding:10px;border-radius:8px;margin:6px 0}
 .awrn{background:#fff3cd;border:1px solid #ffeeba;padding:10px;border-radius:8px;margin:6px 0}
-.form-inline{background:#f8f9fa;padding:12px;border-radius:8px;margin:8px 0}
+.frm{background:#f8f9fa;padding:12px;border-radius:8px;margin:8px 0}
 </style>
 </head>
 <body>
@@ -77,10 +76,10 @@ th{background:#f2f2f2}
 <button class="btn b-nara" onclick="irVentas()">Mis Ventas</button>
 <button class="btn b-verde" onclick="irVenta()">Realizar Venta</button>
 <button class="btn b-azul" onclick="irAltas()">Historial de Altas</button>
-<button class="btn b-osc" onclick="irLotesPin()">Gestion de Lotes</button>
+<button class="btn b-osc" onclick="irLotesPin()">Gestión de Lotes</button>
 <button class="btn b-verde" onclick="irResumenPin()">Resumen de Ganancias</button>
-<button class="btn b-mora" onclick="irInversion()">Panel de Inversion</button>
-<button class="btn b-rojo" onclick="cerrarSes()">Cerrar Sesion</button>
+<button class="btn b-mora" onclick="irInversion()">Panel de Inversión</button>
+<button class="btn b-rojo" onclick="cerrarSes()">Cerrar Sesión</button>
 </div>
 </div>
 
@@ -100,7 +99,7 @@ th{background:#f2f2f2}
 <h1>Historial de Ventas</h1>
 <div class="sub" id="sub-ventas"></div>
 <div class="sec">
-<select id="flt-ventas" onchange="cargarVentas()"><option value="semana">Ultima Semana</option><option value="mes">Ultimo Mes</option><option value="todo">Todo</option></select>
+<select id="flt-ventas" onchange="cargarVentas()"><option value="semana">Última Semana</option><option value="mes">Último Mes</option><option value="todo">Todo</option></select>
 <div style="overflow-x:auto;margin-top:10px">
 <table id="t-ventas"><thead><tr><th>Fecha</th><th>Producto</th><th>Cant</th><th>Total</th><th>Gan.</th><th>Vendedor</th><th>Tipo</th></tr></thead><tbody></tbody></table>
 </div>
@@ -112,8 +111,10 @@ th{background:#f2f2f2}
 <h1>Realizar Venta</h1>
 <div class="sub" id="sub-venta"></div>
 <div class="sec">
+<label>Sucursal donde estás vendiendo:</label>
+<select id="sel-suc-venta" onchange="recargarProdVenta()"><option value="">Seleccione sucursal...</option></select>
 <label>Producto:</label>
-<select id="sel-prod" onchange="onProdChange()"><option value="">Seleccione...</option></select>
+<select id="sel-prod" onchange="onProdChange()"><option value="">Primero seleccione sucursal</option></select>
 <div style="margin:8px 0;padding:10px;background:#f8f9fa;border-radius:8px">
 <div>Stock: <strong id="stk-disp">-</strong></div>
 <div id="lote-info" style="font-size:11px;color:#666;margin-top:3px"></div>
@@ -121,7 +122,7 @@ th{background:#f2f2f2}
 <label>Cantidad:</label>
 <input type="number" id="inp-cant" value="1" min="1">
 <div id="sec-elegir-lote" class="hidden">
-<label>Seleccionar Lote (vencimiento proximo):</label>
+<label>Seleccionar Lote (vencimiento próximo):</label>
 <div id="lista-lotes"></div>
 </div>
 <label>Motivo (opcional):</label>
@@ -147,7 +148,7 @@ th{background:#f2f2f2}
 </div>
 
 <div id="P-lotes-pin" class="hidden">
-<h1>Gestion de Lotes</h1>
+<h1>Gestión de Lotes</h1>
 <div class="sub">Solo propietario</div>
 <div class="sec">
 <label>PIN:</label>
@@ -159,8 +160,8 @@ th{background:#f2f2f2}
 </div>
 
 <div id="P-lotes" class="hidden">
-<h1>Gestion de Lotes</h1>
-<div class="sub">Envios y Stock</div>
+<h1>Gestión de Lotes</h1>
+<div class="sub">Envíos y Stock</div>
 
 <div class="sec">
 <h3>Crear Nuevo Lote</h3>
@@ -168,11 +169,11 @@ th{background:#f2f2f2}
 <select id="lot-suc"></select>
 <label>Tipo:</label>
 <select id="lot-tipo"><option value="Retail">Retail</option><option value="Mayorista">Mayorista</option></select>
-<label>Fecha Envio:</label>
+<label>Fecha Envío:</label>
 <input type="date" id="lot-fecha">
-<label>Dias Pronosticados:</label>
+<label>Días Pronosticados:</label>
 <input type="number" id="lot-dias" placeholder="Ej: 20" min="1">
-<label>Costo Envio ($):</label>
+<label>Costo Envío ($):</label>
 <input type="number" id="lot-costo" placeholder="Ej: 25" step="0.01">
 <button class="btn b-verde" onclick="crearLote()">Crear Lote</button>
 <div id="lot-create-msg"></div>
@@ -184,7 +185,7 @@ th{background:#f2f2f2}
 <input type="text" id="cp-nombre" placeholder="Nombre del producto">
 <label>Marca:</label>
 <input type="text" id="cp-marca" placeholder="Marca">
-<label>Categoria:</label>
+<label>Categoría:</label>
 <input type="text" id="cp-cat" placeholder="Ej: Resinas, Adhesivos...">
 <label>Precio Venta ($):</label>
 <input type="number" id="cp-precio" placeholder="Precio base" step="0.01">
@@ -223,12 +224,12 @@ th{background:#f2f2f2}
 
 <div class="sec">
 <h3>Detalle del Lote</h3>
-<div id="det-lote-box"><p style="color:#999">Seleccione un lote</p></div>
+<div id="det-lote-box"><p style="color:#999">Seleccione un lote arriba</p></div>
 </div>
 
 <div class="sec">
 <h3>Marcar Lote como Llegado</h3>
-<select id="lot-sel-lleg"><option value="">Seleccione lote en transito...</option></select>
+<select id="lot-sel-lleg"><option value="">Seleccione lote en tránsito...</option></select>
 <label>Fecha Llegada:</label>
 <input type="date" id="lot-fecha-lleg">
 <button class="btn b-nara" onclick="marcarLlegada()">Marcar Llegada</button>
@@ -238,7 +239,7 @@ th{background:#f2f2f2}
 <div class="sec">
 <h3>Todos los Lotes</h3>
 <div style="overflow-x:auto">
-<table id="t-lotes"><thead><tr><th>ID</th><th>Suc</th><th>Tipo</th><th>Envio</th><th>Pronost</th><th>Llegada</th><th>Real</th><th>$Envio</th><th>Estado</th><th>Dif</th></tr></thead><tbody></tbody></table>
+<table id="t-lotes"><thead><tr><th>ID</th><th>Suc</th><th>Tipo</th><th>Envío</th><th>Pronóst</th><th>Llegada</th><th>Real</th><th>$Envío</th><th>Estado</th><th>Dif</th></tr></thead><tbody></tbody></table>
 </div>
 </div>
 
@@ -261,8 +262,8 @@ th{background:#f2f2f2}
 <h1>Resumen de Ganancias</h1>
 <div class="sub" id="sub-resumen"></div>
 <div class="sec">
-<label>Periodo:</label>
-<select id="flt-resumen" onchange="onFiltroRes()"><option value="mes_actual">Mes Actual</option><option value="mes_anterior">Mes Anterior</option><option value="semana">Ultima Semana</option><option value="personalizado">Personalizado</option></select>
+<label>Período:</label>
+<select id="flt-resumen" onchange="onFiltroRes()"><option value="mes_actual">Mes Actual</option><option value="mes_anterior">Mes Anterior</option><option value="semana">Última Semana</option><option value="personalizado">Personalizado</option></select>
 <div id="fechas-pers" class="hidden" style="margin-top:8px">
 <label>Desde:</label><input type="date" id="res-fi">
 <label>Hasta:</label><input type="date" id="res-ff">
@@ -272,7 +273,7 @@ th{background:#f2f2f2}
 <div id="res-carga" class="hidden" style="text-align:center;padding:15px">Cargando...</div>
 <div id="res-cont" class="hidden">
 <div class="sec">
-<h3 id="res-titulo">Periodo</h3>
+<h3 id="res-titulo">Período</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
 <div class="dbox"><small>Ventas</small><div class="dnum" id="r-v">$0</div></div>
 <div class="dbox"><small>Costo</small><div class="dnum" id="r-c">$0</div></div>
@@ -295,7 +296,7 @@ th{background:#f2f2f2}
 </div>
 
 <div id="P-inversion" class="hidden">
-<h1>Panel de Inversion</h1>
+<h1>Panel de Inversión</h1>
 <div class="sub">Solo propietario</div>
 <div class="sec" id="inv-pin-sec">
 <label>PIN:</label>
@@ -305,11 +306,11 @@ th{background:#f2f2f2}
 </div>
 <div id="inv-cont" class="hidden">
 <div class="sec">
-<select id="flt-inv" onchange="recInv()"><option value="todo">Todo</option><option value="mes">Ultimo Mes</option><option value="semana">Ultima Semana</option></select>
+<select id="flt-inv" onchange="recInv()"><option value="todo">Todo</option><option value="mes">Último Mes</option><option value="semana">Última Semana</option></select>
 <select id="flt-suc-inv" onchange="recInv()" style="margin-top:6px"><option value="todas">Todas las sucursales</option></select>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
 <div class="dbox"><small>Stock</small><div class="dnum" id="i-st">$0</div></div>
-<div class="dbox"><small>Transito</small><div class="dnum" id="i-tr" style="color:#fd7e14">$0</div></div>
+<div class="dbox"><small>Tránsito</small><div class="dnum" id="i-tr" style="color:#fd7e14">$0</div></div>
 <div class="dbox"><small>Gastos</small><div class="dnum" id="i-ga">$0</div></div>
 <div class="dbox"><small>Ventas</small><div class="dnum" id="i-vt">$0</div></div>
 <div class="dbox"><small style="color:#28a745">Neta</small><div class="dnum" id="i-ne" style="color:#28a745">$0</div></div>
@@ -324,7 +325,7 @@ th{background:#f2f2f2}
 </div>
 <div class="sec">
 <h3>Registrar Gasto</h3>
-<input type="text" id="g-desc" placeholder="Descripcion">
+<input type="text" id="g-desc" placeholder="Descripción">
 <input type="number" id="g-monto" placeholder="Monto ($)" step="0.01">
 <select id="g-tienda"><option value="ODONTO STORE">ODONTO STORE</option><option value="CELEBRACIONES">CELEBRACIONES</option></select>
 <button class="btn b-nara" onclick="addGasto()">Agregar Gasto</button>
@@ -376,7 +377,7 @@ async function cargarAlertas(){
   const box=document.getElementById('alertas-box');
   if(!d.alertas||!d.alertas.length){box.innerHTML='';return}
   let h='<h3 style="margin-bottom:8px">Alertas de Vencimiento</h3>';
-  d.alertas.forEach(a=>{const cls=a.dias<=30?'acrt':'awrn';h+='<div class="'+cls+'"><strong>'+a.producto+'</strong><br>Vence en '+a.dias+' dias | Stock: '+a.cantidad+' | '+a.sucursal+'</div>'});
+  d.alertas.forEach(a=>{const cls=a.dias<=30?'acrt':'awrn';h+='<div class="'+cls+'"><strong>'+a.producto+'</strong><br>Vence en '+a.dias+' días | Stock: '+a.cantidad+' | '+a.sucursal+'</div>'});
   box.innerHTML=h;
 }
 
@@ -395,7 +396,7 @@ async function irStock(){
       const tipo=p.tipo==='Mayorista'?'<span class="badge-m">Mayorista</span>':'<span class="badge-d">Retail</span>';
       tb.innerHTML+='<tr><td>'+p.nombre+'</td><td>$'+p.precio.toFixed(2)+'</td><td>'+p.stock+'</td><td>'+(p.sucursal||'General')+'</td><td>'+tipo+'</td><td>'+est+'</td></tr>';
     });
-  }else tb.innerHTML='<tr><td colspan="6" style="text-align:center">Sin productos en lotes</td></tr>';
+  }else tb.innerHTML='<tr><td colspan="6" style="text-align:center">Sin productos en lotes. Crea lotes primero.</td></tr>';
   mostrar('P-stock');
 }
 
@@ -409,32 +410,54 @@ async function cargarVentas(){
 }
 
 async function irVenta(){
-  const d=await api({action:'getProductosConLotes',tienda:tienda});prods=d.productos||[];
-  const s=document.getElementById('sel-prod');s.innerHTML='<option value="">Seleccione...</option>';
+  const s=await api({action:'getSucursales'});
+  const selSuc=document.getElementById('sel-suc-venta');
+  selSuc.innerHTML='<option value="">Seleccione sucursal...</option>';
+  if(s.sucursales)s.sucursales.forEach(sc=>{if(sc.activa)selSuc.innerHTML+='<option value="'+sc.nombre+'">'+sc.nombre+'</option>'});
+  document.getElementById('sel-prod').innerHTML='<option value="">Primero seleccione sucursal</option>';
+  document.getElementById('stk-disp').textContent='-';
+  document.getElementById('lote-info').textContent='';
+  document.getElementById('inp-cant').value=1;
+  document.getElementById('inp-motivo').value='';
+  document.getElementById('inp-porc').value='';
+  document.getElementById('venta-err').textContent='';
+  document.getElementById('venta-ok').textContent='';
+  document.getElementById('sec-elegir-lote').classList.add('hidden');
+  mostrar('P-venta');
+}
+
+async function recargarProdVenta(){
+  const suc=document.getElementById('sel-suc-venta').value;
+  if(!suc){document.getElementById('sel-prod').innerHTML='<option value="">Primero seleccione sucursal</option>';return}
+  const d=await api({action:'getProductosConLotes',tienda:tienda,sucursal:suc});
+  prods=d.productos||[];
+  const s=document.getElementById('sel-prod');
+  s.innerHTML='<option value="">Seleccione...</option>';
   prods.forEach(p=>{if(p.stock>0)s.innerHTML+='<option value="'+p.nombre+'" data-stock="'+p.stock+'">'+p.nombre+' - $'+p.precio+' ('+p.stock+')</option>'});
-  document.getElementById('stk-disp').textContent='-';document.getElementById('lote-info').textContent='';
-  document.getElementById('inp-cant').value=1;document.getElementById('inp-motivo').value='';document.getElementById('inp-porc').value='';
-  document.getElementById('venta-err').textContent='';document.getElementById('venta-ok').textContent='';
-  document.getElementById('sec-elegir-lote').classList.add('hidden');mostrar('P-venta');
+  if(!prods.length||prods.every(p=>p.stock===0))s.innerHTML='<option value="">Sin stock en '+suc+'</option>';
+  document.getElementById('stk-disp').textContent='-';
+  document.getElementById('lote-info').textContent='';
 }
 
 async function onProdChange(){
   const s=document.getElementById('sel-prod'),p=s.value;
   if(!p){document.getElementById('stk-disp').textContent='-';document.getElementById('lote-info').textContent='';document.getElementById('sec-elegir-lote').classList.add('hidden');return}
   document.getElementById('stk-disp').textContent=s.options[s.selectedIndex].getAttribute('data-stock');
-  const d=await api({action:'getLotesProducto',producto:p,tienda:tienda});lotsProd=d.lotes||[];
+  const suc=document.getElementById('sel-suc-venta').value;
+  const d=await api({action:'getLotesProducto',producto:p,tienda:tienda,sucursal:suc});
+  lotsProd=d.lotes||[];
   if(lotsProd.length<=1){
     document.getElementById('sec-elegir-lote').classList.add('hidden');
-    const l=lotsProd[0];document.getElementById('lote-info').textContent=l?'Lote:'+l.loteId+' '+l.sucursal+' Vence:'+l.vencimiento+' $'+l.costoReal.toFixed(2)+'/u':'';
+    const l=lotsProd[0];document.getElementById('lote-info').textContent=l?'Lote: '+l.loteId+' | '+l.sucursal+' | Vence: '+l.vencimiento+' | $'+l.costoReal.toFixed(2)+'/u':'';
   }else{
     const hc=lotsProd.some(l=>l.diasVencimiento!==null&&l.diasVencimiento<=90);
     if(hc){
       document.getElementById('sec-elegir-lote').classList.remove('hidden');let h='';
-      lotsProd.forEach((l,i)=>{const b=l.diasVencimiento!==null&&l.diasVencimiento<=90?'<span class="badge-r">VENCE '+l.diasVencimiento+'d</span>':'<span class="badge-d">'+l.tipo+'</span>';h+='<div class="slote" onclick="elegirLot('+i+')" id="sl-'+i+'"><strong>'+l.loteId+'</strong> '+l.sucursal+' Stock:'+l.cantidadRestante+' Vence:'+l.vencimiento+' '+b+'</div>'});
+      lotsProd.forEach((l,i)=>{const b=l.diasVencimiento!==null&&l.diasVencimiento<=90?'<span class="badge-r">VENCE '+l.diasVencimiento+'d</span>':'';h+='<div class="slote" onclick="elegirLot('+i+')" id="sl-'+i+'"><strong>'+l.loteId+'</strong> | '+l.sucursal+' | Stock: '+l.cantidadRestante+' | Vence: '+l.vencimiento+' '+b+'</div>'});
       document.getElementById('lista-lotes').innerHTML=h;lotSel=0;elegirLot(0);
     }else{
       document.getElementById('sec-elegir-lote').classList.add('hidden');
-      const a=lotsProd[0];document.getElementById('lote-info').textContent='FIFO: '+a.loteId+' '+a.sucursal+' Vence:'+a.vencimiento+' $'+a.costoReal.toFixed(2)+'/u';
+      const a=lotsProd[0];document.getElementById('lote-info').textContent='FIFO: '+a.loteId+' | '+a.sucursal+' | Vence: '+a.vencimiento+' | $'+a.costoReal.toFixed(2)+'/u';
     }
   }
 }
@@ -444,11 +467,11 @@ function elegirLot(i){lotSel=i;document.querySelectorAll('.slote').forEach(e=>e.
 async function confirmarVenta(){
   const p=document.getElementById('sel-prod').value,c=parseInt(document.getElementById('inp-cant').value),m=document.getElementById('inp-motivo').value,pc=parseFloat(document.getElementById('inp-porc').value)||0;
   const err=document.getElementById('venta-err'),ok=document.getElementById('venta-ok');
-  if(!p){err.textContent='Seleccione producto';return}if(!c||c<1){err.textContent='Cantidad invalida';return}
-  const pr=prods.find(x=>x.nombre===p);if(c>pr.stock){err.textContent='Stock: '+pr.stock;return}
+  if(!p){err.textContent='Seleccione producto';return}if(!c||c<1){err.textContent='Cantidad inválida';return}
+  const pr=prods.find(x=>x.nombre===p);if(!pr||c>pr.stock){err.textContent='Stock: '+(pr?pr.stock:0);return}
   let lid=null;if(lotsProd.length>0){const hc=lotsProd.some(l=>l.diasVencimiento!==null&&l.diasVencimiento<=90);lid=hc&&lotSel!==null?lotsProd[lotSel].loteId:lotsProd[0].loteId}
   const d=await api({},'POST',{action:'realizarVenta',producto:p,cantidad:c,motivo:m,porcientoVendedor:pc,vendedor:vendedor,tienda:tienda,loteId:lid});
-  if(d.success){let msg='Venta: $'+d.total.toFixed(2);if(d.ganancia)msg+=' | Gan: $'+d.ganancia.toFixed(2);ok.textContent=msg;err.textContent='';setTimeout(irVenta,1800)}else{err.textContent=d.error||'Error';ok.textContent=''}
+  if(d.success){let msg='Venta: $'+d.total.toFixed(2);if(d.ganancia!==undefined)msg+=' | Gan: $'+d.ganancia.toFixed(2);ok.textContent=msg;err.textContent='';setTimeout(irVenta,1800)}else{err.textContent=d.error||'Error';ok.textContent=''}
 }
 
 async function irAltas(){document.getElementById('sub-altas').textContent=tienda;const d=await api({action:'getHistorialAltas',tienda:tienda});const tb=document.querySelector('#t-altas tbody');tb.innerHTML='';if(d.altas&&d.altas.length)d.altas.forEach(a=>tb.innerHTML+='<tr><td>'+a.fecha+'</td><td>'+a.producto+'</td><td>'+a.cantidad+'</td><td>'+a.tienda+'</td><td>'+a.tipo+'</td><td>'+(a.nota||'-')+'</td></tr>');else tb.innerHTML='<tr><td colspan="6" style="text-align:center">Sin registros</td></tr>';mostrar('P-altas')}
@@ -468,10 +491,10 @@ async function irLotes(){
 async function cargarLotes(){
   const d=await api({action:'getLotes'});lotes=d.lotes||[];
   const sa=document.getElementById('lot-sel-add'),sl=document.getElementById('lot-sel-lleg');
-  sa.innerHTML='<option value="">Seleccione...</option>';sl.innerHTML='<option value="">Seleccione en transito...</option>';
+  sa.innerHTML='<option value="">Seleccione...</option>';sl.innerHTML='<option value="">Seleccione en tránsito...</option>';
   lotes.forEach(l=>{sa.innerHTML+='<option value="'+l.loteId+'">'+l.loteId+' '+l.sucursal+' ('+l.estado+')</option>';if(l.estado==='En Transito')sl.innerHTML+='<option value="'+l.loteId+'">'+l.loteId+' '+l.sucursal+'</option>'});
   const tb=document.querySelector('#t-lotes tbody');tb.innerHTML='';
-  if(lotes.length)lotes.forEach(l=>{let b;if(l.estado==='En Transito')b='<span class="badge-t">Transito</span>';else if(l.estado==='Disponible')b='<span class="badge-d">Disponible</span>';else b='<span class="badge-c">Cerrado</span>';const t=l.tipo==='Mayorista'?'<span class="badge-m">Mayorista</span>':'<span class="badge-d">Retail</span>';const df=l.diferencia!==null?(l.diferencia>0?'+':'')+l.diferencia+'d':'-';tb.innerHTML+='<tr><td>'+l.loteId+'</td><td>'+l.sucursal+'</td><td>'+t+'</td><td>'+l.fechaEnvio+'</td><td>'+(l.diasPronostico||'-')+'</td><td>'+(l.fechaLlegada||'-')+'</td><td>'+(l.diasReal||'-')+'</td><td>$'+l.costoEnvio.toFixed(2)+'</td><td>'+b+'</td><td>'+df+'</td></tr>'});
+  if(lotes.length)lotes.forEach(l=>{let b;if(l.estado==='En Transito')b='<span class="badge-t">Tránsito</span>';else if(l.estado==='Disponible')b='<span class="badge-d">Disponible</span>';else b='<span class="badge-c">Cerrado</span>';const t=l.tipo==='Mayorista'?'<span class="badge-m">Mayorista</span>':'<span class="badge-d">Retail</span>';const df=l.diferencia!==null?(l.diferencia>0?'+':'')+l.diferencia+'d':'-';tb.innerHTML+='<tr><td>'+l.loteId+'</td><td>'+l.sucursal+'</td><td>'+t+'</td><td>'+l.fechaEnvio+'</td><td>'+(l.diasPronostico||'-')+'</td><td>'+(l.fechaLlegada||'-')+'</td><td>'+(l.diasReal||'-')+'</td><td>$'+l.costoEnvio.toFixed(2)+'</td><td>'+b+'</td><td>'+df+'</td></tr>'});
   else tb.innerHTML='<tr><td colspan="10" style="text-align:center">Sin lotes</td></tr>';
 }
 
@@ -510,7 +533,7 @@ async function marcarLlegada(){
   const l=document.getElementById('lot-sel-lleg').value,f=document.getElementById('lot-fecha-lleg').value,msg=document.getElementById('lot-lleg-msg');
   if(!l||!f){msg.innerHTML='<div class="err">Seleccione lote y fecha</div>';return}
   const d=await api({},'POST',{action:'marcarLlegada',loteId:l,fechaLlegada:f,pin:pinInv});
-  if(d.success){msg.innerHTML='<div class="ok">Llegado. '+d.diasReal+' dias reales ('+d.diferencia+')</div>';cargarLotes()}else msg.innerHTML='<div class="err">'+(d.error||'Error')+'</div>';
+  if(d.success){msg.innerHTML='<div class="ok">Llegado. '+d.diasReal+' días reales ('+d.diferencia+')</div>';cargarLotes()}else msg.innerHTML='<div class="err">'+(d.error||'Error')+'</div>';
 }
 
 async function cargarPrecios(){
@@ -520,7 +543,7 @@ async function cargarPrecios(){
   const s=await api({action:'getSucursales'});const sucs=s.sucursales||[];
   let h='';
   sucs.forEach(sc=>{if(!sc.activa)return;let pr='',pm='',op='',od='',oh='';if(d.precios)d.precios.forEach(px=>{if(px.sucursal===sc.nombre){pr=px.precio;pm=px.precioMayorista;op=px.ofertaPrecio;od=px.ofertaDesde;oh=px.ofertaHasta}});
-    h+='<div class="form-inline"><strong>'+sc.nombre+'</strong><label>Precio:</label><input type="number" class="prec-v" data-suc="'+sc.nombre+'" data-field="precio" value="'+pr+'" step="0.01"><label>Mayorista:</label><input type="number" class="prec-v" data-suc="'+sc.nombre+'" data-field="pm" value="'+pm+'" step="0.01"><label>Oferta:</label><input type="number" class="prec-v" data-suc="'+sc.nombre+'" data-field="oferta" value="'+op+'" step="0.01"><label>Oferta Desde:</label><input type="date" class="prec-v" data-suc="'+sc.nombre+'" data-field="odesde" value="'+od+'"><label>Oferta Hasta:</label><input type="date" class="prec-v" data-suc="'+sc.nombre+'" data-field="ohasta" value="'+oh+'"></div>';
+    h+='<div class="frm"><strong>'+sc.nombre+'</strong><label>Precio:</label><input type="number" class="prec-v" data-suc="'+sc.nombre+'" data-field="precio" value="'+pr+'" step="0.01"><label>Mayorista:</label><input type="number" class="prec-v" data-suc="'+sc.nombre+'" data-field="pm" value="'+pm+'" step="0.01"><label>Oferta:</label><input type="number" class="prec-v" data-suc="'+sc.nombre+'" data-field="oferta" value="'+op+'" step="0.01"><label>Oferta Desde:</label><input type="date" class="prec-v" data-suc="'+sc.nombre+'" data-field="odesde" value="'+od+'"><label>Oferta Hasta:</label><input type="date" class="prec-v" data-suc="'+sc.nombre+'" data-field="ohasta" value="'+oh+'"></div>';
   });
   document.getElementById('prec-campos').innerHTML=h;form.classList.remove('hidden');
 }
@@ -528,10 +551,7 @@ async function cargarPrecios(){
 async function guardarPrecios(){
   const pid=document.getElementById('prec-prod').value;const inputs=document.querySelectorAll('.prec-v');const sucData={};
   inputs.forEach(inp=>{const s=inp.getAttribute('data-suc'),f=inp.getAttribute('data-field');if(!sucData[s])sucData[s]={};sucData[s][f]=inp.value});
-  for(var s2 in sucData){
-    var sd=sucData[s2];
-    await api({},'POST',{action:'updatePrecio',productoId:pid,sucursal:s2,pin:pinInv,precio:parseFloat(sd.precio)||0,precioMayorista:parseFloat(sd.pm)||0,ofertaPrecio:parseFloat(sd.oferta)||'',ofertaDesde:sd.odesde||'',ofertaHasta:sd.ohasta||''});
-  }
+  for(var s2 in sucData){var sd=sucData[s2];await api({},'POST',{action:'updatePrecio',productoId:pid,sucursal:s2,pin:pinInv,precio:parseFloat(sd.precio)||0,precioMayorista:parseFloat(sd.pm)||0,ofertaPrecio:parseFloat(sd.oferta)||'',ofertaDesde:sd.odesde||'',ofertaHasta:sd.ohasta||''})}
   document.getElementById('prec-msg').innerHTML='<div class="ok">Precios guardados</div>';
 }
 
@@ -544,7 +564,7 @@ async function cargarResumen(){
   var p={action:'getResumenMensual',tienda:tienda,filtro:f};if(f==='personalizado'){p.fechaInicio=document.getElementById('res-fi').value;p.fechaFin=document.getElementById('res-ff').value}
   const d=await api(p);document.getElementById('res-carga').classList.add('hidden');
   if(d.error){document.getElementById('res-carga').textContent=d.error;document.getElementById('res-carga').classList.remove('hidden');return}
-  document.getElementById('res-titulo').textContent=d.periodo||'Periodo';
+  document.getElementById('res-titulo').textContent=d.periodo||'Período';
   document.getElementById('r-v').textContent='$'+d.totalVentas.toFixed(2);
   document.getElementById('r-c').textContent='$'+d.totalCostoReal.toFixed(2);
   document.getElementById('r-com').textContent='$'+d.totalComisiones.toFixed(2);
