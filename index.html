@@ -119,6 +119,16 @@ th{background:#f2f2f2}
 <div>Stock: <strong id="stk-disp">-</strong></div>
 <div id="lote-info" style="font-size:11px;color:#666;margin-top:3px"></div>
 </div>
+<label>Precio de Venta ($):</label>
+<input type="number" id="inp-precio-venta" placeholder="Se llena automáticamente" step="0.01">
+<label>Tipo de Venta:</label>
+<select id="sel-tipo-venta">
+  <option value="Normal">Normal</option>
+  <option value="Promoción">Promoción</option>
+  <option value="Desperfecto">Desperfecto</option>
+  <option value="Muestra">Muestra</option>
+  <option value="Otro">Otro</option>
+</select>
 <label>Cantidad:</label>
 <input type="number" id="inp-cant" value="1" min="1">
 <div id="sec-elegir-lote" class="hidden">
@@ -460,6 +470,8 @@ async function onProdChange(){
       const a=lotsProd[0];document.getElementById('lote-info').textContent='FIFO: '+a.loteId+' | '+a.sucursal+' | Vence: '+a.vencimiento+' | $'+a.costoReal.toFixed(2)+'/u';
     }
   }
+  const precioProd = prods.find(x => x.nombre === p);
+if (precioProd) document.getElementById('inp-precio-venta').value = precioProd.precio;
 }
 
 function elegirLot(i){lotSel=i;document.querySelectorAll('.slote').forEach(e=>e.classList.remove('sel'));const el=document.getElementById('sl-'+i);if(el)el.classList.add('sel')}
@@ -470,7 +482,9 @@ async function confirmarVenta(){
   if(!p){err.textContent='Seleccione producto';return}if(!c||c<1){err.textContent='Cantidad inválida';return}
   const pr=prods.find(x=>x.nombre===p);if(!pr||c>pr.stock){err.textContent='Stock: '+(pr?pr.stock:0);return}
   let lid=null;if(lotsProd.length>0){const hc=lotsProd.some(l=>l.diasVencimiento!==null&&l.diasVencimiento<=90);lid=hc&&lotSel!==null?lotsProd[lotSel].loteId:lotsProd[0].loteId}
-  const d=await api({},'POST',{action:'realizarVenta',producto:p,cantidad:c,motivo:m,porcientoVendedor:pc,vendedor:vendedor,tienda:tienda,loteId:lid});
+  const precioVenta=parseFloat(document.getElementById('inp-precio-venta').value)||0;
+const tipoVenta=document.getElementById('sel-tipo-venta').value;
+const d=await api({},'POST',{action:'realizarVenta',producto:p,cantidad:c,motivo:m,porcientoVendedor:pc,vendedor:vendedor,tienda:tienda,loteId:lid,precioVenta:precioVenta,tipoVenta:tipoVenta});
   if(d.success){let msg='Venta: $'+d.total.toFixed(2);if(d.ganancia!==undefined)msg+=' | Gan: $'+d.ganancia.toFixed(2);ok.textContent=msg;err.textContent='';setTimeout(irVenta,1800)}else{err.textContent=d.error||'Error';ok.textContent=''}
 }
 
