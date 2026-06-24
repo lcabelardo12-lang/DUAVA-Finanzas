@@ -181,7 +181,7 @@ th{background:#f2f2f2}
 <select id="lot-tipo"><option value="Retail">Retail</option><option value="Mayorista">Mayorista</option></select>
 <label>Fecha Envío:</label>
 <input type="date" id="lot-fecha">
-<label>Días Pronosticados:</label>
+<label>Días Pronosticados (envío):</label>
 <input type="number" id="lot-dias" placeholder="Ej: 20" min="1">
 <label>Días Pronosticados de Venta:</label>
 <input type="number" id="lot-dias-venta" placeholder="Ej: 60" min="1" value="60">
@@ -476,8 +476,8 @@ async function onProdChange(){
       const a=lotsProd[0];document.getElementById('lote-info').textContent='FIFO: '+a.loteId+' | '+a.sucursal+' | Vence: '+a.vencimiento+' | $'+a.costoReal.toFixed(2)+'/u';
     }
   }
-  const precioProd = prods.find(x => x.nombre === p);
-if (precioProd) document.getElementById('inp-precio-venta').value = precioProd.precio;
+  const precioProd=prods.find(x=>x.nombre===p);
+  if(precioProd)document.getElementById('inp-precio-venta').value=precioProd.precio;
 }
 
 function elegirLot(i){lotSel=i;document.querySelectorAll('.slote').forEach(e=>e.classList.remove('sel'));const el=document.getElementById('sl-'+i);if(el)el.classList.add('sel')}
@@ -489,8 +489,8 @@ async function confirmarVenta(){
   const pr=prods.find(x=>x.nombre===p);if(!pr||c>pr.stock){err.textContent='Stock: '+(pr?pr.stock:0);return}
   let lid=null;if(lotsProd.length>0){const hc=lotsProd.some(l=>l.diasVencimiento!==null&&l.diasVencimiento<=90);lid=hc&&lotSel!==null?lotsProd[lotSel].loteId:lotsProd[0].loteId}
   const precioVenta=parseFloat(document.getElementById('inp-precio-venta').value)||0;
-const tipoVenta=document.getElementById('sel-tipo-venta').value;
-const d=await api({},'POST',{action:'realizarVenta',producto:p,cantidad:c,motivo:m,porcientoVendedor:pc,vendedor:vendedor,tienda:tienda,loteId:lid,precioVenta:precioVenta,tipoVenta:tipoVenta});
+  const tipoVenta=document.getElementById('sel-tipo-venta').value;
+  const d=await api({},'POST',{action:'realizarVenta',producto:p,cantidad:c,motivo:m,porcientoVendedor:pc,vendedor:vendedor,tienda:tienda,loteId:lid,precioVenta:precioVenta,tipoVenta:tipoVenta});
   if(d.success){let msg='Venta: $'+d.total.toFixed(2);if(d.ganancia!==undefined)msg+=' | Gan: $'+d.ganancia.toFixed(2);ok.textContent=msg;err.textContent='';setTimeout(irVenta,1800)}else{err.textContent=d.error||'Error';ok.textContent=''}
 }
 
@@ -504,7 +504,7 @@ async function irLotes(){
   if(s.sucursales)s.sucursales.forEach(sc=>{if(sc.activa)sel.innerHTML+='<option>'+sc.nombre+'</option>'});
   const c=await api({action:'getCatalogoIA'});catalogo=c.productos||[];
   const sp=document.getElementById('lot-prod');sp.innerHTML='<option value="">Seleccione...</option>';catalogo.forEach(p=>{const t=p.tono?' - '+p.tono:'';sp.innerHTML+='<option value="'+p.id+'">'+p.producto+' ('+p.marca+')'+t+'</option>'});
-  const spp=document.getElementById('prec-prod');spp.innerHTML='<option value="">Seleccione...</option>';catalogo.forEach(p=>{const t=p.tono?' - '+p.tono:'';sp.innerHTML+='<option value="'+p.id+'">'+p.producto+' ('+p.marca+')'+t+'</option>'});
+  const spp=document.getElementById('prec-prod');spp.innerHTML='<option value="">Seleccione...</option>';catalogo.forEach(p=>{const t=p.tono?' - '+p.tono:'';spp.innerHTML+='<option value="'+p.id+'">'+p.producto+' ('+p.marca+')'+t+'</option>'});
   await cargarLotes();mostrar('P-lotes');
 }
 
@@ -619,16 +619,20 @@ async function cargarInv(){
 }
 function recInv(){if(pinInv)cargarInv()}
 async function addGasto(){const desc=document.getElementById('g-desc').value,m=parseFloat(document.getElementById('g-monto').value),t=document.getElementById('g-tienda').value,msg=document.getElementById('g-msg');if(!desc||!m){msg.innerHTML='<div class="err">Complete campos</div>';return}const d=await api({},'POST',{action:'addGasto',descripcion:desc,monto:m,tienda:t,pin:pinInv});if(d.success){msg.innerHTML='<div class="ok">Registrado</div>';document.getElementById('g-desc').value='';document.getElementById('g-monto').value='';cargarInv()}else msg.innerHTML='<div class="err">'+(d.error||'Error')+'</div>'}
+
 async function cargarResumenLotes(){
-  const d=await api({},'POST',{action:'getResumenPorLote',tienda:tienda,pin:pinInv,sucursal:'todas'});
+  const su=document.getElementById('flt-suc-inv').value;
+  const d=await api({},'POST',{action:'getResumenPorLote',tienda:tienda,pin:pinInv,sucursal:su});
   const box=document.getElementById('resumen-lotes-box');
   if(d.error||!d.lotes||!d.lotes.length){box.innerHTML='<p style="color:#999">Sin lotes</p>';return}
   let h='';
   d.lotes.forEach(l=>{
     let icono='',badge='',color='';
-    if(l.estado==='En Transito'){icono='Tránsito';badge='badge-t';color='#856404'}
+    if(l.estado==='En Transito'){icono='En Transito';badge='badge-t';color='#856404'}
     else if(l.estado==='Disponible'){icono='Disponible';badge='badge-d';color='#28a745'}
-    else{icono='Cerrado';badge='badge-c';color='#6c757d'}
+    else if(l.estado==='Vendiendo'){icono='Vendiendo';badge='badge-d';color='#28a745'}
+    else if(l.estado==='Cerrado'){icono='Cerrado';badge='badge-c';color='#6c757d'}
+    else{icono=l.estado||'Desconocido';badge='badge-d';color='#666'}
     const tipoBadge=l.tipo==='Mayorista'?'badge-m':'badge-d';
 
     h+='<div style="border:1px solid #ddd;border-radius:10px;padding:12px;margin:8px 0;background:#fafafa">';
