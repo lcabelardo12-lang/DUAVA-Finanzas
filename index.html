@@ -625,7 +625,7 @@ async function cargarResumenLotes(){
   const d=await api({},'POST',{action:'getResumenPorLote',tienda:tienda,pin:pinInv,sucursal:su});
   const box=document.getElementById('resumen-lotes-box');
   if(d.error||!d.lotes||!d.lotes.length){box.innerHTML='<p style="color:#999">Sin lotes</p>';return}
-  let h='<div style="max-height:510px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:4px">';
+  let h='<div style="max-height:370px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:4px">';
   d.lotes.forEach(l=>{
     let badge='',badgeClass='';
     if(l.estado==='En Transito'){badge='En Transito';badgeClass='badge-t';}
