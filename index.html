@@ -359,7 +359,7 @@ th{background:#f2f2f2}
 
 <script>
 const URL_GAS='https://script.google.com/macros/s/AKfycbzVZh6s8MNTz3s20X6d2hUxZ2dhbDA8WOIN6pjyaLrJkbRJ7mELrZIELeY0l4yB3bH7zQ/exec';
-let tienda='',vendedor='',prods=[],pinInv='',lotes=[],catalogo=[],lotSel=null,lotsProd=[];
+let tienda='',vendedor='',prods=[],pinInv='',lotes=[],catalogo=[],lotSel=null,lotsProd=[];let esPropietario=false;
 
 function mostrar(id){document.querySelectorAll('[id^="P-"]').forEach(e=>e.classList.add('hidden'));document.getElementById(id).classList.remove('hidden')}
 function selTienda(t){tienda=t;document.getElementById('sub-login').textContent='La Habana - '+t;cargarVend();mostrar('P-login')}
@@ -383,7 +383,7 @@ async function cargarVend(){
 async function doLogin(){
   const v=document.getElementById('sel-vend').value,c=document.getElementById('inp-clave').value,e=document.getElementById('login-err');
   if(!v||!c){e.textContent='Complete campos';return}
-  if(v==='Abelardo'&&c==='7512'){vendedor=v;e.textContent='';document.getElementById('sub-menu').textContent='La Habana - '+tienda;mostrar('P-menu');cargarAlertas();return}
+  if(v==='Abelardo'&&c==='7512'){vendedor=v;esPropietario=true;e.textContent='';document.getElementById('sub-menu').textContent='La Habana - '+tienda;mostrar('P-menu');cargarAlertas();return}
   const d=await api({},'POST',{action:'login',vendedor:v,clave:c});
   if(d.success){vendedor=v;e.textContent='';document.getElementById('sub-menu').textContent='La Habana - '+tienda;mostrar('P-menu');cargarAlertas()}else e.textContent=d.error||'Error';
 }
@@ -497,7 +497,7 @@ async function confirmarVenta(){
 async function irAltas(){document.getElementById('sub-altas').textContent=tienda;const d=await api({action:'getHistorialAltas',tienda:tienda});const tb=document.querySelector('#t-altas tbody');tb.innerHTML='';if(d.altas&&d.altas.length)d.altas.forEach(a=>tb.innerHTML+='<tr><td>'+a.fecha+'</td><td>'+a.producto+'</td><td>'+a.cantidad+'</td><td>'+a.tienda+'</td><td>'+a.tipo+'</td><td>'+(a.nota||'-')+'</td></tr>');else tb.innerHTML='<tr><td colspan="6" style="text-align:center">Sin registros</td></tr>';mostrar('P-altas')}
 
 function irLotesPin(){document.getElementById('lpin').value='';document.getElementById('lpin-err').textContent='';mostrar('P-lotes-pin')}
-async function verifPinLotes(){const p=document.getElementById('lpin').value;if(!p){document.getElementById('lpin-err').textContent='Ingrese PIN';return}if(p!=='7512'){document.getElementById('lpin-err').textContent='Incorrecto';return}pinInv=p;await irLotes()}
+async function verifPinLotes(){const p=document.getElementById('lpin').value;if(!p){document.getElementById('lpin-err').textContent='Ingrese PIN';return}if(esPropietario){pinInv='7512';await irLotes();return}if(p!=='7512'){document.getElementById('lpin-err').textContent='Incorrecto';return}pinInv=p;await irLotes()}
 
 async function irLotes(){
   const s=await api({action:'getSucursales'});const sel=document.getElementById('lot-suc');sel.innerHTML='';
@@ -576,7 +576,7 @@ async function guardarPrecios(){
 }
 
 function irResumenPin(){document.getElementById('rpin').value='';document.getElementById('rpin-err').textContent='';mostrar('P-resumen-pin')}
-function verifPinResumen(){const p=document.getElementById('rpin').value;if(!p){document.getElementById('rpin-err').textContent='Ingrese PIN';return}if(p!=='7512'){document.getElementById('rpin-err').textContent='Incorrecto';return}pinInv=p;document.getElementById('sub-resumen').textContent=tienda;document.getElementById('flt-resumen').value='mes_actual';document.getElementById('fechas-pers').classList.add('hidden');document.getElementById('res-cont').classList.add('hidden');cargarResumen();mostrar('P-resumen')}
+function verifPinResumen(){const p=document.getElementById('rpin').value;if(!p){document.getElementById('rpin-err').textContent='Ingrese PIN';return}if(esPropietario){pinInv='7512';document.getElementById('sub-resumen').textContent=tienda;document.getElementById('flt-resumen').value='mes_actual';document.getElementById('fechas-pers').classList.add('hidden');document.getElementById('res-cont').classList.add('hidden');cargarResumen();mostrar('P-resumen');return}if(p!=='7512'){document.getElementById('rpin-err').textContent='Incorrecto';return}pinInv=p;document.getElementById('sub-resumen').textContent=tienda;document.getElementById('flt-resumen').value='mes_actual';document.getElementById('fechas-pers').classList.add('hidden');document.getElementById('res-cont').classList.add('hidden');cargarResumen();mostrar('P-resumen')}
 function onFiltroRes(){if(document.getElementById('flt-resumen').value==='personalizado'){document.getElementById('fechas-pers').classList.remove('hidden');document.getElementById('res-cont').classList.add('hidden')}else{document.getElementById('fechas-pers').classList.add('hidden');cargarResumen()}}
 async function cargarResumen(){
   const f=document.getElementById('flt-resumen').value;if(f==='personalizado'){if(!document.getElementById('res-fi').value||!document.getElementById('res-ff').value)return}
@@ -599,7 +599,7 @@ async function cargarResumen(){
 }
 
 async function irInversion(){pinInv='';document.getElementById('inv-pin').value='';document.getElementById('inv-pin-err').textContent='';document.getElementById('inv-pin-sec').classList.remove('hidden');document.getElementById('inv-cont').classList.add('hidden');mostrar('P-inversion')}
-async function verInv(){const p=document.getElementById('inv-pin').value;if(!p){document.getElementById('inv-pin-err').textContent='Ingrese PIN';return}pinInv=p;document.getElementById('inv-pin-err').textContent='Cargando...';await cargarInv()}
+async function verInv(){const p=document.getElementById('inv-pin').value;if(esPropietario){pinInv='7512';document.getElementById('inv-pin-err').textContent='Cargando...';await cargarInv();return}if(!p){document.getElementById('inv-pin-err').textContent='Ingrese PIN';return}pinInv=p;document.getElementById('inv-pin-err').textContent='Cargando...';await cargarInv()}
 async function cargarInv(){
   const f=document.getElementById('flt-inv').value,su=document.getElementById('flt-suc-inv').value;
   const d=await api({},'POST',{action:'getResumenInversion',tienda:tienda,pin:pinInv,filtro:f,sucursal:su});
