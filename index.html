@@ -76,9 +76,9 @@ th{background:#f2f2f2}
 <button class="btn b-nara" onclick="irVentas()">Mis Ventas</button>
 <button class="btn b-verde" onclick="irVenta()">Realizar Venta</button>
 <button class="btn b-azul" onclick="irAltas()">Historial de Altas</button>
-<button class="btn b-osc" onclick="irLotesPin()">Gestión de Lotes</button>
-<button class="btn b-verde" onclick="irResumenPin()">Resumen de Ganancias</button>
-<button class="btn b-mora" onclick="irInversion()">Panel de Inversión</button>
+<button id="btn-lotes" class="btn b-osc hidden" onclick="irLotesPin()">Gestión de Lotes</button>
+<button id="btn-resumen" class="btn b-verde hidden" onclick="irResumenPin()">Resumen de Ganancias</button>
+<button id="btn-inversion" class="btn b-mora hidden" onclick="irInversion()">Panel de Inversión</button>
 <button class="btn b-rojo" onclick="cerrarSes()">Cerrar Sesión</button>
 </div>
 </div>
@@ -359,12 +359,12 @@ th{background:#f2f2f2}
 
 <script>
 const URL_GAS='https://script.google.com/macros/s/AKfycbzVZh6s8MNTz3s20X6d2hUxZ2dhbDA8WOIN6pjyaLrJkbRJ7mELrZIELeY0l4yB3bH7zQ/exec';
-let tienda='',vendedor='',prods=[],pinInv='',lotes=[],catalogo=[],lotSel=null,lotsProd=[];let esPropietario=false;
+let tienda='',vendedor='',prods=[],pinInv='',lotes=[],catalogo=[],lotSel=null,lotsProd=[],esPropietario=false;
 
 function mostrar(id){document.querySelectorAll('[id^="P-"]').forEach(e=>e.classList.add('hidden'));document.getElementById(id).classList.remove('hidden')}
 function selTienda(t){tienda=t;document.getElementById('sub-login').textContent='La Habana - '+t;cargarVend();mostrar('P-login')}
 function volverMenu(){mostrar('P-menu');cargarAlertas()}
-function cerrarSes(){vendedor='';tienda='';document.getElementById('inp-clave').value='';mostrar('P-inicio')}
+function cerrarSes(){vendedor='';tienda='';esPropietario=false;document.getElementById('inp-clave').value='';document.getElementById('btn-lotes').classList.add('hidden');document.getElementById('btn-resumen').classList.add('hidden');document.getElementById('btn-inversion').classList.add('hidden');mostrar('P-inicio')}
 
 async function api(p,m,d){
   try{
@@ -383,9 +383,9 @@ async function cargarVend(){
 async function doLogin(){
   const v=document.getElementById('sel-vend').value,c=document.getElementById('inp-clave').value,e=document.getElementById('login-err');
   if(!v||!c){e.textContent='Complete campos';return}
-  if(v==='Abelardo'&&c==='7512'){vendedor=v;esPropietario=true;e.textContent='';document.getElementById('sub-menu').textContent='La Habana - '+tienda;mostrar('P-menu');cargarAlertas();return}
+  if(v==='Abelardo'&&c==='7512'){vendedor=v;esPropietario=true;document.getElementById('btn-lotes').classList.remove('hidden');document.getElementById('btn-resumen').classList.remove('hidden');document.getElementById('btn-inversion').classList.remove('hidden');e.textContent='';document.getElementById('sub-menu').textContent='La Habana - '+tienda;mostrar('P-menu');cargarAlertas();return}
   const d=await api({},'POST',{action:'login',vendedor:v,clave:c});
-  if(d.success){vendedor=v;e.textContent='';document.getElementById('sub-menu').textContent='La Habana - '+tienda;mostrar('P-menu');cargarAlertas()}else e.textContent=d.error||'Error';
+  if(d.success){vendedor=v;esPropietario=false;document.getElementById('btn-lotes').classList.add('hidden');document.getElementById('btn-resumen').classList.add('hidden');document.getElementById('btn-inversion').classList.add('hidden');e.textContent='';document.getElementById('sub-menu').textContent='La Habana - '+tienda;mostrar('P-menu');cargarAlertas()}else e.textContent=d.error||'Error';
 }
 
 async function cargarAlertas(){
@@ -496,7 +496,7 @@ async function confirmarVenta(){
 
 async function irAltas(){document.getElementById('sub-altas').textContent=tienda;const d=await api({action:'getHistorialAltas',tienda:tienda});const tb=document.querySelector('#t-altas tbody');tb.innerHTML='';if(d.altas&&d.altas.length)d.altas.forEach(a=>tb.innerHTML+='<tr><td>'+a.fecha+'</td><td>'+a.producto+'</td><td>'+a.cantidad+'</td><td>'+a.tienda+'</td><td>'+a.tipo+'</td><td>'+(a.nota||'-')+'</td></tr>');else tb.innerHTML='<tr><td colspan="6" style="text-align:center">Sin registros</td></tr>';mostrar('P-altas')}
 
-function irLotesPin(){document.getElementById('lpin').value='';document.getElementById('lpin-err').textContent='';mostrar('P-lotes-pin')}
+async function irLotesPin(){if(esPropietario){pinInv='7512';await irLotes();return}document.getElementById('lpin').value='';document.getElementById('lpin-err').textContent='';mostrar('P-lotes-pin')}
 async function verifPinLotes(){const p=document.getElementById('lpin').value;if(!p){document.getElementById('lpin-err').textContent='Ingrese PIN';return}if(esPropietario){pinInv='7512';await irLotes();return}if(p!=='7512'){document.getElementById('lpin-err').textContent='Incorrecto';return}pinInv=p;await irLotes()}
 
 async function irLotes(){
@@ -575,7 +575,7 @@ async function guardarPrecios(){
   document.getElementById('prec-msg').innerHTML='<div class="ok">Precios guardados</div>';
 }
 
-function irResumenPin(){document.getElementById('rpin').value='';document.getElementById('rpin-err').textContent='';mostrar('P-resumen-pin')}
+function irResumenPin(){if(esPropietario){pinInv='7512';document.getElementById('sub-resumen').textContent=tienda;document.getElementById('flt-resumen').value='mes_actual';document.getElementById('fechas-pers').classList.add('hidden');document.getElementById('res-cont').classList.add('hidden');cargarResumen();mostrar('P-resumen');return}document.getElementById('rpin').value='';document.getElementById('rpin-err').textContent='';mostrar('P-resumen-pin')}
 function verifPinResumen(){const p=document.getElementById('rpin').value;if(!p){document.getElementById('rpin-err').textContent='Ingrese PIN';return}if(esPropietario){pinInv='7512';document.getElementById('sub-resumen').textContent=tienda;document.getElementById('flt-resumen').value='mes_actual';document.getElementById('fechas-pers').classList.add('hidden');document.getElementById('res-cont').classList.add('hidden');cargarResumen();mostrar('P-resumen');return}if(p!=='7512'){document.getElementById('rpin-err').textContent='Incorrecto';return}pinInv=p;document.getElementById('sub-resumen').textContent=tienda;document.getElementById('flt-resumen').value='mes_actual';document.getElementById('fechas-pers').classList.add('hidden');document.getElementById('res-cont').classList.add('hidden');cargarResumen();mostrar('P-resumen')}
 function onFiltroRes(){if(document.getElementById('flt-resumen').value==='personalizado'){document.getElementById('fechas-pers').classList.remove('hidden');document.getElementById('res-cont').classList.add('hidden')}else{document.getElementById('fechas-pers').classList.add('hidden');cargarResumen()}}
 async function cargarResumen(){
@@ -598,7 +598,7 @@ async function cargarResumen(){
   document.getElementById('res-cont').classList.remove('hidden');
 }
 
-async function irInversion(){pinInv='';document.getElementById('inv-pin').value='';document.getElementById('inv-pin-err').textContent='';document.getElementById('inv-pin-sec').classList.remove('hidden');document.getElementById('inv-cont').classList.add('hidden');mostrar('P-inversion')}
+async function irInversion(){if(esPropietario){mostrar('P-inversion');pinInv='7512'';document.getElementById('inv-pin-err').textContent='';document.getElementById('inv-pin-sec').classList.add('hidden');document.getElementById('inv-cont').classList.remove('hidden');await cargarInv();return}pinInv='';document.getElementById('inv-pin').value='';document.getElementById('inv-pin-err').textContent='';document.getElementById('inv-pin-sec').classList.remove('hidden');document.getElementById('inv-cont').classList.add('hidden');mostrar('P-inversion')}
 async function verInv(){const p=document.getElementById('inv-pin').value;if(esPropietario){pinInv='7512';document.getElementById('inv-pin-err').textContent='Cargando...';await cargarInv();return}if(!p){document.getElementById('inv-pin-err').textContent='Ingrese PIN';return}pinInv=p;document.getElementById('inv-pin-err').textContent='Cargando...';await cargarInv()}
 async function cargarInv(){
   const f=document.getElementById('flt-inv').value,su=document.getElementById('flt-suc-inv').value;
