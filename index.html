@@ -643,7 +643,7 @@ async function cargarResumenLotes(){
     h+='<div style="border:2px solid #ccc;border-radius:12px;padding:16px;margin:15px 0;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.08)">';
     h+='<div style="font-weight:bold;font-size:15px;margin-bottom:8px">'+l.loteId+' | '+l.sucursal+' | <span class="'+badgeClass+'">'+badge+'</span> <span class="'+tipoBadge+'">'+l.tipo+'</span></div>';
     h+='<div style="font-size:13px;line-height:1.8">';
-    h+='<div>Inversión: <strong>$'+l.inversionTotal.toFixed(2)+'</strong></div>';
+    h+='<div>Inversión: <strong>$'+l.inversionTotal.toFixed(2)+'</strong> (envío: $'+l.costoEnvio.toFixed(2)+' incluido)</div>';
     if(l.estado==='En Transito'){
       h+='<div>Proyección venta: <strong>$'+l.proyeccionVenta.toFixed(2)+'</strong></div>';
       h+='<div style="color:#28a745">Ganancia potencial: <strong>$'+l.gananciaPotencial.toFixed(2)+'</strong> ('+l.margen+'%)</div>';
