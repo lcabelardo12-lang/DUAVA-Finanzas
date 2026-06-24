@@ -20,7 +20,7 @@ h1{text-align:center;font-size:26px;margin-bottom:8px;font-weight:700;color:#2c2
 .b-rojo{background:#dc3545;color:#fff}
 .b-mora{background:#6f42c1;color:#fff}
 .b-osc{background:#343a40;color:#fff}
-.hidden{display:none}
+.hidden{display:none!important}
 .sec{background:#fff;padding:18px;margin:10px 0;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
 input,select,textarea{width:100%;height:50px;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:8px;font-size:16px}
 textarea{height:70px;resize:vertical}
@@ -598,7 +598,7 @@ async function cargarResumen(){
   document.getElementById('res-cont').classList.remove('hidden');
 }
 
-async function irInversion(){if(esPropietario){mostrar('P-inversion');pinInv='7512'';document.getElementById('inv-pin-err').textContent='';document.getElementById('inv-pin-sec').classList.add('hidden');document.getElementById('inv-cont').classList.remove('hidden');await cargarInv();return}pinInv='';document.getElementById('inv-pin').value='';document.getElementById('inv-pin-err').textContent='';document.getElementById('inv-pin-sec').classList.remove('hidden');document.getElementById('inv-cont').classList.add('hidden');mostrar('P-inversion')}
+async function irInversion(){if(esPropietario){mostrar('P-inversion');pinInv='7512';document.getElementById('inv-pin-err').textContent='';document.getElementById('inv-pin-sec').classList.add('hidden');document.getElementById('inv-cont').classList.remove('hidden');await cargarInv();return}pinInv='';document.getElementById('inv-pin').value='';document.getElementById('inv-pin-err').textContent='';document.getElementById('inv-pin-sec').classList.remove('hidden');document.getElementById('inv-cont').classList.add('hidden');mostrar('P-inversion')}
 async function verInv(){const p=document.getElementById('inv-pin').value;if(esPropietario){pinInv='7512';document.getElementById('inv-pin-err').textContent='Cargando...';await cargarInv();return}if(!p){document.getElementById('inv-pin-err').textContent='Ingrese PIN';return}pinInv=p;document.getElementById('inv-pin-err').textContent='Cargando...';await cargarInv()}
 async function cargarInv(){
   const f=document.getElementById('flt-inv').value,su=document.getElementById('flt-suc-inv').value;
