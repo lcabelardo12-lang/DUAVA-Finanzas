@@ -183,6 +183,8 @@ th{background:#f2f2f2}
 <input type="date" id="lot-fecha">
 <label>Días Pronosticados:</label>
 <input type="number" id="lot-dias" placeholder="Ej: 20" min="1">
+<label>Días Pronosticados de Venta:</label>
+<input type="number" id="lot-dias-venta" placeholder="Ej: 60" min="1" value="60">
 <label>Costo Envío ($):</label>
 <input type="number" id="lot-costo" placeholder="Ej: 25" step="0.01">
 <button class="btn b-verde" onclick="crearLote()">Crear Lote</button>
@@ -326,6 +328,10 @@ th{background:#f2f2f2}
 <div class="dbox"><small style="color:#28a745">Neta</small><div class="dnum" id="i-ne" style="color:#28a745">$0</div></div>
 <div class="dbox"><small>Comisiones</small><div class="dnum" id="i-co">$0</div></div>
 </div>
+</div>
+<div class="sec">
+<h3>Resumen por Lote</h3>
+<div id="resumen-lotes-box"><p style="color:#999">Cargando...</p></div>
 </div>
 <div class="sec">
 <h3>Productos</h3>
@@ -513,10 +519,10 @@ async function cargarLotes(){
 }
 
 async function crearLote(){
-  const s=document.getElementById('lot-suc').value,t=document.getElementById('lot-tipo').value,f=document.getElementById('lot-fecha').value,d=document.getElementById('lot-dias').value,c=document.getElementById('lot-costo').value,msg=document.getElementById('lot-create-msg');
+  const s=document.getElementById('lot-suc').value,t=document.getElementById('lot-tipo').value,f=document.getElementById('lot-fecha').value,d=document.getElementById('lot-dias').value,c=document.getElementById('lot-costo').value,dv=document.getElementById('lot-dias-venta').value,msg=document.getElementById('lot-create-msg');
   if(!s||!f||!c){msg.innerHTML='<div class="err">Complete campos</div>';return}
-  const r=await api({},'POST',{action:'crearLote',sucursal:s,fechaEnvio:f,diasPronostico:parseInt(d)||0,costoEnvio:parseFloat(c),tipo:t,pin:pinInv});
-  if(r.success){msg.innerHTML='<div class="ok">Lote '+r.loteId+' creado ('+t+')</div>';document.getElementById('lot-fecha').value='';document.getElementById('lot-dias').value='';document.getElementById('lot-costo').value='';cargarLotes()}else msg.innerHTML='<div class="err">'+(r.error||'Error')+'</div>';
+  const r=await api({},'POST',{action:'crearLote',sucursal:s,fechaEnvio:f,diasPronostico:parseInt(d)||0,costoEnvio:parseFloat(c),tipo:t,pin:pinInv,diasPronosticoVenta:parseInt(dv)||60});
+  if(r.success){msg.innerHTML='<div class="ok">Lote '+r.loteId+' creado ('+t+')</div>';document.getElementById('lot-fecha').value='';document.getElementById('lot-dias').value='';document.getElementById('lot-costo').value='';document.getElementById('lot-dias-venta').value='60';cargarLotes()}else msg.innerHTML='<div class="err">'+(r.error||'Error')+'</div>';
 }
 
 async function crearProducto(){
@@ -609,9 +615,53 @@ async function cargarInv(){
   if(d.gastos&&d.gastos.length)d.gastos.forEach(g=>tg.innerHTML+='<tr><td>'+g.fecha+'</td><td>'+g.descripcion+'</td><td>$'+g.monto.toFixed(2)+'</td><td>'+g.tienda+'</td></tr>');
   else tg.innerHTML='<tr><td colspan="4" style="text-align:center">Sin gastos</td></tr>';
   document.getElementById('g-tienda').value=tienda;
+  cargarResumenLotes();
 }
 function recInv(){if(pinInv)cargarInv()}
 async function addGasto(){const desc=document.getElementById('g-desc').value,m=parseFloat(document.getElementById('g-monto').value),t=document.getElementById('g-tienda').value,msg=document.getElementById('g-msg');if(!desc||!m){msg.innerHTML='<div class="err">Complete campos</div>';return}const d=await api({},'POST',{action:'addGasto',descripcion:desc,monto:m,tienda:t,pin:pinInv});if(d.success){msg.innerHTML='<div class="ok">Registrado</div>';document.getElementById('g-desc').value='';document.getElementById('g-monto').value='';cargarInv()}else msg.innerHTML='<div class="err">'+(d.error||'Error')+'</div>'}
+async function cargarResumenLotes(){
+  const d=await api({},'POST',{action:'getResumenPorLote',tienda:tienda,pin:pinInv,sucursal:'todas'});
+  const box=document.getElementById('resumen-lotes-box');
+  if(d.error||!d.lotes||!d.lotes.length){box.innerHTML='<p style="color:#999">Sin lotes</p>';return}
+  let h='';
+  d.lotes.forEach(l=>{
+    let icono='',badge='',color='';
+    if(l.estado==='En Transito'){icono='Tránsito';badge='badge-t';color='#856404'}
+    else if(l.estado==='Disponible'){icono='Disponible';badge='badge-d';color='#28a745'}
+    else{icono='Cerrado';badge='badge-c';color='#6c757d'}
+    const tipoBadge=l.tipo==='Mayorista'?'badge-m':'badge-d';
+
+    h+='<div style="border:1px solid #ddd;border-radius:10px;padding:12px;margin:8px 0;background:#fafafa">';
+    h+='<div style="font-weight:bold;font-size:15px;margin-bottom:6px">'+l.loteId+' | '+l.sucursal+' | <span class="'+badge+'">'+icono+'</span> <span class="'+tipoBadge+'">'+l.tipo+'</span></div>';
+    h+='<div style="font-size:13px;line-height:1.8">';
+
+    h+='<div>Inversión: <strong>$'+l.inversionTotal.toFixed(2)+'</strong> (envío: $'+l.costoEnvio.toFixed(2)+' incluido)</div>';
+
+    if(l.estado==='En Transito'){
+      h+='<div style="color:'+color+'">Proyección venta: <strong>$'+l.proyeccionVenta.toFixed(2)+'</strong></div>';
+      h+='<div style="color:#28a745">Ganancia potencial: <strong>$'+l.gananciaPotencial.toFixed(2)+'</strong> ('+l.margen+'%)</div>';
+      h+='<div>Envío: '+l.fechaEnvio+' → Llegada est.: <strong>'+l.llegadaEstimada+'</strong></div>';
+      h+='<div>Venta est.: <strong>'+l.ventaEstimada+'</strong> ('+l.diasPronosticoVenta+' días)</div>';
+    }else{
+      h+='<div>Vendido: <strong>$'+l.ventasLote.toFixed(2)+'</strong> | Costo: $'+l.costoVentasLote.toFixed(2)+' | Comisiones: $'+l.comisionesLote.toFixed(2)+'</div>';
+      var gc=l.gananciaReal>=0?'#28a745':'#dc3545';
+      h+='<div style="color:'+gc+'">Ganancia real: <strong>$'+l.gananciaReal.toFixed(2)+'</strong></div>';
+      h+='<div>Stock: '+l.totalRestante+' de '+l.totalProductos+' ('+l.pctVendido+'% vendido)</div>';
+      if(l.totalRestante>0){
+        h+='<div style="color:#28a745">Ganancia si vende todo: <strong>$'+l.gananciaPotencial.toFixed(2)+'</strong> ('+l.margen+'%)</div>';
+      }
+      h+='<div>Llegó: '+l.fechaLlegada+' | Venta est.: '+l.ventaEstimada;
+      if(l.diasRestantesVenta!==null){
+        if(l.diasRestantesVenta>0) h+=' (<strong>'+l.diasRestantesVenta+' días restantes</strong>)';
+        else h+=' (<strong>Plazo vencido hace '+Math.abs(l.diasRestantesVenta)+' días</strong>)';
+      }
+      h+='</div>';
+    }
+
+    h+='</div></div>';
+  });
+  box.innerHTML=h;
+}
 </script>
 </body>
 </html>
