@@ -497,8 +497,8 @@ async function irLotes(){
   const s=await api({action:'getSucursales'});const sel=document.getElementById('lot-suc');sel.innerHTML='';
   if(s.sucursales)s.sucursales.forEach(sc=>{if(sc.activa)sel.innerHTML+='<option>'+sc.nombre+'</option>'});
   const c=await api({action:'getCatalogoIA'});catalogo=c.productos||[];
-  const sp=document.getElementById('lot-prod');sp.innerHTML='<option value="">Seleccione...</option>';catalogo.forEach(p=>sp.innerHTML+='<option value="'+p.id+'">'+p.producto+' ('+p.marca+')</option>');
-  const spp=document.getElementById('prec-prod');spp.innerHTML='<option value="">Seleccione...</option>';catalogo.forEach(p=>spp.innerHTML+='<option value="'+p.id+'">'+p.producto+'</option>');
+  const sp=document.getElementById('lot-prod');sp.innerHTML='<option value="">Seleccione...</option>';catalogo.forEach(p=>{const t=p.tono?' - '+p.tono:'';sp.innerHTML+='<option value="'+p.id+'">'+p.producto+' ('+p.marca+')'+t+'</option>'});
+  const spp=document.getElementById('prec-prod');spp.innerHTML='<option value="">Seleccione...</option>';catalogo.forEach(p=>{const t=p.tono?' - '+p.tono:'';sp.innerHTML+='<option value="'+p.id+'">'+p.producto+' ('+p.marca+')'+t+'</option>'});
   await cargarLotes();mostrar('P-lotes');
 }
 
