@@ -625,8 +625,8 @@ async function cargarResumenLotes(){
   const d=await api({},'POST',{action:'getResumenPorLote',tienda:tienda,pin:pinInv,sucursal:su});
   const box=document.getElementById('resumen-lotes-box');
   if(d.error||!d.lotes||!d.lotes.length){box.innerHTML='<p style="color:#999">Sin lotes</p>';return}
-  let h='<div id="cont-lotes" style="overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:4px">';
-  d.lotes.forEach((l,i)=>{
+  let h='<div style="max-height:620px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:4px">';
+  d.lotes.forEach(l=>{
     let badge='',badgeClass='';
     if(l.estado==='En Transito'){badge='En Transito';badgeClass='badge-t';}
     else if(l.estado==='Vendiendo'){badge='Vendiendo';badgeClass='badge-d';}
@@ -634,7 +634,7 @@ async function cargarResumenLotes(){
     else{badge='Disponible';badgeClass='badge-d';}
     const tipoBadge=l.tipo==='Mayorista'?'badge-m':'badge-d';
     const gc=l.gananciaReal>=0?'#28a745':'#dc3545';
-    h+='<div class="lote-card">';
+    h+='<div style="border:1px solid #ddd;border-radius:10px;padding:12px;margin:8px 0;background:#fafafa">';
     h+='<div style="font-weight:bold;font-size:15px;margin-bottom:6px">'+l.loteId+' | '+l.sucursal+' | <span class="'+badgeClass+'">'+badge+'</span> <span class="'+tipoBadge+'">'+l.tipo+'</span></div>';
     h+='<div style="font-size:13px;line-height:1.8">';
     h+='<div>Inversión: <strong>$'+l.inversionTotal.toFixed(2)+'</strong></div>';
@@ -669,20 +669,6 @@ async function cargarResumenLotes(){
   });
   h+='</div>';
   box.innerHTML=h;
-
-  // Medir las 3 primeras tarjetas y ajustar altura
-  setTimeout(function(){
-    var cont=document.getElementById('cont-lotes');
-    if(!cont)return;
-    var cards=cont.querySelectorAll('.lote-card');
-    if(cards.length<=3)return;
-    var hTotal=0;
-    for(var i=0;i<3;i++){
-      hTotal+=cards[i].offsetHeight;
-      if(i<2)hTotal+=8;
-    }
-    cont.style.maxHeight=hTotal+'px';
-  },100);
 }
 </script>
 </body>
