@@ -449,7 +449,7 @@ async function recargarProdVenta(){
   prods=d.productos||[];
   const s=document.getElementById('sel-prod');
   s.innerHTML='<option value="">Seleccione...</option>';
-  prods.forEach(p=>{const t=p.tono?' - '+p.tono:'';if(p.stock>0)s.innerHTML+='<option value="'+p.nombre+'" data-stock="'+p.stock+'">'+p.nombre+t+' - $'+p.precio+' ('+p.stock+')</option>'});
+  prods.forEach(p=>{const t=p.tono?' - '+p.tono:'';if(p.stock>0)s.innerHTML+='<option value="'+p.nombre+'" data-stock="'+p.stock+'">'+p.nombre+t+' - $'+p.precio+'</option>'});
   if(!prods.length||prods.every(p=>p.stock===0))s.innerHTML='<option value="">Sin stock en '+suc+'</option>';
   document.getElementById('stk-disp').textContent='-';
   document.getElementById('lote-info').textContent='';
