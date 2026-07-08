@@ -217,6 +217,8 @@ th{background:#f2f2f2}
 <input type="number" id="lot-cant" value="1" min="1">
 <label>Costo Unitario ($):</label>
 <input type="number" id="lot-costoU" placeholder="Costo compra" step="0.01">
+<label>Precio de Venta ($):</label>
+<input type="number" id="lot-precioV" placeholder="Se llena según tipo de lote" step="0.01">
 <label>Vencimiento:</label>
 <input type="date" id="lot-venc">
 <button class="btn b-azul" onclick="addProdLote()">Agregar al Lote</button>
@@ -505,6 +507,8 @@ async function irLotes(){
   const c=await api({action:'getCatalogoIA'});catalogo=c.productos||[];
   const sp=document.getElementById('lot-prod');sp.innerHTML='<option value="">Seleccione...</option>';catalogo.forEach(p=>{const t=p.tono?' - '+p.tono:'';sp.innerHTML+='<option value="'+p.id+'">'+p.producto+' ('+p.marca+')'+t+'</option>'});
   const spp=document.getElementById('prec-prod');spp.innerHTML='<option value="">Seleccione...</option>';catalogo.forEach(p=>{const t=p.tono?' - '+p.tono:'';spp.innerHTML+='<option value="'+p.id+'">'+p.producto+' ('+p.marca+')'+t+'</option>'});
+  document.getElementById('lot-sel-add').onchange=function(){verDetalleLote();llenarPrecioLote()};
+document.getElementById('lot-prod').onchange=function(){llenarPrecioLote()};
   await cargarLotes();mostrar('P-lotes');
 }
 
@@ -533,10 +537,10 @@ async function crearProducto(){
 }
 
 async function addProdLote(){
-  const l=document.getElementById('lot-sel-add').value,p=document.getElementById('lot-prod').value,c=parseInt(document.getElementById('lot-cant').value),cu=parseFloat(document.getElementById('lot-costoU').value),v=document.getElementById('lot-venc').value,msg=document.getElementById('lot-add-msg');
+  const l=document.getElementById('lot-sel-add').value,p=document.getElementById('lot-prod').value,c=parseInt(document.getElementById('lot-cant').value),cu=parseFloat(document.getElementById('lot-costoU').value),pv=parseFloat(document.getElementById('lot-precioV').value)||0,v=document.getElementById('lot-venc').value,msg=document.getElementById('lot-add-msg');
   if(!l||!p||!c||!cu){msg.innerHTML='<div class="err">Complete campos</div>';return}
-  const d=await api({},'POST',{action:'addProductoLote',loteId:l,productoId:p,cantidad:c,costoUnitario:cu,vencimiento:v,pin:pinInv});
-  if(d.success){msg.innerHTML='<div class="ok">Agregado. Costo real: $'+d.costoRealUnitario.toFixed(2)+'/u</div>';document.getElementById('lot-cant').value='1';document.getElementById('lot-costoU').value='';verDetalleLote()}else msg.innerHTML='<div class="err">'+(d.error||'Error')+'</div>';
+  const d=await api({},'POST',{action:'addProductoLote',loteId:l,productoId:p,cantidad:c,costoUnitario:cu,precioVenta:pv,vencimiento:v,pin:pinInv});
+  if(d.success){msg.innerHTML='<div class="ok">Agregado. Costo real: $'+d.costoRealUnitario.toFixed(2)+'/u</div>';document.getElementById('lot-cant').value='1';document.getElementById('lot-costoU').value='';document.getElementById('lot-precioV').value='';verDetalleLote()}else msg.innerHTML='<div class="err">'+(d.error||'Error')+'</div>';
 }
 
 async function verDetalleLote(){
@@ -544,8 +548,8 @@ async function verDetalleLote(){
   if(!lid){box.innerHTML='<p style="color:#999">Seleccione lote</p>';return}
   const d=await api({action:'getDetalleLote',loteId:lid});
   if(!d.productos||!d.productos.length){box.innerHTML='<p style="color:#999">Sin productos</p>';return}
-  let h='<div style="overflow-x:auto"><table><thead><tr><th>Prod</th><th>C</th><th>Costo</th><th>Env/U</th><th>Real/U</th><th>Vence</th><th>Rest</th></tr></thead><tbody>';
-  d.productos.forEach(p=>{h+='<tr><td>'+p.producto+'</td><td>'+p.cantidad+'</td><td>$'+p.costoUnitario.toFixed(2)+'</td><td>$'+p.costoEnvioUnitario.toFixed(2)+'</td><td>$'+p.costoRealUnitario.toFixed(2)+'</td><td>'+(p.vencimiento||'-')+'</td><td>'+p.cantidadRestante+'</td></tr>'});
+  let h='<div style="overflow-x:auto"><table><thead><tr><th>Prod</th><th>C</th><th>Costo</th><th>Env/U</th><th>Real/U</th><th>P.Venta</th><th>Vence</th><th>Rest</th></tr></thead><tbody>';
+  d.productos.forEach(p=>{h+='<tr><td>'+p.producto+'</td><td>'+p.cantidad+'</td><td>$'+p.costoUnitario.toFixed(2)+'</td><td>$'+p.costoEnvioUnitario.toFixed(2)+'</td><td>$'+p.costoRealUnitario.toFixed(2)+'</td><td>'+(p.precioVenta?'$'+p.precioVenta.toFixed(2):'-')+'</td><td>'+(p.vencimiento||'-')+'</td><td>'+p.cantidadRestante+'</td></tr>'});
   h+='</tbody></table></div>';box.innerHTML=h;
 }
 
@@ -675,6 +679,19 @@ async function cargarResumenLotes(){
   });
   h+='</div>';
   box.innerHTML=h;
+}
+function llenarPrecioLote(){
+  const lid=document.getElementById('lot-sel-add').value;
+  const pid=document.getElementById('lot-prod').value;
+  if(!lid||!pid){document.getElementById('lot-precioV').value='';return}
+  const lote=lotes.find(l=>l.loteId===lid);
+  const prod=catalogo.find(p=>p.id===pid);
+  if(!lote||!prod){return}
+  if(lote.tipo==='Mayorista'){
+    document.getElementById('lot-precioV').value=prod.precioMayorista||prod.precio||0;
+  }else{
+    document.getElementById('lot-precioV').value=prod.precio||0;
+  }
 }
 </script>
 </body>
