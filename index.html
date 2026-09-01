@@ -464,19 +464,12 @@ async function onProdChange(){
   const suc=document.getElementById('sel-suc-venta').value;
   const d=await api({action:'getLotesProducto',producto:p,tienda:tienda,sucursal:suc});
   lotsProd=d.lotes||[];
-  if(lotsProd.length<=1){
-    document.getElementById('sec-elegir-lote').classList.add('hidden');
-    const l=lotsProd[0];document.getElementById('lote-info').textContent=l?'Lote: '+l.loteId+' | '+l.sucursal+' | Vence: '+l.vencimiento+' | $'+l.costoReal.toFixed(2)+'/u':'';
+  document.getElementById('sec-elegir-lote').classList.add('hidden');
+  if(lotsProd.length>0){
+    const a=lotsProd[0];
+    document.getElementById('lote-info').textContent='FIFO: '+a.loteId+' | '+a.sucursal+' | Stock: '+a.cantidadRestante+' | $'+a.costoReal.toFixed(2)+'/u';
   }else{
-    const hc=lotsProd.some(l=>l.diasVencimiento!==null&&l.diasVencimiento<=90);
-    if(hc){
-      document.getElementById('sec-elegir-lote').classList.remove('hidden');let h='';
-      lotsProd.forEach((l,i)=>{const b=l.diasVencimiento!==null&&l.diasVencimiento<=90?'<span class="badge-r">VENCE '+l.diasVencimiento+'d</span>':'';h+='<div class="slote" onclick="elegirLot('+i+')" id="sl-'+i+'"><strong>'+l.loteId+'</strong> | '+l.sucursal+' | Stock: '+l.cantidadRestante+' | Vence: '+l.vencimiento+' '+b+'</div>'});
-      document.getElementById('lista-lotes').innerHTML=h;lotSel=0;elegirLot(0);
-    }else{
-      document.getElementById('sec-elegir-lote').classList.add('hidden');
-      const a=lotsProd[0];document.getElementById('lote-info').textContent='FIFO: '+a.loteId+' | '+a.sucursal+' | Vence: '+a.vencimiento+' | $'+a.costoReal.toFixed(2)+'/u';
-    }
+    document.getElementById('lote-info').textContent='Sin lotes con stock';
   }
   const precioProd=prods.find(x=>x.nombre===p);
   if(precioProd)document.getElementById('inp-precio-venta').value=precioProd.precio;
@@ -489,7 +482,7 @@ async function confirmarVenta(){
   const err=document.getElementById('venta-err'),ok=document.getElementById('venta-ok');
   if(!p){err.textContent='Seleccione producto';return}if(!c||c<1){err.textContent='Cantidad inválida';return}
   const pr=prods.find(x=>x.nombre===p);if(!pr||c>pr.stock){err.textContent='Stock: '+(pr?pr.stock:0);return}
-  let lid=null;if(lotsProd.length>0){const hc=lotsProd.some(l=>l.diasVencimiento!==null&&l.diasVencimiento<=90);lid=hc&&lotSel!==null?lotsProd[lotSel].loteId:lotsProd[0].loteId}
+  let lid=lotsProd.length>0?lotsProd[0].loteId:null;
   const precioVenta=parseFloat(document.getElementById('inp-precio-venta').value)||0;
   const tipoVenta=document.getElementById('sel-tipo-venta').value;
   const d=await api({},'POST',{action:'realizarVenta',producto:p,cantidad:c,motivo:m,porcientoVendedor:pc,vendedor:vendedor,tienda:tienda,loteId:lid,precioVenta:precioVenta,tipoVenta:tipoVenta});
